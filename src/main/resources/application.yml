@@ -17,3 +17,7 @@ springdoc:
     oauth:
       client-id: 85d2fc81-5ed0-4276-9101-640026f5eacc
       client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
+fusionauth:
+  apikey: ONijuRXlmVe3aUzggTrKCaKl2EC8rJanmru8oZq6Ozw_yp77Y6V0tDPu
+  baseurl: http://52.14.197.167:9011/
+  tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0

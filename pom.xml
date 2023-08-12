@@ -68,6 +68,13 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.fusionauth</groupId>
+            <artifactId>fusionauth-java-client</artifactId>
+            <version>1.47.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
