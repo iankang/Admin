@@ -1,3 +1,8 @@
+spring:
+  profiles:
+    active: production
+
+---
 server:
   port: 9080
 spring:
@@ -7,6 +12,9 @@ spring:
         jwt:
           jwk-set-uri: http://52.14.197.167:9011/.well-known/jwks.json
           issuer-uri: http://52.14.197.167:9011/
+  config:
+    activate:
+      on-profile: production
 oidc:
   issuer: think.net
   auth_url: http://52.14.197.167:9011/oauth2/authorize
@@ -22,3 +30,48 @@ fusionauth:
   baseurl: http://52.14.197.167:9011/
   tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
   applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
+
+minio:
+  #  default-folder: /resources
+  #  access-key: mWorR7QeZtLQ4zEL
+  access-key: minio-access-key
+  #  url: http://62.12.115.155:9000
+  url: http://52.14.197.167:9000
+  bucket: thinking
+  #  secret-key: 5uDPnKPMFK2o9e0o1bvi7B0g8X0t5NMF
+  secret-key: minio-secret-key
+---
+server:
+  port: 9080
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://52.14.197.167:9011/.well-known/jwks.json
+          issuer-uri: http://52.14.197.167:9011/
+  config:
+    activate:
+      on-profile: development
+oidc:
+  issuer: think.net
+  auth_url: http://52.14.197.167:9011/oauth2/authorize
+  token_url: http://52.14.197.167:9011/oauth2/token
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: 85d2fc81-5ed0-4276-9101-640026f5eacc
+      client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
+fusionauth:
+  apikey: ONijuRXlmVe3aUzggTrKCaKl2EC8rJanmru8oZq6Ozw_yp77Y6V0tDPu
+  baseurl: http://52.14.197.167:9011/
+  tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
+  applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
+minio:
+  #  default-folder: /resources
+  #  access-key: mWorR7QeZtLQ4zEL
+  access-key: minio-access-key
+  url: http://52.14.197.167:9000
+  bucket: thinking
+  secret-key: minio-secret-key
