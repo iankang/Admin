@@ -42,7 +42,7 @@ class AuthController(
             .with{request ->
                 request.loginId = signInRequest.email
                 request.password = signInRequest.password
-                request.applicationId = UUID.fromString(tenantId)
+                request.applicationId = UUID.fromString(applicationId)
             }
 
         val response:ClientResponse<LoginResponse,Errors> = fusionAuthClient.login(loginRequest)
@@ -76,10 +76,12 @@ class AuthController(
             other.firstName = firstName
             other.lastName = lastName
             other.mobilePhone = phoneNumber
+            other.username = username
         }
 
         val userReg:UserRegistration = UserRegistration().with { other ->
             other.applicationId = UUID.fromString(applicationId)
+            other.roles.add("basic")
             if(is_Admin == true) {
                 other.roles.add("admin")
             }
@@ -88,7 +90,7 @@ class AuthController(
             }
             other.username = username
         }
-        val registrationRequest:RegistrationRequest = RegistrationRequest(user,userReg,true,true)
+        val registrationRequest:RegistrationRequest = RegistrationRequest(user,userReg)
         val registrationResponse = fusionAuthClient.register(UUID.randomUUID(),registrationRequest)
 
         return if(registrationResponse.wasSuccessful()){

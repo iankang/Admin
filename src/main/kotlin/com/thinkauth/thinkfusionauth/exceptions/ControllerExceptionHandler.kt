@@ -23,7 +23,7 @@ class ControllerExceptionHandler {
         return ResponseEntity<ErrorMessage?>(message, HttpStatus.NOT_FOUND)
     }
     @ExceptionHandler(PasswordMismatchException::class)
-    fun passwordMismatchException(ex: ResourceNotFoundException, request: WebRequest): ResponseEntity<ErrorMessage?>? {
+    fun passwordMismatchException(ex: PasswordMismatchException, request: WebRequest): ResponseEntity<ErrorMessage?>? {
         val message = ErrorMessage(
             HttpStatus.UNAUTHORIZED.value(),
             Date(),
