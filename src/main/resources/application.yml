@@ -34,12 +34,12 @@ fusionauth:
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
-  access-key: minio-access-key
+  access-key: think-access-key
   #  url: http://62.12.115.155:9000
   url: http://52.14.197.167:9000
   bucket: thinking
   #  secret-key: 5uDPnKPMFK2o9e0o1bvi7B0g8X0t5NMF
-  secret-key: minio-secret-key
+  secret-key: think-secret-key
 ---
 server:
   port: 9080
@@ -71,7 +71,7 @@ fusionauth:
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
-  access-key: minio-access-key
-  url: http://52.14.197.167:9000
+  access-key: think-access-key
+  url: http://52.14.197.167
   bucket: thinking
-  secret-key: minio-secret-key
+  secret-key: think-secret-key
