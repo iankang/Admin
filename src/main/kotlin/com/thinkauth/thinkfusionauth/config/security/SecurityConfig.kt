@@ -37,6 +37,7 @@ class SecurityConfig(
            ?.authorizeRequests()
            ?.antMatchers("/api/v1/anyone")?.permitAll()
            ?.antMatchers("/api/auth/**")?.permitAll()
+           ?.antMatchers("/api/accountRecovery/**")?.permitAll()
            ?.antMatchers("/swagger-ui/**")?.permitAll()
            ?.antMatchers("/v3/api-docs/**")?.permitAll()
            ?.anyRequest()
