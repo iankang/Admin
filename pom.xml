@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.thinkAuth</groupId>
     <artifactId>ThinkFusionAUth</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>ThinkFusionAUth</name>
     <description>ThinkFusionAUth</description>
     <properties>
