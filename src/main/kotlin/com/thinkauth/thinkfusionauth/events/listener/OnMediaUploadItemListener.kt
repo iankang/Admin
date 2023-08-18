@@ -34,7 +34,7 @@ class OnMediaUploadItemListener(
     private fun uploadMedia(event: OnMediaUploadItemEvent){
         val multipartFile = event.file
         val path = event.copyLocation
-        val bucko = "$bucketName/"+ BucketName.USER_ACCOUNT_PROFILE+"/"+path.nameWithoutExtension
+        val bucko = "$bucketName/"+ BucketName.USER_ACCOUNT_PROFILE+"/"+path.name
         logger.info("path: $path")
         fileManagerService.uploadFile(bucketName,bucko,multipartFile.inputStream)
     }
