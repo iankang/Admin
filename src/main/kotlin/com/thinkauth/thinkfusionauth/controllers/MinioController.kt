@@ -30,7 +30,7 @@ import java.nio.file.Paths
          @RequestPart("file") file: MultipartFile
      ){
          val path = Paths.get(thinking+ File.separator+BucketName.USER_ACCOUNT_PROFILE.name+File.separator+file.originalFilename)
-         val onMediaUploadItemEvent = OnMediaUploadItemEvent(file,path)
+         val onMediaUploadItemEvent = OnMediaUploadItemEvent(file,path,BucketName.VOICE_COLLECTION)
          applicationEventPublisher.publishEvent(onMediaUploadItemEvent)
      }
  }

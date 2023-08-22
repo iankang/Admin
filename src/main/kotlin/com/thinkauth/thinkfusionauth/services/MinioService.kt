@@ -4,8 +4,8 @@ import com.thinkauth.thinkfusionauth.utils.BucketName
 import io.minio.*
 import io.minio.messages.Bucket
 import io.minio.messages.Item
-import org.bouncycastle.asn1.x500.style.RFC4519Style.name
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import javax.servlet.ServletContext
@@ -24,7 +24,6 @@ class MinioService(
 
     fun listBuckets(): MutableList<Bucket>? {
         try {
-
 
         return minioClient.listBuckets()
         }catch (e:Exception){
@@ -205,5 +204,18 @@ class MinioService(
         }
         return null
 
+    }
+
+    fun getMinioObject(
+        bucketName: String,
+        objectName: String
+    ): InputStreamResource {
+        val inputStream: InputStream = minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(bucketName)
+                .`object`(objectName)
+                .build()
+        )
+        return InputStreamResource(inputStream)
     }
 }

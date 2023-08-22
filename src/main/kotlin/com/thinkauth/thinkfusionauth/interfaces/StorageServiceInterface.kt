@@ -4,6 +4,8 @@ import io.minio.ObjectWriteResponse
 import io.minio.Result
 import io.minio.messages.Bucket
 import io.minio.messages.Item
+import io.minio.GetObjectResponse
+import org.springframework.core.io.InputStreamResource
 import java.io.InputStream
 
 interface StorageServiceInterface {
@@ -21,12 +23,15 @@ interface StorageServiceInterface {
                    objectName: String,
                    filename: String)
     fun stream(  bucketName: String,
-                 objectName: String)
+                 objectName: String):GetObjectResponse?
     fun createBucket(bucketName: String)
     fun listBuckets(): MutableList<Bucket>?
     fun listObjects(bucketName: String): MutableIterable<Result<Item>>?
 
     fun composeObject(bucketName: String,
                       objectName: String):ObjectWriteResponse?
+
+    fun getObject(bucketName: String,
+                  objectName: String):InputStreamResource?
 
 }

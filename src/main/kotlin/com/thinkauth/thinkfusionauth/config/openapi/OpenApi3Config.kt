@@ -61,11 +61,11 @@ class OpenApi3Config(
             )
             .info(
                 Info()
-                    .title("Simple Example REST Service")
+                    .title("THiNK Authentication REST Service")
                     .description(
                         """
-Simple REST Service used to demonstrate
-securing a Spring REST service with
+REST Service used to
+secure a Spring REST service with
 FusionAuth.
                      
                      """.trimIndent()

@@ -34,7 +34,25 @@ class OnMediaUploadItemListener(
     private fun uploadMedia(event: OnMediaUploadItemEvent){
         val multipartFile = event.file
         val path = event.copyLocation
-        val bucko = "$bucketName/"+ BucketName.USER_ACCOUNT_PROFILE+"/"+path.name
+        val resource = event.resource
+        var bucko:String = when(resource){
+            BucketName.BUSINESS_PROFILE_PIC ->{
+                "$bucketName/"+ BucketName.BUSINESS_PROFILE_PIC+"/"+path.name
+            }
+
+            BucketName.STT_UPLOAD ->{
+                "$bucketName/"+ BucketName.STT_UPLOAD+"/"+path.name
+            }
+
+            BucketName.VOICE_COLLECTION ->{
+                "$bucketName/"+ BucketName.VOICE_COLLECTION+"/"+path.name
+            }
+
+            BucketName.USER_ACCOUNT_PROFILE->{
+                "$bucketName/"+ BucketName.USER_ACCOUNT_PROFILE+"/"+path.name
+            }
+        }
+
         logger.info("path: $path")
         fileManagerService.uploadFile(bucketName,bucko,multipartFile.inputStream)
     }

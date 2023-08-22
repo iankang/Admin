@@ -1,11 +1,13 @@
 package com.thinkauth.thinkfusionauth.services
 
 import com.thinkauth.thinkfusionauth.interfaces.StorageServiceInterface
+import io.minio.GetObjectResponse
 import io.minio.ObjectWriteResponse
 import io.minio.Result
 import io.minio.messages.Bucket
 import io.minio.messages.Item
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Service
 import java.io.InputStream
 
@@ -47,12 +49,13 @@ class StorageService(
         }
     }
 
-    override fun stream(bucketName: String, objectName: String) {
+    override fun stream(bucketName: String, objectName: String): GetObjectResponse? {
         try {
-            minioService.streamObject(bucketName, objectName)
+            return minioService.streamObject(bucketName, objectName)
         } catch (e: Exception) {
             logger.error("stream", e.message)
         }
+        return null
     }
 
     override fun createBucket(bucketName: String) {
@@ -87,6 +90,15 @@ class StorageService(
        }catch (e:Exception){
            logger.error("composeObject: ${e.message}")
        }
+        return null
+    }
+
+    override fun getObject(bucketName: String, objectName: String): InputStreamResource? {
+        try{
+            return minioService.getMinioObject(bucketName, objectName)
+        }catch (e:Exception){
+            logger.error("getObject: ${e.message}")
+        }
         return null
     }
 
