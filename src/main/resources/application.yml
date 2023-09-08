@@ -4,7 +4,14 @@ spring:
 
 ---
 server:
-  port: 9080
+  port: 9081
+  ssl:
+    key-store: classpath:auth.think.ke.p12
+    key-store-password: kangethe
+    key-store-type: pkcs12
+    key-alias: auth.think.ke
+    key-password: kangethe
+
 spring:
   security:
     oauth2:
@@ -41,14 +48,6 @@ minio:
   #  secret-key: 5uDPnKPMFK2o9e0o1bvi7B0g8X0t5NMF
   secret-key: think-secret-key
 ---
-server:
-  port: 9081
-  ssl:
-    key-store: classpath:auth.think.ke.p12
-    key-store-password: kangethe
-    key-store-type: pkcs12
-    key-alias: auth.think.ke
-    key-password: kangethe
 spring:
   security:
     oauth2:
