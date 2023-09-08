@@ -3,6 +3,7 @@ spring:
     active: production
 
 ---
+
 server:
   port: 9081
   ssl:
@@ -11,6 +12,7 @@ server:
     key-store-type: pkcs12
     key-alias: auth.think.ke
     key-password: kangethe
+    enabled: true
 
 spring:
   security:
