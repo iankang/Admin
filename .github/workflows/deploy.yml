@@ -35,8 +35,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           script: |
-            docker stop think-auth-fusion-container
-            docker rm think-auth-fusion-container
+            docker stop think-auth-fusion-container1
+            docker rm think-auth-fusion-container1
             docker pull ikangethe/think-fusion-auth:latest
-            docker run -d -p "9080:9080" --restart=unless-stopped --name=think-auth-fusion-container ikangethe/think-fusion-auth:latest
+            docker run -d -p "9081:9081" --restart=unless-stopped --name=think-auth-fusion-container1 ikangethe/think-fusion-auth:latest
             docker ps -a
