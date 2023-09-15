@@ -8,10 +8,10 @@ server:
   port: 9081
   ssl:
     enabled: true
-    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.p12
+    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore
     key-store-password: kangethe
     key-store-type: PKCS12
-    key-alias: tomcat
+    key-alias: auth.think.ke
 
 spring:
   security:

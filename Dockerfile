@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -f /app/pom.xml clean package -Dskip
 FROM bellsoft/liberica-openjdk-alpine:17
 COPY --from=builder /app/target/ThinkFusionAUth-0.0.1.jar /opt/app.jar
 COPY --from=builder /app/src/main/resources/* /opt/
-ADD auth.think.ke.p12 /etc/letsencrypt/live/auth.think.ke/auth.think.ke.p12
+ADD auth.think.ke.keystore /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore
 EXPOSE 9081
 ENV SPRING_PROFILES_ACTIVE=production
 ENTRYPOINT ["java", "-jar", "/opt/app.jar"]
