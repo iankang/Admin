@@ -7,12 +7,11 @@ spring:
 server:
   port: 9081
   ssl:
-    key-store: classpath:springboot.p12
-    key-store-password: password
-    key-store-type: pkcs12
-    key-alias: springboot
-    key-password: password
     enabled: true
+    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.p12
+    key-store-password: kangethe
+    key-store-type: PKCS12
+    key-alias: tomcat
 
 spring:
   security:
