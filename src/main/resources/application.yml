@@ -18,15 +18,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://52.14.197.167:9011/.well-known/jwks.json
-          issuer-uri: http://52.14.197.167:9011/
+          jwk-set-uri: https://auth.think.ke/.well-known/jwks.json
+          issuer-uri: https://auth.think.ke/
   config:
     activate:
       on-profile: production
 oidc:
   issuer: think.net
-  auth_url: http://52.14.197.167:9011/oauth2/authorize
-  token_url: http://52.14.197.167:9011/oauth2/token
+  auth_url: https://auth.think.ke/oauth2/authorize
+  token_url: https://auth.think.ke/oauth2/token
 
 springdoc:
   swagger-ui:
@@ -35,7 +35,7 @@ springdoc:
       client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
 fusionauth:
   apikey: ONijuRXlmVe3aUzggTrKCaKl2EC8rJanmru8oZq6Ozw_yp77Y6V0tDPu
-  baseurl: http://52.14.197.167:9011/
+  baseurl: https://auth.think.ke/
   tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
   applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
 
@@ -53,20 +53,22 @@ minio:
 #    #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
 #    uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDB?tls=false?authSource=admin
 ---
+server:
+  port: 9080
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://52.14.197.167:9011/.well-known/jwks.json
-          issuer-uri: http://52.14.197.167:9011/
+          jwk-set-uri: https://auth.think.ke/.well-known/jwks.json
+          issuer-uri: https://auth.think.ke/
   config:
     activate:
       on-profile: development
 oidc:
   issuer: think.net
-  auth_url: http://52.14.197.167:9011/oauth2/authorize
-  token_url: http://52.14.197.167:9011/oauth2/token
+  auth_url: https://auth.think.ke/oauth2/authorize
+  token_url: https://auth.think.ke/oauth2/token
 
 springdoc:
   swagger-ui:
@@ -75,7 +77,7 @@ springdoc:
       client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
 fusionauth:
   apikey: ONijuRXlmVe3aUzggTrKCaKl2EC8rJanmru8oZq6Ozw_yp77Y6V0tDPu
-  baseurl: http://52.14.197.167:9011/
+  baseurl: https://auth.think.ke/
   tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
   applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
 minio:
