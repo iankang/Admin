@@ -14,6 +14,18 @@ server:
     key-alias: auth.think.ke
 
 spring:
+  data:
+    mongodb:
+      #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
+#      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBProd?tls=false?authSource=
+      database: ThinkDBProd
+      authentication-database: admin
+      host: localhost
+      username: ian
+      password: point90
+      port: 9050
+
+
   security:
     oauth2:
       resourceserver:
@@ -48,10 +60,7 @@ minio:
   bucket: thinking
   #  secret-key: 5uDPnKPMFK2o9e0o1bvi7B0g8X0t5NMF
   secret-key: think-secret-key
-data:
-  mongodb:
-    #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
-    uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDB?tls=false?authSource=admin
+
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
