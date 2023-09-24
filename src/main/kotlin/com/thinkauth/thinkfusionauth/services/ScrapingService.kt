@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class ScrapingService(
-
+    @Value("\${app.language-url}")
+    private val languagesUrl: String? = null
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-    @Value("\${app.language-url}")
-    private val languagesUrl: String? = null
+
     fun fetchLanguages(): MutableList<LanguageScrapeResponse> {
         val dataList: MutableList<LanguageScrapeResponse> = ArrayList()
 
