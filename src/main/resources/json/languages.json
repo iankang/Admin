@@ -1,0 +1,72 @@
+{
+  "languages": [
+    {
+      "name": "Swahili",
+      "iso_639-3": "swa"
+    },
+    {
+      "name": "Kikuyu",
+      "iso_639-3": "kik"
+    },
+    {
+      "name": "Luhya",
+      "iso_639-3": "luy"
+    },
+    {
+      "name": "Kalenjin",
+      "iso_639-3": "kln"
+    },
+    {
+      "name": "Kamba",
+      "iso_639-3": "kam"
+    },
+    {
+      "name": "Meru",
+      "iso_639-3": "mer"
+    },
+    {
+      "name": "Maasai",
+      "iso_639-3": "mas"
+    },
+    {
+      "name": "Luo",
+      "iso_639-3": "luo"
+    },
+    {
+      "name": "Turkana",
+      "iso_639-3": "tuk"
+    },
+    {
+      "name": "Embu",
+      "iso_639-3": "ebu"
+    },
+    {
+      "name": "Somali",
+      "iso_639-3": "som"
+    },
+    {
+      "name": "Rendille",
+      "iso_639-3": "rel"
+    },
+    {
+      "name": "Orma",
+      "iso_639-3": "orc"
+    },
+    {
+      "name": "Taita",
+      "iso_639-3": "tai"
+    },
+    {
+      "name": "Gusii",
+      "iso_639-3": "guz"
+    },
+    {
+      "name": "Mbeere",
+      "iso_639-3": "rmy"
+    },
+    {
+      "name": "Chuka",
+      "iso_639-3": "cuh"
+    }
+  ]
+}

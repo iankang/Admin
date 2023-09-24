@@ -3,7 +3,6 @@ package com.thinkauth.thinkfusionauth.controllers
 import com.inversoft.error.Errors
 import com.inversoft.rest.ClientResponse
 import com.thinkauth.thinkfusionauth.exceptions.PasswordMismatchException
-
 import com.thinkauth.thinkfusionauth.models.requests.SignInRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
 import io.fusionauth.client.FusionAuthClient
@@ -24,9 +23,15 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.io.Serializable
+import java.util.*
 import javax.validation.Valid
+
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -187,9 +192,23 @@ class AuthController(
 
         val logoutResponse = fusionAuthClient.logout(global, refreshToken)
         return if(logoutResponse.wasSuccessful()){
+            SecurityContextHolder.clearContext()
             ResponseEntity(FusionApiResponse(logoutResponse.status,logoutResponse.successResponse,null),HttpStatus.OK)
         } else {
             ResponseEntity(FusionApiResponse(logoutResponse.status,null,null),HttpStatus.INTERNAL_SERVER_ERROR)
         }
+    }
+
+    @Operation(summary = "who is loggedIn", description = "LoggedInUser", tags = ["Authentication"])
+    @PostMapping("/principal")
+    fun loggedInUser(): ResponseEntity<String>? {
+        val authentication = SecurityContextHolder.getContext().authentication
+        if (authentication !is AnonymousAuthenticationToken) {
+            val userPrincipal = authentication.principal as String
+//            println("User principal name =" + userPrincipal.username)
+//            println("Is user enabled =" + userPrincipal.isEnabled)
+            return ResponseEntity(userPrincipal,HttpStatus.OK)
+        }
+        return ResponseEntity("No one loggedIn", HttpStatus.UNAUTHORIZED)
     }
 }

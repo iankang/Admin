@@ -87,3 +87,6 @@ minio:
   url: http://52.14.197.167
   bucket: thinking
   secret-key: think-secret-key
+
+app:
+  language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"

@@ -4,6 +4,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Size
 
+
 data class SignInRequest(
     @field:NotBlank(message = "Username or email is required")
     @field:NotEmpty(message = "Username or email is required")

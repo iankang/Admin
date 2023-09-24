@@ -14,7 +14,7 @@ import javax.servlet.ServletContext
 @Service
 class MinioService(
     private val minioClient: MinioClient,
-    private val servletContext:ServletContext
+    private val servletContext: ServletContext
 ) {
 
     private val logger = LoggerFactory.getLogger(MinioService::class.java)

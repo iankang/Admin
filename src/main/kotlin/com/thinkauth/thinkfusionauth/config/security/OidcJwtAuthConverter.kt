@@ -4,6 +4,7 @@ import org.springframework.core.convert.converter.Converter
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.util.StringUtils
 import java.util.*
@@ -16,11 +17,13 @@ class OidcJwtAuthConverter(
 ): Converter<Jwt,AbstractAuthenticationToken> {
 
     override fun convert(source: Jwt): AbstractAuthenticationToken? {
-        return UsernamePasswordAuthenticationToken(
+        val authentication =  UsernamePasswordAuthenticationToken(
             getUserName(jwt = source),
             "n/a",
             getAuthorities(jwt = source)
         )
+       SecurityContextHolder.getContext().authentication = authentication
+        return authentication
     }
 
     private fun getUserName(jwt: Jwt): String? {

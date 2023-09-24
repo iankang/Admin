@@ -14,7 +14,7 @@
     <name>ThinkFusionAUth</name>
     <description>ThinkFusionAUth</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <kotlin.version>1.8.22</kotlin.version>
         <springdoc.version>1.6.3</springdoc.version>
     </properties>
@@ -127,6 +127,11 @@
             <version>8.5.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>

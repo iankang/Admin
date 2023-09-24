@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.exceptions
 
-class ResourceNotFoundException():RuntimeException() {
+class ResourceNotFoundException(s: String) :RuntimeException(s) {
+
 
 }

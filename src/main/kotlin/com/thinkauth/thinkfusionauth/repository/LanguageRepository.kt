@@ -9,5 +9,10 @@ interface LanguageRepository:MongoRepository<Language,String> {
 
     fun existsByLanguageName(languageName:String):Boolean
 
+    fun existsByCountry(country: String):Boolean
+
     fun findByLanguageName(languageName: String):Language?
+
+    fun findAllByCountry(country:String):List<Language>
+
 }

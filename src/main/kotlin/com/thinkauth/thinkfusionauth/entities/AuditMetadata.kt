@@ -4,15 +4,15 @@ import org.springframework.data.annotation.*
 import java.time.LocalDateTime
 
 abstract class AuditMetadata(
-    @Id var id:String? = null,
 
-    @CreatedDate var createdDate: LocalDateTime? = null,
 
-    @LastModifiedDate var lastModifiedDate: LocalDateTime? = null,
+    @CreatedDate var createdDate: LocalDateTime = LocalDateTime.now(),
+
+    @LastModifiedDate var lastModifiedDate: LocalDateTime = LocalDateTime.now(),
 
     @CreatedBy var createdByUser: String? = null,
 
     @LastModifiedBy var modifiedByUser: String? = null
 ) {
-
+    @Id var id:String? = null
 }
