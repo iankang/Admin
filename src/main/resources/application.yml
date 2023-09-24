@@ -52,6 +52,9 @@ minio:
 #  mongodb:
 #    #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
 #    uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDB?tls=false?authSource=admin
+
+app:
+  language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
 ---
 server:
   port: 9080
