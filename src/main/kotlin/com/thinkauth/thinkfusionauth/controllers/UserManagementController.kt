@@ -28,7 +28,7 @@ class UserManagementController(
 
     @Operation(summary = "get a user by email", description = "Gets a user by email", tags = ["UserManagement"])
     @GetMapping("/fetchUserByEmail")
-    @PreAuthorize("hasAuthority('admin')")
+//    @PreAuthorize("hasAuthority('admin')")
     fun getUserByEmail(
         @RequestParam("email") email: String?
     ): ResponseEntity<FusionApiResponse<UserResponse>> {
