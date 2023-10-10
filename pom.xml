@@ -126,6 +126,12 @@
             <artifactId>minio</artifactId>
             <version>8.5.4</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
+        <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>8.13.22</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jsoup</groupId>
