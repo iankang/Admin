@@ -1,8 +1,6 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.google.i18n.phonenumbers.Phonenumber
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
 import io.fusionauth.client.FusionAuthClient

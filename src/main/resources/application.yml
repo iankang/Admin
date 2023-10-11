@@ -64,6 +64,7 @@ minio:
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
+  bot-url: https://llm.think.ke:5000/chat
 ---
 server:
   port: 9080
@@ -112,3 +113,4 @@ minio:
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
+  bot-url: https://llm.think.ke:5000/chat
