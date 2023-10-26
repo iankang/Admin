@@ -72,7 +72,7 @@ spring:
   data:
     mongodb:
       #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
-      #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBProd?tls=false?authSource=
+      #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBTest?tls=false?authSource=
       database: ThinkDBTest
       authentication-database: admin
       host: 52.14.197.167

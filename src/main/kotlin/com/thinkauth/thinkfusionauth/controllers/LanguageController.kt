@@ -72,6 +72,22 @@ class LanguageController(
         throw ResourceNotFoundException("Language with country: $country not found")
     }
     @Operation(
+        summary = "Get a language by Language Name", description = "gets a language by languageName", tags = ["Language"]
+    )
+    @GetMapping("/languageByLanguageName")
+    @PreAuthorize("permitAll()")
+    fun getLanguageByLanguageName(
+        @RequestParam(name = "languageName") languageName:String,
+    ): ResponseEntity<List<Language?>> {
+        val languageReq = LanguageRequest(languageName = languageName)
+        if(languageService.existsByLanguageName(languageReq)){
+           return ResponseEntity(languageService.findLanguageByLanguageName(languageName = languageName), HttpStatus.OK)
+        }
+        throw ResourceNotFoundException("Language with country: $languageName not found")
+    }
+
+
+    @Operation(
         summary = "Get languages from wikipedia", description = "gets languages from Wikipedia", tags = ["Language"]
     )
     @GetMapping("/downloadFromWikipedia")

@@ -57,7 +57,7 @@ class LanguageService(
     }
 
     @TrackExecutionTime
-    fun findLanguageByLanguageName(languageName:String):Language?{
+    fun findLanguageByLanguageName(languageName:String):List<Language?>{
         return languageRepository.findByLanguageName(languageName = languageName)
     }
     @TrackExecutionTime

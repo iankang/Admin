@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.services
 
 import com.thinkauth.thinkfusionauth.interfaces.StorageServiceInterface
+import com.thinkauth.thinkfusionauth.utils.BucketName
 import io.minio.GetObjectResponse
 import io.minio.ObjectWriteResponse
 import io.minio.Result
@@ -9,7 +10,11 @@ import io.minio.messages.Item
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
+import java.io.File
 import java.io.InputStream
+import java.nio.file.Path
+import java.nio.file.Paths
 
 @Service
 class StorageService(
@@ -18,10 +23,7 @@ class StorageService(
 
     private val logger = LoggerFactory.getLogger(StorageService::class.java)
     override fun upload(
-        bucketName: String,
-        objectName: String,
-        filename: String,
-        contentType: String
+        bucketName: String, objectName: String, filename: String, contentType: String
     ): ObjectWriteResponse? {
         try {
             return minioService.uploadMedia(bucketName, objectName, filename, contentType)
@@ -33,9 +35,9 @@ class StorageService(
     }
 
     override fun uploadFile(bucketName: String, objectName: String, inputStream: InputStream): ObjectWriteResponse? {
-        try{
+        try {
             return minioService.uploadFile(bucketName, objectName, inputStream)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             logger.error("upload", e.message)
         }
         return null
@@ -85,22 +87,24 @@ class StorageService(
     }
 
     override fun composeObject(bucketName: String, objectName: String): ObjectWriteResponse? {
-       try {
-           return minioService.composeObject(bucketName, objectName)
-       }catch (e:Exception){
-           logger.error("composeObject: ${e.message}")
-       }
+        try {
+            return minioService.composeObject(bucketName, objectName)
+        } catch (e: Exception) {
+            logger.error("composeObject: ${e.message}")
+        }
         return null
     }
 
     override fun getObject(bucketName: String, objectName: String): InputStreamResource? {
-        try{
+        try {
             return minioService.getMinioObject(bucketName, objectName)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             logger.error("getObject: ${e.message}")
         }
         return null
     }
+
+
 
 
 }

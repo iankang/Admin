@@ -84,8 +84,8 @@ class BusinessService(
 
         val bizniz = getSingleBusiness(businessId)
 
-        val path = Paths.get(thinkResources+ File.separator+BucketName.BUSINESS_PROFILE_PIC.name+File.separator+file.originalFilename)
-        bizniz.businessImageProfile = path.absolutePathString()
+        val path = thinkResources+ File.separator+BucketName.BUSINESS_PROFILE_PIC.name+File.separator+file.originalFilename
+        bizniz.businessImageProfile = path
         val onMediaUploadItemEvent = OnMediaUploadItemEvent(file,path,BucketName.BUSINESS_PROFILE_PIC)
         applicationEventPublisher.publishEvent(onMediaUploadItemEvent)
         return saveBusiness(bizniz)

@@ -8,7 +8,7 @@ import java.nio.file.Path
 
 class OnMediaUploadItemEvent(
     val file: MultipartFile,
-    val copyLocation: Path,
+    val copyLocation: String,
     val resource:BucketName
 ): ApplicationEvent(file) {
 }

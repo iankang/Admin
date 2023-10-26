@@ -11,7 +11,7 @@ interface LanguageRepository:MongoRepository<Language,String> {
 
     fun existsByCountry(country: String):Boolean
 
-    fun findByLanguageName(languageName: String):Language?
+    fun findByLanguageName(languageName: String):List<Language?>
 
     fun findAllByCountry(country:String):List<Language>
 

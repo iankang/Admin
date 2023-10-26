@@ -6,3 +6,11 @@ enum class BucketName {
     USER_ACCOUNT_PROFILE,
     STT_UPLOAD,
 }
+
+//enum class ResourceType {
+//    VOICE_COLLECTION,
+//    BUSINESS_PROFILE_PIC,
+//    USER_ACCOUNT_PROFILE,
+//    POST_MEDIA,
+//    STT_UPLOAD,
+//}
