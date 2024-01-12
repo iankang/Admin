@@ -5,6 +5,7 @@ import com.thinkauth.thinkfusionauth.utils.BucketName
 import io.minio.GetObjectResponse
 import io.minio.ObjectWriteResponse
 import io.minio.Result
+import io.minio.StatObjectResponse
 import io.minio.messages.Bucket
 import io.minio.messages.Item
 import org.slf4j.LoggerFactory
@@ -104,7 +105,22 @@ class StorageService(
         return null
     }
 
+    override fun fetchStats(bucketName: String, objectName: String): StatObjectResponse? {
+        try {
+            return minioService.getStats(bucketName, objectName)
+        } catch (e: Exception) {
+            logger.error("getObject: ${e.message}")
+        }
+        return null
+    }
 
+    override fun removeObject(bucketName: String, objectName: String) {
+        try {
+             minioService.removeObject(bucketName, objectName)
+        } catch (e: Exception) {
+            logger.error("getObject: ${e.message}")
+        }
+    }
 
 
 }

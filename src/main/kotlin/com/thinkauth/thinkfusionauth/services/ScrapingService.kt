@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.services
 
 
+import com.thinkauth.thinkfusionauth.models.requests.SampleWords
 import com.thinkauth.thinkfusionauth.models.responses.LanguageScrapeResponse
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service
 @Service
 class ScrapingService(
     @Value("\${app.language-url}")
-    private val languagesUrl: String? = null
+    private val languagesUrl: String? = null,
+    @Value("\${app.swahili-url}")
+    private val swahiliUrl: String? = null
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -54,5 +57,22 @@ class ScrapingService(
         return dataList
     }
 
+    fun fetchSwahiliWords(): MutableList<SampleWords> {
+        val sampleWords = mutableListOf<SampleWords>()
+        repeat(5){
+            val doc = Jsoup.connect(swahiliUrl+it).get()
 
+            val wordBoxes = doc.getElementsByClass("wlv-item__word-box")
+
+            for(word in wordBoxes){
+                val wordBox  = word.getElementsByClass("js-wlv-word").text()
+                val wordBoxEng  = word.getElementsByClass("js-wlv-english").text()
+                sampleWords.add(SampleWords(wordBox,wordBoxEng))
+//                logger.info("swabili: "+ wordBox.toString())
+//                logger.info("english: "+ wordBoxEng.toString())
+            }
+        }
+
+        return sampleWords
+    }
 }

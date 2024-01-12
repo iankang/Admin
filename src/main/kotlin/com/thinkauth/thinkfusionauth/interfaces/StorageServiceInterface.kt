@@ -5,6 +5,7 @@ import io.minio.Result
 import io.minio.messages.Bucket
 import io.minio.messages.Item
 import io.minio.GetObjectResponse
+import io.minio.StatObjectResponse
 import org.springframework.core.io.InputStreamResource
 import java.io.InputStream
 
@@ -33,5 +34,9 @@ interface StorageServiceInterface {
 
     fun getObject(bucketName: String,
                   objectName: String):InputStreamResource?
+    fun fetchStats(bucketName: String,
+                  objectName: String): StatObjectResponse?
 
+    fun removeObject(bucketName: String,
+                     objectName: String)
 }

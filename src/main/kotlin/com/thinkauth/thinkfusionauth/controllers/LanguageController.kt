@@ -4,10 +4,13 @@ package com.thinkauth.thinkfusionauth.controllers
 import com.thinkauth.thinkfusionauth.entities.Language
 import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.LanguageRequest
+import com.thinkauth.thinkfusionauth.models.requests.SampleWords
 import com.thinkauth.thinkfusionauth.models.responses.LanguageScrapeResponse
 import com.thinkauth.thinkfusionauth.services.LanguageService
+import com.thinkauth.thinkfusionauth.services.ScrapingService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.bouncycastle.asn1.x500.style.RFC4519Style.l
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -18,7 +21,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/language")
 @Tag(name = "Language", description = "This manages Audio Languages")
 class LanguageController(
-    private val languageService: LanguageService
+    private val languageService: LanguageService,
+    private val scrapingService: ScrapingService
 ) {
     @Operation(
         summary = "Add a language", description = "adds a language", tags = ["Language"]
@@ -104,6 +108,16 @@ class LanguageController(
         val langs = languageService.downloadLanguagesFromWikipedia()
 
         return languageService.addLanguages(langs)
+    }
+    @Operation(
+        summary = "Get swahili", description = "gets swahili", tags = ["Language"]
+    )
+    @PostMapping("/downloadSwahili")
+    @PreAuthorize("permitAll()")
+    fun downloadSwahili(
+    ): MutableList<SampleWords> {
+
+      return scrapingService.fetchSwahiliWords()
     }
     @Operation(
         summary = "Delete all languages", description = "deletes all languages", tags = ["Language"]

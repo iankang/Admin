@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+
 @Configuration
 class MinioConfiguration(
     @Value("\${minio.url}")
@@ -18,7 +19,7 @@ class MinioConfiguration(
 ) {
 
     @Bean
-    fun minioClient():MinioClient{
+    fun minioClient(): MinioClient {
         return MinioClient.builder()
             .endpoint(endpoint,9000,false)
             .credentials(accessKey, secretKey)
