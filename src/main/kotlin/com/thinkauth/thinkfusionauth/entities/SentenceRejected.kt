@@ -1,15 +1,12 @@
 package com.thinkauth.thinkfusionauth.entities
 
+import io.fusionauth.domain.User
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 
 @Document
-class AudioCollection(
-    var sentence:String? = null,
-    var audio: String? = null,
-    var englishTranslation:String? = null,
+data class SentenceRejected(
     @DocumentReference
-    var language:Language,
-):AuditMetadata() {
-}
-
+    var sentenceUploadEntity: SentenceUploadEntity? = null,
+    var rejector: User? = null
+):AuditMetadata()

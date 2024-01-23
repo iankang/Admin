@@ -1,11 +1,12 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 
-import com.thinkauth.thinkfusionauth.entities.AudioCollection
+import com.thinkauth.thinkfusionauth.entities.SentenceEntity
+import com.thinkauth.thinkfusionauth.entities.SentenceUploadEntity
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
-import com.thinkauth.thinkfusionauth.models.responses.GenericResponse
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.AudioCollectionService
+import com.thinkauth.thinkfusionauth.services.SentenceUploadService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.Logger
@@ -23,7 +24,8 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/audioCollection")
 @Tag(name = "Audio", description = "This manages the audio in the system.")
 class AudioCollectionController(
-    private val audioCollectionService: AudioCollectionService
+    private val audioCollectionService: AudioCollectionService,
+    private val uploadService: SentenceUploadService
 ) {
     private val LOGGER:Logger = LoggerFactory.getLogger(AudioCollectionController::class.java)
     @Operation(
@@ -35,11 +37,11 @@ class AudioCollectionController(
     fun addAudioCollection(
         @RequestParam sentenceId:String,
         @RequestPart("file") file: MultipartFile
-    ): ResponseEntity<AudioCollection> {
+    ): ResponseEntity<SentenceUploadEntity> {
 //        val audioCollectionRequest = AudioCollectionRequest(sentence,language)
         if(!audioCollectionService.audioCollectionExists(sentenceId)){
 
-            return ResponseEntity(audioCollectionService.addSentenceCollection(sentenceId,file), HttpStatus.OK)
+            return ResponseEntity(uploadService.addSentenceUpload(sentenceId,file), HttpStatus.OK)
         }
         return ResponseEntity(HttpStatus.CONFLICT)
     }
@@ -80,13 +82,13 @@ class AudioCollectionController(
     fun addAudioToCollection(
         @PathVariable("sentenceId") audioCollectionId:String,
         @RequestPart("file") file: MultipartFile
-    ):ResponseEntity<AudioCollection>{
+    ):ResponseEntity<SentenceUploadEntity>{
         if(audioCollectionService.audioCollectionExists(audioCollectionId)){
             LOGGER.info("sentence exists")
             val audioCollection = audioCollectionService.getAudioCollectionById(audioCollectionId)
             LOGGER.info("audioCollectionFound: "+ audioCollection.toString())
-            audioCollectionService.addAudioEvent(file,audioCollection)
-            return ResponseEntity(audioCollection,HttpStatus.OK)
+
+            return ResponseEntity(uploadService.addAudioEvent(file,audioCollection),HttpStatus.OK)
         }
         LOGGER.info("sentence doesn't exist")
         return ResponseEntity(HttpStatus.NOT_FOUND)
@@ -101,7 +103,7 @@ class AudioCollectionController(
 //    @PreAuthorize("hasRole('ADMIN')")
     fun addSentenceWithoutAudio(
        @RequestBody audioRequest:AudioCollectionRequest
-    ):ResponseEntity<AudioCollection>{
+    ):ResponseEntity<SentenceEntity>{
         if(audioCollectionService.languageIdExists(audioRequest.languageId)) {
 
             if (!audioCollectionService.audioCollectionExistsBySentence(audioRequest)) {
@@ -115,14 +117,23 @@ class AudioCollectionController(
     }
 
     @Operation(
-        summary = "Get all audio", description = "gets all audio", tags = ["Audio"]
+        summary = "Get all sentences", description = "gets all sentences", tags = ["Audio"]
     )
-    @GetMapping("/audio")
+    @GetMapping("/sentences")
     fun getAudios(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
-    ): ResponseEntity<PagedResponse<MutableList<AudioCollection>>> {
-        return ResponseEntity(audioCollectionService.getAllAudioCollection(page, size),HttpStatus.OK)
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
+        return ResponseEntity(audioCollectionService.getAllSentences(page, size),HttpStatus.OK)
+    }
+    @Operation(
+        summary = "Get all sentences", description = "gets all sentences", tags = ["Audio"]
+    )
+    @GetMapping("/sentencesByBusinessId")
+    fun getSentencesByBusinessId(
+        @RequestParam("businessId") businessId:String
+    ): ResponseEntity<List<SentenceEntity>> {
+        return ResponseEntity(audioCollectionService.getAllSentencesByBusinessId(businessId),HttpStatus.OK)
     }
 
 //    @Operation(
@@ -144,7 +155,7 @@ class AudioCollectionController(
     fun getAudio(
         @PathVariable("audioId") audioId:String,
         response:HttpServletResponse
-    ): AudioCollection {
+    ): SentenceEntity {
 
         return audioCollectionService.getAudioCollectionById(audioId)
     }
@@ -154,7 +165,7 @@ class AudioCollectionController(
     @GetMapping("/audioCollectionByLanguageId/{languageId}")
     fun getAllAudioByLanguageId(
         @PathVariable("languageId") languageId:String
-    ): List<AudioCollection> {
+    ): List<SentenceEntity> {
 
         return audioCollectionService.getAudioCollectionByLanguageId(languageId)
     }
@@ -170,27 +181,27 @@ class AudioCollectionController(
 //
 //        return audioCollectionService.getAudioCollectionByLanguageId(languageId)
 //    }
-    @Operation(
-        summary = "Get audio by languageId and no audio", description = "gets audio by languageId and no audio", tags = ["Audio"]
-    )
-    @GetMapping("/audioByLanguageAndNoAudio/{languageId}")
-    fun getAudioByLanguageIdAndNoAudio(
-        @PathVariable("languageId") languageId:String,
-    ): List<AudioCollection> {
+//    @Operation(
+//        summary = "Get audio by languageId and no audio", description = "gets audio by languageId and no audio", tags = ["Audio"]
+//    )
+//    @GetMapping("/audioByLanguageAndNoAudio/{languageId}")
+//    fun getAudioByLanguageIdAndNoAudio(
+//        @PathVariable("languageId") languageId:String,
+//    ): List<SentenceEntity> {
+//
+//        return audioCollectionService.getAudioCollectionByLanguageWithNoAudio(languageId)
+//    }
 
-        return audioCollectionService.getAudioCollectionByLanguageWithNoAudio(languageId)
-    }
-
-    @Operation(
-        summary = "Get audio by languageId and with audio", description = "gets audio by languageId and with audio", tags = ["Audio"]
-    )
-    @GetMapping("/audioByLanguageAndWithAudio/{languageId}")
-    fun getAudioByLanguageIdAndWithAudio(
-        @PathVariable("languageId") languageId:String,
-    ): List<AudioCollection> {
-
-        return audioCollectionService.getAudioCollectionByLanguageWithAudio(languageId)
-    }
+//    @Operation(
+//        summary = "Get audio by languageId and with audio", description = "gets audio by languageId and with audio", tags = ["Audio"]
+//    )
+//    @GetMapping("/audioByLanguageAndWithAudio/{languageId}")
+//    fun getAudioByLanguageIdAndWithAudio(
+//        @PathVariable("languageId") languageId:String,
+//    ): List<SentenceEntity> {
+//
+//        return audioCollectionService.getAudioCollectionByLanguageWithAudio(languageId)
+//    }
 
     @Operation(
         summary = "Deletes All Audio Collections", description = "deletes all audio collections", tags = ["Audio"]

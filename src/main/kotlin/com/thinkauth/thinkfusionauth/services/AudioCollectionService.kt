@@ -1,7 +1,7 @@
 package com.thinkauth.thinkfusionauth.services
 
 
-import com.thinkauth.thinkfusionauth.entities.AudioCollection
+import com.thinkauth.thinkfusionauth.entities.SentenceEntity
 import com.thinkauth.thinkfusionauth.entities.Language
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
@@ -17,66 +17,43 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.name
 
 
 @Service
 class AudioCollectionService(
     private val audioRepository: AudioCollectionRepository,
     private val languageService: LanguageService,
+    private val businessService: BusinessService,
     private val fileProcessingHelper: FileProcessingHelper,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val LOGGER: Logger = LoggerFactory.getLogger(AudioCollectionService::class.java)
-    fun addSentenceCollection(sentenceId:String, file: MultipartFile): AudioCollection {
-        val sentence = audioRepository.findById(sentenceId).get();
-        val path = fileProcessingHelper.mediaFullPath(BucketName.VOICE_COLLECTION,file.originalFilename!!)
-        sentence.audio = path.toString()
 
-        val finalCollection = audioRepository.save(sentence)
 
-        val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(file, path, BucketName.VOICE_COLLECTION)
-        applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
-
-        return finalCollection
-    }
-
-    fun addAudioEvent(
-        file: MultipartFile, audioCollection: AudioCollection
-    ): AudioCollection {
-        val path = fileProcessingHelper.mediaFullPath(BucketName.VOICE_COLLECTION, file.name)
-        LOGGER.info("file_path_add_audio: "+ path.toString())
-        audioCollection.audio = path
-        val finalCollection = audioRepository.save(audioCollection)
-        val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(file, path, BucketName.VOICE_COLLECTION)
-        applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
-        LOGGER.info("finalCollection: "+ finalCollection.toString())
-        return finalCollection
-    }
-
-    fun addSentenceCollection(audioCollectionRequest: AudioCollectionRequest): AudioCollection {
+    fun addSentenceCollection(audioCollectionRequest: AudioCollectionRequest): SentenceEntity {
         val language = languageService.getLanguageByLanguageId(audioCollectionRequest.languageId)
-        val collection = AudioCollection(
+        val biz = businessService.getSingleBusiness(businessId = audioCollectionRequest.businessId!!)
+        val collection = SentenceEntity(
             sentence = audioCollectionRequest.sentence,
             language = language!!,
-            englishTranslation = audioCollectionRequest.englishTranslation
+            englishTranslation = audioCollectionRequest.englishTranslation,
+            business = biz
         )
         return audioRepository.save(collection)
     }
 
-    fun getAllAudioCollection(
+    fun getAllSentences(
         page: Int, size: Int
-    ): PagedResponse<MutableList<AudioCollection>> {
-        var audioCollectionList = mutableListOf<AudioCollection>()
+    ): PagedResponse<MutableList<SentenceEntity>> {
+        var sentenceEntityList = mutableListOf<SentenceEntity>()
         val paging = PageRequest.of(page, size)
-        val audioCollectionPage: Page<AudioCollection> = audioRepository.findAll(paging)
-        audioCollectionList = audioCollectionPage.content
-        return PagedResponse<MutableList<AudioCollection>>(
-            audioCollectionList,
-            audioCollectionPage.number,
-            audioCollectionPage.totalElements,
-            audioCollectionPage.totalPages
+        val sentenceEntityPage: Page<SentenceEntity> = audioRepository.findAll(paging)
+        sentenceEntityList = sentenceEntityPage.content
+        return PagedResponse<MutableList<SentenceEntity>>(
+            sentenceEntityList,
+            sentenceEntityPage.number,
+            sentenceEntityPage.totalElements,
+            sentenceEntityPage.totalPages
         )
     }
 
@@ -88,7 +65,7 @@ class AudioCollectionService(
         return audioRepository.existsBySentence(audioCollectionRequest.sentence)
     }
 
-    fun getAudioCollectionById(audioCollectionId: String): AudioCollection {
+    fun getAudioCollectionById(audioCollectionId: String): SentenceEntity {
         return audioRepository.findById(audioCollectionId).get()
     }
 
@@ -114,29 +91,10 @@ class AudioCollectionService(
 //        response.flushBuffer()
 //    }
 
-    fun getAudioCollectionByLanguageId(languageId: String): List<AudioCollection> {
+    fun getAudioCollectionByLanguageId(languageId: String): List<SentenceEntity> {
         return audioRepository.findAllByLanguageId(languageId)
     }
 
-    fun getAudioCollectionByLanguageWithNoAudio(languageId: String): List<AudioCollection> {
-
-        return audioRepository.findAllByAudioIsNullAndLanguageId(languageId)
-    }
-
-    fun getAudioCollectionByLanguageWithNoAudioCount(languageId: String): Long? {
-
-        return audioRepository.countAudioCollectionsByLanguageIdAndAudioIsNull(languageId)
-    }
-
-    fun getAudioCollectionByLanguageWithAudio(languageId: String): List<AudioCollection> {
-
-        return audioRepository.findAudioCollectionsByLanguageIdAndAudioIsNotNull(languageId)
-    }
-
-    fun getAudioCollectionByLanguageWithAudioCount(languageId: String): Long? {
-
-        return audioRepository.countAudioCollectionsByLanguageIdAndAudioIsNotNull(languageId)
-    }
 
     fun getLanguage(languageId: String): Language? {
         return languageService.getLanguageByLanguageId(languageId)
@@ -154,15 +112,15 @@ class AudioCollectionService(
         return audioRepository.countAudioCollectionsByLanguageId(languageId)
     }
 
-    fun getCountOfAllAudioCollectionByLanguageIdAndNoAudioUrl(languageId: String): Long? {
-        return audioRepository.countAudioCollectionsByLanguageIdAndAudioIsNotNull(languageId)
-    }
-
     fun audioSentencesCount(): Long {
         return audioRepository.count()
     }
 
     fun deleteAllSentences() {
         return audioRepository.deleteAll()
+    }
+
+    fun getAllSentencesByBusinessId(businessId:String): List<SentenceEntity> {
+        return audioRepository.findAllByBusinessId(businessId)
     }
 }

@@ -1,6 +1,6 @@
 package com.thinkauth.thinkfusionauth.controllers
 
-import com.thinkauth.thinkfusionauth.entities.AudioCollection
+import com.thinkauth.thinkfusionauth.entities.SentenceEntity
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.AudioCollectionService
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -31,7 +30,7 @@ class SentencesController(
     )
     fun addSentenceWithoutAudio(
         @RequestBody audioRequest: AudioCollectionRequest
-    ):ResponseEntity<AudioCollection>{
+    ):ResponseEntity<SentenceEntity>{
         if(audioCollectionService.languageIdExists(audioRequest.languageId)) {
             LOGGER.info("language Exists")
             if (!audioCollectionService.audioCollectionExistsBySentence(audioRequest)) {
@@ -52,7 +51,7 @@ class SentencesController(
     fun getAudios(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
-    ): ResponseEntity<PagedResponse<MutableList<AudioCollection>>> {
-        return ResponseEntity(audioCollectionService.getAllAudioCollection(page, size),HttpStatus.OK)
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
+        return ResponseEntity(audioCollectionService.getAllSentences(page, size),HttpStatus.OK)
     }
 }
