@@ -68,50 +68,51 @@ app:
   bot-url: https://llm.think.ke:5000/chat
 ---
 server:
-  port: 9080
+  port: 9082
 spring:
   data:
     mongodb:
       #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
       #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBTest?tls=false?authSource=
-      database: ThinkDB
+      database: ThinkDBTest
       authentication-database: admin
-      host: 52.14.197.167
-      username: think
-      password: think
-      port: 27017
+      host: 18.218.12.248
+      username: ian
+      password: point90
+      port: 9050
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: https://auth.think.ke/.well-known/jwks.json
-          issuer-uri: https://auth.think.ke/
+          jwk-set-uri: http://3.140.199.14:9011/.well-known/jwks.json
+          issuer-uri: http://3.140.199.14:9011/
   config:
     activate:
       on-profile: development
 oidc:
   issuer: acme.com
-  auth_url: https://auth.think.ke/oauth2/authorize
-  token_url: https://auth.think.ke/oauth2/token
+  auth_url: http://3.140.199.14:9011/oauth2/authorize
+  token_url: http://3.140.199.14:9011/oauth2/token
 
 springdoc:
   swagger-ui:
     oauth:
-      client-id: 85d2fc81-5ed0-4276-9101-640026f5eacc
-      client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
+      client-id: 3bc70ec3-7013-4d52-a6bf-21694f23be37
+      client-secret: H3zd_vO8PZJZgsEPinlwaaiSCVTqvqPnK8_nzlZUpJw
 fusionauth:
-  apikey: ONijuRXlmVe3aUzggTrKCaKl2EC8rJanmru8oZq6Ozw_yp77Y6V0tDPu
-  baseurl: https://auth.think.ke/
-  tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
-  applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
+  apikey: fzUDM7plPkmTjVKKAQB9ssytD6dBqpt-iOEIBXtvNHn_QoqXDYDvZXEe
+  baseurl: http://3.140.199.14:9011/
+  tenantId: d6d1a6e2-2c5d-4317-80fd-05239202af17
+  applicationId: 3bc70ec3-7013-4d52-a6bf-21694f23be37
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
-  access-key: think-access-key
-  url: http://52.14.197.167
+  access-key: thinking
+  url: http://3.140.199.14
   bucket: thinking
-  secret-key: think-secret-key
+  secret-key: thinking
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
+  swahili-url: "https://www.swahilipod101.com/swahili-word-lists/?page="
   bot-url: https://llm.think.ke:5000/chat

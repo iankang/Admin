@@ -68,7 +68,7 @@ class DataLoader(
         if(businessService.getBusinessCount() == 0L){
             repeat(10){
                 val biz = BusinessRequest(
-                    businessName = faker.app().name()
+                    businessName = faker.company().name()
                 )
                 logger.info("business: "+ biz)
                 businessService.addBusiness(biz)
@@ -79,9 +79,10 @@ class DataLoader(
 
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
+        createBusinesses()
         loadingLanguageData()
         checkIfBucketIsAvailable()
         addSwahiliSentences()
-        createBusinesses()
+
     }
 }
