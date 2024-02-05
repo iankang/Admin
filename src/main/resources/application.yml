@@ -68,7 +68,7 @@ app:
   bot-url: https://llm.think.ke:5000/chat
 ---
 server:
-  port: 9082
+  port: 9081
 spring:
   data:
     mongodb:
