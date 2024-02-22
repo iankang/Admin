@@ -43,8 +43,8 @@ oidc:
 springdoc:
   swagger-ui:
     oauth:
-      client-id: 3d85f87c-b550-485e-8ac2-4efd1de9926d
-      client-secret: aSX-YnSk7kGLVAIkJlT7drIG-L6ffE5GBHr6GXqP5LI
+      client-id: 3bc70ec3-7013-4d52-a6bf-21694f23be37
+      client-secret: H3zd_vO8PZJZgsEPinlwaaiSCVTqvqPnK8_nzlZUpJw
 fusionauth:
   apikey: cq-ehmVXkWn10_Mx2mve3s0MrpE1QZ7M_0Q7vDJsGxunKwzrq7Jpuoy_
   baseurl: http://38.242.219.131:9011/
@@ -97,8 +97,8 @@ oidc:
 springdoc:
   swagger-ui:
     oauth:
-      client-id: 3d85f87c-b550-485e-8ac2-4efd1de9926d
-      client-secret: aSX-YnSk7kGLVAIkJlT7drIG-L6ffE5GBHr6GXqP5LI
+      client-id: 3bc70ec3-7013-4d52-a6bf-21694f23be37
+      client-secret: H3zd_vO8PZJZgsEPinlwaaiSCVTqvqPnK8_nzlZUpJw
 fusionauth:
   apikey: cq-ehmVXkWn10_Mx2mve3s0MrpE1QZ7M_0Q7vDJsGxunKwzrq7Jpuoy_
   baseurl: http://38.242.219.131:9011/
