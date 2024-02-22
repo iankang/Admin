@@ -4,10 +4,7 @@ import com.thinkauth.thinkfusionauth.entities.CompanyProfile
 import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileRequest
 import com.thinkauth.thinkfusionauth.repository.CompanyProfileRepository
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class CompanyProfileService(
@@ -17,12 +14,10 @@ class CompanyProfileService(
 ) {
 
     fun addCompanyProfile(
-        companyProfileRequest: CompanyProfileRequest,
-        email:String,
-        industryId:String
+        companyProfileRequest: CompanyProfileRequest
     ): CompanyProfile {
-        val industry = companyProfileIndustryService.fetchCompanyProfileIndustryById(industryId)
-        val user = userManagementService.fetchUserEntityByEmail(email)
+        val industry = companyProfileIndustryService.fetchCompanyProfileIndustryById(companyProfileRequest.companyProfileIndustryId)
+        val user = userManagementService.fetchUserEntityByEmail(companyProfileRequest.userEmail)
         val companyProfile = CompanyProfile(
             companyName = companyProfileRequest.companyName,
             companyEmail = companyProfileRequest.companyEmail,

@@ -7,4 +7,6 @@ data class CompanyProfileRequest(
     var city:String = "",
     var Address:String = "",
     var websiteLink:String = "",
+    var userEmail:String ="",
+    var companyProfileIndustryId:String=""
 )
