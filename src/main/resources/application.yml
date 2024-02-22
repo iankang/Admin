@@ -97,13 +97,13 @@ oidc:
 springdoc:
   swagger-ui:
     oauth:
-      client-id: 3bc70ec3-7013-4d52-a6bf-21694f23be37
-      client-secret: H3zd_vO8PZJZgsEPinlwaaiSCVTqvqPnK8_nzlZUpJw
+      client-id: a8b86223-179e-4699-a6b2-cffbb139d79d
+      client-secret: n5jjcBOd0hvBYUxkSq8JDpzwuaMBR0vUVn2uuF2SAdc
 fusionauth:
-  apikey: cq-ehmVXkWn10_Mx2mve3s0MrpE1QZ7M_0Q7vDJsGxunKwzrq7Jpuoy_
-  baseurl: http://38.242.219.131:9011/
-  tenantId: 495e8d50-e96f-415a-b17f-460885176dbb
-  applicationId: 3d85f87c-b550-485e-8ac2-4efd1de9926d
+  apikey: -k5_CYIYKtKjuxu-mdrpIujVsGvgRReD2D1KBcOGxaLLEbCZOhm9GskO
+  baseurl: http://3.140.199.14:9011/
+  tenantId: e5e21339-9d56-4b6b-8f4e-5a0d8c8016dc
+  applicationId: a8b86223-179e-4699-a6b2-cffbb139d79d
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL

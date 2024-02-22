@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.controllers
 
 import com.inversoft.error.Errors
 import com.inversoft.rest.ClientResponse
+import com.thinkauth.thinkfusionauth.events.OnUserRegisteredEvent
 import com.thinkauth.thinkfusionauth.exceptions.PasswordMismatchException
 import com.thinkauth.thinkfusionauth.models.requests.SignInRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
@@ -21,6 +22,7 @@ import io.fusionauth.domain.oauth2.UserinfoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AnonymousAuthenticationToken
@@ -39,6 +41,7 @@ import javax.validation.Valid
 @Tag(name = "Authentication", description = "This authenticates users into the system.")
 class AuthController(
     private val fusionAuthClient: FusionAuthClient,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 
     @Value("\${fusionauth.applicationId}")
     private val applicationId:String,
@@ -106,6 +109,10 @@ class AuthController(
         val registrationResponse = fusionAuthClient.register(UUID.randomUUID(),registrationRequest)
 
         return if(registrationResponse.wasSuccessful()){
+            
+            val userRegisteredEvent = OnUserRegisteredEvent(email!!)
+            applicationEventPublisher.publishEvent(userRegisteredEvent)
+
             ResponseEntity(FusionApiResponse(registrationResponse.status,registrationResponse.successResponse,null),HttpStatus.OK)
         } else {
             ResponseEntity(FusionApiResponse(registrationResponse.status,null,registrationResponse.errorResponse),HttpStatus.BAD_REQUEST)

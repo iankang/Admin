@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtValidators
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
@@ -51,7 +52,7 @@ class SecurityConfig(
 
     @Bean
     fun jwtDecoder(): JwtDecoder {
-        val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(oauth2Properties.jwt.jwkSetUri).build()
+        val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(oauth2Properties.jwt.jwkSetUri).jwsAlgorithm(SignatureAlgorithm.ES256).build()
         val withIssuer = JwtValidators.createDefaultWithIssuer(issuer)
         jwtDecoder.setJwtValidator(withIssuer)
         return jwtDecoder

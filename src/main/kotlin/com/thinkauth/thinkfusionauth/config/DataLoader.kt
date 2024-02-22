@@ -4,6 +4,7 @@ import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.Business
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
+import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
 import com.thinkauth.thinkfusionauth.services.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,6 +20,7 @@ class DataLoader(
     private val minioService: MinioService,
     private val faker:Faker,
     private val businessService: BusinessService,
+    private val industryService: CompanyProfileIndustryService,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -77,12 +79,28 @@ class DataLoader(
         }
     }
 
+    fun industryItems(){
+        if(industryService.fetchIndustryCount() == 0L){
+            val industryList = mutableListOf("Agriculture and Agribusiness","Banking and Finance","Telecommunications",
+                "Information Technology","Manufacturing and Industrial","Retail and Wholesale","Real Estate and Construction",
+                "Healthcare and Pharmaceuticals","Energy and Utilities","Tourism and Hospitality","Transport and Logistics",
+                "Education and Training","Media and Entertainment","Non-Profit and NGOs","Legal and Professional Services",
+                "Mining and Extractive Industries","Government and Public Sector")
+
+            industryList.forEach { industry ->
+                industryService.addCompanyProfileIndustry(CompanyProfileIndustryRequest(industry))
+            }
+            logger.info("industryCount: "+ industryService.fetchIndustryCount())
+        }
+    }
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
         loadingLanguageData()
         checkIfBucketIsAvailable()
         addSwahiliSentences()
+        industryItems()
 
     }
 }
