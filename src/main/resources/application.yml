@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: production
+    active: development
 
 ---
 
@@ -84,33 +84,33 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://3.140.199.14:9011/.well-known/jwks.json
-          issuer-uri: http://3.140.199.14:9011/
+          jwk-set-uri: http://18.218.12.248:9011/.well-known/jwks.json
+          issuer-uri: http://18.218.12.248:9011/
   config:
     activate:
       on-profile: development
 oidc:
-  issuer: acme.com
-  auth_url: http://3.140.199.14:9011/oauth2/authorize
-  token_url: http://3.140.199.14:9011/oauth2/token
+  issuer: think.net
+  auth_url: http://18.218.12.248:9011/oauth2/authorize
+  token_url: http://18.218.12.248:9011/oauth2/token
 
 springdoc:
   swagger-ui:
     oauth:
-      client-id: a8b86223-179e-4699-a6b2-cffbb139d79d
-      client-secret: n5jjcBOd0hvBYUxkSq8JDpzwuaMBR0vUVn2uuF2SAdc
+      client-id: 85d2fc81-5ed0-4276-9101-640026f5eacc
+      client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
 fusionauth:
-  apikey: -k5_CYIYKtKjuxu-mdrpIujVsGvgRReD2D1KBcOGxaLLEbCZOhm9GskO
-  baseurl: http://3.140.199.14:9011/
-  tenantId: e5e21339-9d56-4b6b-8f4e-5a0d8c8016dc
-  applicationId: a8b86223-179e-4699-a6b2-cffbb139d79d
+  apikey: 9hmUEht1z98FKCt4F0fareYJI_QdV6-hcB4imnTFvIl1_ovx5hjR9yNM
+  baseurl: http://18.218.12.248:9011/
+  tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
+  applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
-  access-key: thinking
-  url: http://3.140.199.14
+  access-key: think-access-key
+  url: http://18.218.12.248:9001
   bucket: thinking
-  secret-key: thinking
+  secret-key: think-secret-key
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
