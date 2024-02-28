@@ -52,7 +52,7 @@ class SecurityConfig(
 
     @Bean
     fun jwtDecoder(): JwtDecoder {
-        val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(oauth2Properties.jwt.jwkSetUri).jwsAlgorithm(SignatureAlgorithm.ES256).build()
+        val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(oauth2Properties.jwt.jwkSetUri).jwsAlgorithm(SignatureAlgorithm.RS256).build()
         val withIssuer = JwtValidators.createDefaultWithIssuer(issuer)
         jwtDecoder.setJwtValidator(withIssuer)
         return jwtDecoder

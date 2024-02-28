@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import javax.servlet.http.HttpServletResponse
@@ -100,7 +101,7 @@ class AudioCollectionController(
     @PostMapping(
         value = ["/addSentence"]
     )
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     fun addSentenceWithoutAudio(
        @RequestBody audioRequest:AudioCollectionRequest
     ):ResponseEntity<SentenceEntity>{
@@ -120,6 +121,7 @@ class AudioCollectionController(
         summary = "Get all sentences", description = "gets all sentences", tags = ["Audio"]
     )
     @GetMapping("/sentences")
+        @PreAuthorize("hasRole('admin') or hasRole('basic') or hasRole('user')")
     fun getAudios(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
