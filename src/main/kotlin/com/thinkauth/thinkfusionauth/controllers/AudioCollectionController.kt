@@ -121,8 +121,7 @@ class AudioCollectionController(
         summary = "Get all sentences", description = "gets all sentences", tags = ["Audio"]
     )
     @GetMapping("/sentences")
-        @PreAuthorize("hasRole('admin') or hasRole('basic') or hasRole('user')")
-    fun getAudios(
+    fun getSentencesPaged(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
