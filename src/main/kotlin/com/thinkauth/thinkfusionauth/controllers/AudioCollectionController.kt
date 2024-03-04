@@ -40,11 +40,11 @@ class AudioCollectionController(
         @RequestPart("file") file: MultipartFile
     ): ResponseEntity<SentenceUploadEntity> {
 //        val audioCollectionRequest = AudioCollectionRequest(sentence,language)
-        if(!audioCollectionService.audioCollectionExists(sentenceId)){
+        if(audioCollectionService.audioCollectionExists(sentenceId)){
 
             return ResponseEntity(uploadService.addSentenceUpload(sentenceId,file), HttpStatus.OK)
         }
-        return ResponseEntity(HttpStatus.CONFLICT)
+        return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 //    @Operation(
 //        summary = "Add an audio by Language Id", description = "adds an audio by Language Id", tags = ["Audio"]
