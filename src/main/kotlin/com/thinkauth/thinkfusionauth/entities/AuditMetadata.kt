@@ -10,9 +10,8 @@ abstract class AuditMetadata(
 
     @LastModifiedDate var lastModifiedDate: LocalDateTime = LocalDateTime.now(),
 
-    @CreatedBy var createdByUser: String? = null,
-
-    @LastModifiedBy var modifiedByUser: String? = null
 ) {
     @Id var id:String? = null
+    @CreatedBy var createdByUser: String ? = null
+    @LastModifiedBy var modifiedByUser: String? = null
 }
