@@ -8,18 +8,14 @@ import com.thinkauth.thinkfusionauth.repository.BusinessRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.Resource
-import org.springframework.data.rest.core.mapping.ResourceType
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 
 @Service
@@ -86,7 +82,13 @@ class BusinessService(
 
         val path = thinkResources+ File.separator+BucketName.BUSINESS_PROFILE_PIC.name+File.separator+file.originalFilename
         bizniz.businessImageProfile = path
-        val onMediaUploadItemEvent = OnMediaUploadItemEvent(file,path,BucketName.BUSINESS_PROFILE_PIC)
+        val onMediaUploadItemEvent = OnMediaUploadItemEvent(
+            file,
+            path,
+            BucketName.BUSINESS_PROFILE_PIC,
+            null,
+            bizniz.id
+        )
         applicationEventPublisher.publishEvent(onMediaUploadItemEvent)
         return saveBusiness(bizniz)
     }

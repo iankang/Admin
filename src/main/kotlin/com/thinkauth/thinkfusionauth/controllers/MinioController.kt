@@ -11,8 +11,6 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -31,7 +29,13 @@ import kotlin.io.path.absolutePathString
          @RequestPart("file") file: MultipartFile
      ){
          val path = thinking+ File.separator+BucketName.USER_ACCOUNT_PROFILE.name+File.separator+file.originalFilename
-         val onMediaUploadItemEvent = OnMediaUploadItemEvent(file,path,BucketName.VOICE_COLLECTION)
+         val onMediaUploadItemEvent = OnMediaUploadItemEvent(
+             file,
+             path,
+             BucketName.VOICE_COLLECTION,
+             null,
+             null
+         )
          applicationEventPublisher.publishEvent(onMediaUploadItemEvent)
      }
  }

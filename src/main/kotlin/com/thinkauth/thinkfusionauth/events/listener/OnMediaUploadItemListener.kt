@@ -5,22 +5,12 @@ import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.services.MediaEntityService
 import com.thinkauth.thinkfusionauth.services.StorageService
 import com.thinkauth.thinkfusionauth.services.UserManagementService
-import com.thinkauth.thinkfusionauth.utils.BucketName
-import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationListener
-import org.springframework.data.rest.core.mapping.ResourceType
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.Async
-import org.springframework.security.authentication.AnonymousAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.name
-import kotlin.io.path.nameWithoutExtension
 
 @Component
 class OnMediaUploadItemListener(
@@ -46,6 +36,8 @@ class OnMediaUploadItemListener(
         val multipartFile = event.file
         val path = event.copyLocation
         val resource = event.resource
+        val sentenceId = event.sentenceId
+        val businessId = event.businessId
 
 //        if (authentication !is AnonymousAuthenticationToken) {
 //            val userPrincipal = authentication.principal as String
@@ -77,7 +69,9 @@ class OnMediaUploadItemListener(
            mediaName = resource.name,
            owner = user,
            mediaObject = response?.`object`()!!,
-           mediaPathId = path
+           mediaPathId = path,
+           sentenceId = sentenceId,
+           businessId = businessId
            )
         mediaEntityService.saveMediaEntity(mediaEntity)
     }
