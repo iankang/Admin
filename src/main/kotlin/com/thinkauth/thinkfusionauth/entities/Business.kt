@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document
 class Business(
     var businessName:String? = null,
-    var businessImageProfile:String? = null,
+    var businessImageProfile:String? = null
 ) :AuditMetadata(){
 
 }

@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.utils
 
+import com.thinkauth.thinkfusionauth.models.responses.FileTypeEnum
 import org.apache.commons.lang3.RandomStringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -90,4 +91,5 @@ class FileProcessingHelper {
             }
         }
     }
+
 }

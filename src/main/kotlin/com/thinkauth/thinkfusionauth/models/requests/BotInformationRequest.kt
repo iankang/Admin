@@ -1,0 +1,12 @@
+package com.thinkauth.thinkfusionauth.models.requests
+
+import com.thinkauth.thinkfusionauth.entities.Business
+import org.springframework.web.multipart.MultipartFile
+
+data class BotInformationRequest(
+    var botName:String? = null,
+    var botLogoUrl:String? = null,
+    var botUrl:String? = null,
+    var botPort:Int? = null,
+    var businessId: String? = null
+)

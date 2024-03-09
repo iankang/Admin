@@ -22,6 +22,17 @@ class ControllerExceptionHandler {
         )
         return ResponseEntity<ErrorMessage?>(message, HttpStatus.NOT_FOUND)
     }
+
+    @ExceptionHandler(BadRequestException::class)
+    fun badRequestException(ex: BadRequestException, request: WebRequest): ResponseEntity<ErrorMessage?>? {
+        val message = ErrorMessage(
+            HttpStatus.BAD_REQUEST.value(),
+            Date(),
+            ex.message ?: "no message",
+            request.getDescription(false)
+        )
+        return ResponseEntity<ErrorMessage?>(message, HttpStatus.BAD_REQUEST)
+    }
     @ExceptionHandler(PasswordMismatchException::class)
     fun passwordMismatchException(ex: PasswordMismatchException, request: WebRequest): ResponseEntity<ErrorMessage?>? {
         val message = ErrorMessage(

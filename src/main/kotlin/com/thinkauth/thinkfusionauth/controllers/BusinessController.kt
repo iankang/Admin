@@ -26,7 +26,9 @@ class BusinessController(
     )
     @PostMapping("/addBusiness")
     @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
-    fun addBusiness(businessRequest: BusinessRequest):ResponseEntity<Business>{
+    fun addBusiness(
+        @RequestBody() businessRequest: BusinessRequest
+    ):ResponseEntity<Business>{
         if(!businessService.businessExists(businessRequest)){
 
             return ResponseEntity(businessService.addBusiness(businessRequest),HttpStatus.OK)
