@@ -34,8 +34,9 @@ class BotInfoImpl(
     }
 
     override fun getItemById(id: String): BotInformation {
-        logger.info("fetch item by Id")
-        return botInformationRepository.findById(id).get()
+        val botInfo = botInformationRepository.findById(id).get()
+        logger.info("fetch item by Id: {}", botInfo)
+        return botInfo
     }
 
     override fun deleteItemById(id: String) {

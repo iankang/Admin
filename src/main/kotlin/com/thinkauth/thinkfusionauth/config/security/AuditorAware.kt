@@ -24,11 +24,8 @@ class FusionAuthAuditorAware(
 
         var uzername:String? = null
         val authentication = SecurityContextHolder.getContext().authentication
-        logger.info("authentication: {}",authentication)
         if (authentication != null && authentication.isAuthenticated){
-            logger.info("authenticated_user: {}", authentication)
             val username = authentication.principal as String
-            logger.info("converted email: {}", username)
 //            println("User principal name =" + userPrincipal.username)
 //            println("Is user enabled =" + userPrincipal.isEnabled)
             uzername = username

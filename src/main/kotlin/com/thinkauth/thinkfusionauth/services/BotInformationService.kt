@@ -32,6 +32,7 @@ class BotInformationService(
             botUrl = botInformationRequest.botUrl,
             botPort = botInformationRequest.botPort,
             botLogoUrl = botInformationRequest.botLogoUrl,
+            botPath = botInformationRequest.botPath,
             botIsAvailable = botAvailability,
             business = business
         )

@@ -38,7 +38,6 @@ class BotService(
     fun interactWithBot(s: String, @RequestBody input: ActualBotInput): ResponseEntity<GeneralBotResponse> {
         val headers =  HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
-        val entity = HttpEntity<ActualBotInput>(input,headers)
 
         return ResponseEntity( restTemplate.postForObject(URI.create(s) ,  input, GeneralBotResponse::class.java), HttpStatus.OK)
     }

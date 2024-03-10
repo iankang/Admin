@@ -8,6 +8,7 @@ class BotInformation(
     var botLogoUrl:String? = null,
     var botUrl:String? = null,
     var botPort:Int? = null,
+    var botPath:String? = null,
     var botIsAvailable:Boolean? = false,
     var business: Business? = null
 ): AuditMetadata(){

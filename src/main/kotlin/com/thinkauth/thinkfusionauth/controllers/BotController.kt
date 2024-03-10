@@ -14,30 +14,29 @@ import org.springframework.web.bind.annotation.*
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
-@RequestMapping("/api/bot")
-@Tag(name = "Bot", description = "This interacts with the bot")
+@RequestMapping("/api/conversations")
+@Tag(name = "Conversations", description = "This interacts with the conversations")
 class BotController(
-    @Value("\${app.bot-url}")
-    private val botUrl: String? = null,
+
     private val botService: BotService
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(BotController::class.java)
 
 
-    @Operation(
-        summary = "post to bot", description = "posts to bot", tags = ["Bot"]
-    )
-    @PostMapping("/interact")
-    fun interact(
-        @RequestBody input: BotInput
-    ): ResponseEntity<GeneralBotResponse>? {
-        try {
-            val actualBot = ActualBotInput(input.message!!)
-            return botService.interactWithBot("$botUrl", actualBot)
-        }catch(e:Exception){
-            logger.error("error: ${e.message}")
-        }
-        return null
-    }
+//    @Operation(
+//        summary = "post to bot", description = "posts to bot", tags = ["Bot"]
+//    )
+//    @PostMapping("/interact")
+//    fun interact(
+//        @RequestBody input: BotInput
+//    ): ResponseEntity<GeneralBotResponse>? {
+//        try {
+//            val actualBot = ActualBotInput(input.message!!)
+//            return botService.interactWithBot("$botUrl", actualBot)
+//        }catch(e:Exception){
+//            logger.error("error: ${e.message}")
+//        }
+//        return null
+//    }
 }

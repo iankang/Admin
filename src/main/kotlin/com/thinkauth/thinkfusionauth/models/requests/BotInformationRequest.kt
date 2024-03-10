@@ -7,6 +7,7 @@ data class BotInformationRequest(
     var botName:String? = null,
     var botLogoUrl:String? = null,
     var botUrl:String? = null,
+    var botPath:String? = null,
     var botPort:Int? = null,
     var businessId: String? = null
 )
