@@ -9,14 +9,23 @@ import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.AudioCollectionRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import com.thinkauth.thinkfusionauth.utils.FileProcessingHelper
+import io.minio.GetObjectResponse
+import org.apache.commons.io.IOUtils
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.core.io.InputStreamResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.rest.core.mapping.ResourceType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.InputStream
+import java.net.URLConnection
+import javax.servlet.http.HttpServletResponse
+import kotlin.io.path.Path
 
 
 @Service
@@ -24,6 +33,9 @@ class AudioCollectionService(
     private val audioRepository: AudioCollectionRepository,
     private val languageService: LanguageService,
     private val businessService: BusinessService,
+    @Value("\${minio.bucket}")
+    private val bucketName:String,
+    private val storageService: StorageService,
     private val fileProcessingHelper: FileProcessingHelper,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
@@ -69,27 +81,26 @@ class AudioCollectionService(
         return audioRepository.findById(audioCollectionId).get()
     }
 
-    fun getMinioObject(){
-
-    }
-//    fun getMinioObject(audioCollectionId: String, response: HttpServletResponse){
-//        val audioCollection = audioRepository.findById(audioCollectionId).get()
-//        val fullPath = storageService.getMediaFullPath(ResourceType.VOICE_COLLECTION,audioCollection.audio!!)
-//        val inputStream: InputStream = minioService.get(Path(fullPath.pathString))
-//        val inputStreamResource = InputStreamResource(inputStream)
-//
-//        // Set the content type and attachment header.
-//
-//        // Set the content type and attachment header.
-//        response.addHeader("Content-disposition", "attachment;filename=${audioCollection.audio}")
-//        response.contentType = URLConnection.guessContentTypeFromName(audioCollection.audio)
-//
-//        // Copy the stream to the response's output stream.
-//
-//        // Copy the stream to the response's output stream.
-//        IOUtils.copy(inputStream, response.outputStream)
-//        response.flushBuffer()
+//    fun getMinioObject(
+//        objectName:String
+//    ): GetObjectResponse? {
+//        return storageService.stream(bucketName, objectName)
 //    }
+    fun getMinioObject(objectName:String, response: HttpServletResponse){
+        val inputStream = storageService.stream(bucketName, objectName)
+
+        // Set the content type and attachment header.
+
+        // Set the content type and attachment header.
+        response.addHeader("Content-disposition", "attachment;filename=${objectName}")
+        response.contentType = fileProcessingHelper.getExtensionFromResource(BucketName.VOICE_COLLECTION)
+
+        // Copy the stream to the response's output stream.
+
+        // Copy the stream to the response's output stream.
+        IOUtils.copy(inputStream, response.outputStream)
+        response.flushBuffer()
+    }
 
     fun getAudioCollectionByLanguageId(languageId: String): List<SentenceEntity> {
         return audioRepository.findAllByLanguageId(languageId)

@@ -7,6 +7,7 @@ import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.AudioCollectionService
 import com.thinkauth.thinkfusionauth.services.SentenceUploadService
+import io.minio.GetObjectResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.Logger
@@ -169,6 +170,18 @@ class AudioCollectionController(
     ): List<SentenceEntity> {
 
         return audioCollectionService.getAudioCollectionByLanguageId(languageId)
+    }
+
+    @Operation(
+        summary = "Get single audio object", description = "gets a single audio object", tags = ["Audio"]
+    )
+    @GetMapping("/audioObject")
+    fun getAudioObject(
+        @RequestParam("audioName") audioName:String,
+        response:HttpServletResponse
+    ) {
+
+        return audioCollectionService.getMinioObject(audioName, response)
     }
 
 //    @Operation(
