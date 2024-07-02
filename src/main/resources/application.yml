@@ -5,8 +5,6 @@ spring:
 ---
 
 server:
-  http:
-    port: 9082
   port: 9081
 #  ssl:
 #    enabled: true
@@ -77,8 +75,6 @@ app:
   bot-url: https://llm.think.ke:5000/chat
 ---
 server:
-  http:
-    port: 9082
   port: 9081
   ssl:
     enabled: true
