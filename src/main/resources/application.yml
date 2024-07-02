@@ -5,6 +5,8 @@ spring:
 ---
 
 server:
+  http:
+    port: 9082
   port: 9081
 #  ssl:
 #    enabled: true
