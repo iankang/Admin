@@ -18,7 +18,7 @@ class HttpSecurity(
         return WebServerFactoryCustomizer<TomcatServletWebServerFactory> { factory: TomcatServletWebServerFactory ->
             // also listen on http
             val connector: Connector = Connector()
-            connector.setPort(httpPort)
+            connector.port = httpPort
             factory.addAdditionalTomcatConnectors(connector)
         }
     }

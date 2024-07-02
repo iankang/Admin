@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.InputStreamResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.rest.core.mapping.ResourceType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -58,7 +59,7 @@ class AudioCollectionService(
         page: Int, size: Int
     ): PagedResponse<MutableList<SentenceEntity>> {
         var sentenceEntityList = mutableListOf<SentenceEntity>()
-        val paging = PageRequest.of(page, size)
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
         val sentenceEntityPage: Page<SentenceEntity> = audioRepository.findAll(paging)
         sentenceEntityList = sentenceEntityPage.content
         return PagedResponse<MutableList<SentenceEntity>>(

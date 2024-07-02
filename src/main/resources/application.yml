@@ -5,8 +5,6 @@ spring:
 ---
 
 server:
-  http:
-    port:9082
   port: 9081
 #  ssl:
 #    enabled: true
@@ -43,7 +41,7 @@ spring:
           issuer-uri: https://38.242.219.131:9011/
   config:
     activate:
-      on-profile: production
+      on-profile: development
 oidc:
   issuer: acme.com
   auth_url: http://38.242.219.131:9011/oauth2/authorize
@@ -112,7 +110,7 @@ spring:
           issuer-uri: https://auth.think.ke:9011/
   config:
     activate:
-      on-profile: development
+      on-profile: production
 oidc:
   issuer: think.net
   auth_url: https://auth.think.ke:9011/oauth2/authorize
