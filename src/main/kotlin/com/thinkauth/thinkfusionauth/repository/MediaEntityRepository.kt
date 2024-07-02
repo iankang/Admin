@@ -13,6 +13,6 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllByCreatedByUser(userEmail:String):List<MediaEntity>
 
-
+    fun findAllByAccepted(boolean: Boolean):List<MediaEntity>
 
 }

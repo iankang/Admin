@@ -44,4 +44,21 @@ class MediaEntityService(
     fun fetchAllMediaEntityBySentenceId(sentenceId:String): List<MediaEntity> {
         return mediaEntityRepository.findAllBySentenceId(sentenceId)
     }
+
+    fun acceptMediaEntity(sentenceId: String): MediaEntity {
+        val mediaEntity = fetchMediaEntityById(sentenceId)
+        mediaEntity.accepted = true
+        return saveMediaEntity(mediaEntity)
+    }
+    fun rejectMediaEntity(sentenceId: String): MediaEntity {
+        val mediaEntity = fetchMediaEntityById(sentenceId)
+        mediaEntity.accepted = false
+        return saveMediaEntity(mediaEntity)
+    }
+
+    fun fetchMediaEntitiesByAcceptedState(
+        acceptedState:Boolean = false
+    ): List<MediaEntity> {
+        return mediaEntityRepository.findAllByAccepted(acceptedState)
+    }
 }

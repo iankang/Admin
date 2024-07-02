@@ -9,6 +9,6 @@ data class MediaEntity(
     var mediaObject: String,
     var mediaPathId: String,
     val sentenceId: String?,
-    val businessId: String?
-
+    val businessId: String?,
+    var accepted:Boolean = false
 ):AuditMetadata()
