@@ -4,6 +4,7 @@ import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,7 +20,7 @@ class MediaEntityService(
         page:Int = 0,
         size:Int= 10
     ): PagedResponse<List<MediaEntity>> {
-        val paging = PageRequest.of(page,size)
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
         val content = mediaEntityRepository.findAll(paging)
         return PagedResponse<List<MediaEntity>>(
             content.content,

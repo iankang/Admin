@@ -3,7 +3,6 @@ spring:
     active: production
 
 ---
-
 server:
   port: 9081
 #  ssl:
@@ -14,6 +13,9 @@ server:
 #    key-alias: auth.think.ke
 
 spring:
+  config:
+    activate:
+      on-profile: development
   main:
     allow-bean-definition-overriding: true
   servlet:
@@ -24,50 +26,42 @@ spring:
   data:
     mongodb:
       #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
-#      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBProd?tls=false?authSource=
-      database: ThinkDB
+      #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBTest?tls=false?authSource=
+      database: ThinkDBTest
       authentication-database: admin
-      host: 38.242.219.131
-      username: kangethe
-      password: kangethe
-      port: 27017
-
-
+      host: 18.218.12.248
+      username: ian
+      password: point90
+      port: 9050
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://38.242.219.131:9011/.well-known/jwks.json
-          issuer-uri: https://38.242.219.131:9011/
-  config:
-    activate:
-      on-profile: development
+          jwk-set-uri: https://auth.think.ke:9011/.well-known/jwks.json
+          issuer-uri: https://auth.think.ke:9011/
+
 oidc:
-  issuer: acme.com
-  auth_url: http://38.242.219.131:9011/oauth2/authorize
-  token_url: http://38.242.219.131:9011/oauth2/token
+  issuer: think.net
+  auth_url: https://auth.think.ke:9011/oauth2/authorize
+  token_url: https://auth.think.ke:9011/oauth2/token
 
 springdoc:
   swagger-ui:
     oauth:
-      client-id: 3bc70ec3-7013-4d52-a6bf-21694f23be37
-      client-secret: H3zd_vO8PZJZgsEPinlwaaiSCVTqvqPnK8_nzlZUpJw
+      client-id: 85d2fc81-5ed0-4276-9101-640026f5eacc
+      client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
 fusionauth:
-  apikey: cq-ehmVXkWn10_Mx2mve3s0MrpE1QZ7M_0Q7vDJsGxunKwzrq7Jpuoy_
-  baseurl: http://38.242.219.131:9011/
-  tenantId: 495e8d50-e96f-415a-b17f-460885176dbb
-  applicationId: 3d85f87c-b550-485e-8ac2-4efd1de9926d
-
+  apikey: 9hmUEht1z98FKCt4F0fareYJI_QdV6-hcB4imnTFvIl1_ovx5hjR9yNM
+  baseurl: https://auth.think.ke:9011/
+  tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
+  applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
-  access-key: kangethe
-  #  url: http://62.12.115.155:9000
-  url: http://38.242.219.131:9000
+  access-key: think-access-key
+  url: http://18.218.12.248:9001
   bucket: thinking
-  #  secret-key: 5uDPnKPMFK2o9e0o1bvi7B0g8X0t5NMF
-  secret-key: kangethe
-
+  secret-key: think-secret-key
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
