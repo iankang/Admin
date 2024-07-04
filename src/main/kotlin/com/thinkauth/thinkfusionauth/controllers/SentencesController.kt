@@ -25,9 +25,7 @@ class SentencesController(
     @Operation(
         summary = "Add a sentence", description = "adds a sentence", tags = ["Sentences"]
     )
-    @PostMapping(
-        value = ["/addSentence"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
-    )
+    @PostMapping("/addSentence")
     fun addSentenceWithoutAudio(
         @RequestBody audioRequest: AudioCollectionRequest
     ):ResponseEntity<SentenceEntity>{
