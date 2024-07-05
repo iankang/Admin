@@ -116,6 +116,6 @@ class DataLoader(
         checkIfBucketIsAvailable()
         addSwahiliSentences()
         industryItems()
-        backdateAllMediaEntities()
+//        backdateAllMediaEntities()
     }
 }
