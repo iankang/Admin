@@ -8,7 +8,8 @@ data class MediaEntity(
     var owner: UserEntity,
     var mediaObject: String,
     var mediaPathId: String,
-    val sentenceId: String?,
-    val businessId: String?,
-    var accepted:Boolean = false
+    var sentenceId: String?,
+    var businessId: String?,
+    var accepted:Boolean? = false,
+    var mediaState:MediaAcceptanceState =  MediaAcceptanceState.PENDING
 ):AuditMetadata()

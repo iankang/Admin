@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.config
 
 import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.Business
+import com.thinkauth.thinkfusionauth.entities.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class DataLoader(
@@ -98,10 +100,13 @@ class DataLoader(
 
     fun backdateAllMediaEntities(){
         val mediaEntities = mediaEntityService.findAll()
-        mediaEntities.map {
-            it.accepted = false
+
+        mediaEntities.forEach {
+            it.mediaState = MediaAcceptanceState.PENDING
+            logger.info("modifying the media: "+ it)
             mediaEntityService.save(it)
         }
+
     }
 
     override fun run(vararg args: String?) {
@@ -111,5 +116,6 @@ class DataLoader(
         checkIfBucketIsAvailable()
         addSwahiliSentences()
         industryItems()
+        backdateAllMediaEntities()
     }
 }

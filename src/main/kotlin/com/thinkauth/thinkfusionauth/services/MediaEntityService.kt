@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.entities.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
@@ -47,12 +48,12 @@ class MediaEntityService(
 
     fun acceptMediaEntity(sentenceId: String): MediaEntity {
         val mediaEntity = fetchMediaEntityById(sentenceId)
-        mediaEntity.accepted = true
+        mediaEntity.mediaState = MediaAcceptanceState.ACCEPTED
         return saveMediaEntity(mediaEntity)
     }
     fun rejectMediaEntity(sentenceId: String): MediaEntity {
         val mediaEntity = fetchMediaEntityById(sentenceId)
-        mediaEntity.accepted = false
+        mediaEntity.mediaState = MediaAcceptanceState.REJECTED
         return saveMediaEntity(mediaEntity)
     }
 
