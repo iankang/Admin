@@ -63,7 +63,7 @@ import java.io.File
             val imageStream = storageService.getObject(thinking,BucketName.USER_ACCOUNT_PROFILE.name+File.separator+objectname)
             return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + objectname + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + objectname + "\"")
                 .body(imageStream);
         }catch (e:Exception){
             LOGGER.error("error: ${e.message}")
