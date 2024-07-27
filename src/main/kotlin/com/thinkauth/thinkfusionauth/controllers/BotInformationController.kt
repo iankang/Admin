@@ -78,6 +78,26 @@ class BotInformationController(
     }
 
     @Operation(
+        summary = "Update a bot by id", description = "Updates a  bot's information", tags = ["BotInfo"]
+    )
+    @PutMapping("/updateBot/{botId}")
+    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
+    fun updateBotById(
+        @RequestParam("botId") botId: String,
+        @RequestBody botInformation: BotInformation
+    ): ResponseEntity<BotInformation> {
+        try {
+            if(botInfoImpl.itemExistsById(botId)){
+                return ResponseEntity(botInfoImpl.updateItem(botId,botInformation),HttpStatus.OK)
+            }else {
+                throw ResourceNotFoundException("bot with id ${botId} does not exist")
+            }
+        }catch (e:Exception){
+            throw Exception(e.message.toString())
+        }
+    }
+
+    @Operation(
         summary = "Delete all bot information", description = "Deletes all bot's information", tags = ["BotInfo"]
     )
     @DeleteMapping("/deleteAll")

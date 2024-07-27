@@ -50,14 +50,15 @@ class BotInfoImpl(
 
     override fun updateItem(id: String, item: BotInformation): BotInformation? {
         if (itemExistsById(id)) {
-            val item = getItemById(id)
-            item.apply {
-                botName = item.botName
-                botUrl = item.botLogoUrl
-                botPort = item.botPort
-                botLogoUrl = item.botLogoUrl
-            }
-            return createItem(item)
+            val botRepo = getItemById(id)
+            botRepo.botName = item.botName
+            botRepo.botLogoUrl = item.botLogoUrl
+            botRepo.botUrl = item.botUrl
+            botRepo.botPort = item.botPort
+            botRepo.botPath = item.botPath
+            botRepo.botIsAvailable = item.botIsAvailable
+            botRepo.business = item.business
+            return createItem(botRepo)
         }
         return null
     }

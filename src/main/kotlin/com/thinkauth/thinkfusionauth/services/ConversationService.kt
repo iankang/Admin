@@ -54,7 +54,7 @@ class ConversationService(
         }
         messageInput.conversationId = conversational?.id
         messagesImpl.createItem(messageInput)
-        val baseUrl = "http://${botInfo.botUrl}:${botInfo.botPort}/${botInfo.botPath}"
+        val baseUrl = "${botInfo.botUrl}:${botInfo.botPort}/${botInfo.botPath}"
         logger.info("the url: {}", baseUrl)
         return BotCreateMessage(baseUrl, message.content, botInformationId, conversational!!)
     }
