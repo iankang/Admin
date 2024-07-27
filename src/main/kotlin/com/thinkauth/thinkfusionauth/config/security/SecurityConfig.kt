@@ -37,6 +37,7 @@ class SecurityConfig(
            ?.disable()
            ?.authorizeRequests()
            ?.antMatchers("/api/v1/anyone")?.permitAll()
+           ?.antMatchers("/api/minio/**")?.permitAll()
            ?.antMatchers("/api/auth/**")?.permitAll()
            ?.antMatchers("/api/accountRecovery/**")?.permitAll()
            ?.antMatchers("/api/userManagement/fetchUserByEmail")?.permitAll()
