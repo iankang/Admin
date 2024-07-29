@@ -62,6 +62,7 @@ minio:
   url: http://18.218.12.248:8998
   bucket: thinking
   secret-key: think-secret-key
+  port: 8998
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
@@ -125,6 +126,7 @@ minio:
   url: http://18.218.12.248:8998
   bucket: thinking
   secret-key: think-secret-key
+  port: 8998
 
 app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"

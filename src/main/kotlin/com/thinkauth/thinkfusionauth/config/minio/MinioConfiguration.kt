@@ -16,12 +16,15 @@ class MinioConfiguration(
 
     @Value("\${minio.secret-key}")
     private val secretKey:String,
+
+    @Value("\${minio.port}")
+    private val port:Int
 ) {
 
     @Bean
     fun minioClient(): MinioClient {
         return MinioClient.builder()
-            .endpoint(endpoint,9000,false)
+            .endpoint(endpoint,port,false)
             .credentials(accessKey, secretKey)
             .build()
     }
