@@ -59,7 +59,7 @@ minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
   access-key: think-access-key
-  url: http://18.218.12.248:8998
+  url: http://18.218.12.248:8999
   bucket: thinking
   secret-key: think-secret-key
   port: 8998
@@ -123,7 +123,7 @@ minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
   access-key: think-access-key
-  url: http://18.218.12.248:8998
+  url: http://18.218.12.248:8999
   bucket: thinking
   secret-key: think-secret-key
   port: 8998
