@@ -12,4 +12,5 @@ class Conversation(
 //    @JsonIgnore
 //    var messages:MutableList<Message>
 ):AuditMetadata() {
+
 }

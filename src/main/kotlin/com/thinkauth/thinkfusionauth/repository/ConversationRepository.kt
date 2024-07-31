@@ -12,4 +12,5 @@ interface ConversationRepository:MongoRepository<Conversation,String> {
     fun findAllByUserEmail(userEmail: String):List<Conversation>
 
     fun existsByUserEmail(userEmail: String):Boolean
+
 }

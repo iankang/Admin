@@ -91,4 +91,10 @@ class ConversationImpl(
     ): Boolean {
         return conversationRepository.existsByUserEmail(userId)
     }
+
+    fun existByConversationId(
+        conversationId:String
+    ): Boolean {
+        return conversationRepository.existsById(conversationId)
+    }
 }

@@ -28,19 +28,12 @@ class BotService(
         restTemplate.messageConverters.add(converter)
 
     }
-//    fun interactWithBot(s: String, @RequestBody input: ActualBotInput): ResponseEntity<GeneralBotResponse> {
-//        val headers =  HttpHeaders()
-//        headers.contentType = MediaType.APPLICATION_JSON
-//        val entity = HttpEntity<ActualBotInput>(input,headers)
-//
-//        return restTemplate.postForEntity(s,  entity, GeneralBotResponse::class.java)
-//    }
+
     fun interactWithBot(s: String, @RequestBody input: ActualBotInput): ResponseEntity<GeneralBotResponse> {
         val headers =  HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
 
         return ResponseEntity( restTemplate.postForObject(URI.create(s) ,  input, GeneralBotResponse::class.java), HttpStatus.OK)
     }
-
 
 }

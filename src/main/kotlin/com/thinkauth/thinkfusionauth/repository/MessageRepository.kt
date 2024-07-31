@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface MessageRepository:MongoRepository<Message,String> {
 
     fun findAllByConversationId(conversationId:String):List<Message>
+
+    fun countAllByConversationId(conversationId: String):Long
 }

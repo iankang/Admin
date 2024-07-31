@@ -28,10 +28,23 @@ class MessagesImpl(
     }
 
     fun findAllByConversationId(
-        conversationId:String
+        conversationId: String
     ): List<Message> {
         return messageRepository.findAllByConversationId(conversationId)
     }
+
+    fun findAllByConversationIdListString(
+        conversationId: String
+    ): List<String> {
+        return messageRepository.findAllByConversationId(conversationId).map { conversation -> conversation.content}
+    }
+
+    fun countAllByConversationId(
+        conversationId: String
+    ):Long{
+        return messageRepository.countAllByConversationId(conversationId)
+    }
+
     override fun getItemById(id: String): Message {
         return messageRepository.findById(id).get()
     }
@@ -56,6 +69,4 @@ class MessagesImpl(
         logger.info("Message item creation: {}", item.toString())
         return messageRepository.save(item)
     }
-
-
 }

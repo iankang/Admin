@@ -1,9 +1,7 @@
 package com.thinkauth.thinkfusionauth.controllers
 
-import com.thinkauth.thinkfusionauth.entities.BotInformation
 import com.thinkauth.thinkfusionauth.entities.Message
 import com.thinkauth.thinkfusionauth.models.requests.MessageRequest
-import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.MessagesImpl
 import com.thinkauth.thinkfusionauth.services.ConversationService
 import io.swagger.v3.oas.annotations.Operation
@@ -32,7 +30,7 @@ class MessagesController(
     }
 
     @Operation(
-        summary = "Talk to bot", description = "Talks to bot", tags = ["BotInfo"]
+        summary = "Talk to bot", description = "Talks to bot", tags = ["Message"]
     )
     @PostMapping("/talkToBot")
     fun talkToBot(
@@ -40,6 +38,16 @@ class MessagesController(
         @RequestBody message: MessageRequest
     ): ResponseEntity<List<Message>> {
         return ResponseEntity( conversationService.UserCreateMessage(botInformationId, message), HttpStatus.OK)
+    }
+    @Operation(
+        summary = "Talk to bot in conversation", description = "Talks to bot in conversation", tags = ["Message"]
+    )
+    @PostMapping("/talkToBotInConversation")
+    fun continueConversation(
+        @RequestParam("conversationId") conversationId:String,
+        @RequestBody message: MessageRequest
+    ): ResponseEntity<List<Message>> {
+        return ResponseEntity( conversationService.userCreateMessageInConversation(conversationId, message), HttpStatus.OK)
     }
 
 
