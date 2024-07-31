@@ -38,5 +38,5 @@ jobs:
             docker stop think-auth-fusion-container1
             docker rm think-auth-fusion-container1
             docker pull ikangethe/think-fusion-auth:latest
-            docker run -d -p "9081:9081" --restart=unless-stopped --name=think-auth-fusion-container1 ikangethe/think-fusion-auth:latest
+            docker run -d -p "9081:9081" -p "8080:8080" --restart=unless-stopped --name=think-auth-fusion-container1 ikangethe/think-fusion-auth:latest
             docker ps -a
