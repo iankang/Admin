@@ -30,16 +30,6 @@ class MessagesController(
     }
 
     @Operation(
-        summary = "Talk to bot", description = "Talks to bot", tags = ["Message"]
-    )
-    @PostMapping("/talkToBot")
-    fun talkToBot(
-        @RequestParam("botInformationId") botInformationId:String,
-        @RequestBody message: MessageRequest
-    ): ResponseEntity<List<Message>> {
-        return ResponseEntity( conversationService.UserCreateMessage(botInformationId, message), HttpStatus.OK)
-    }
-    @Operation(
         summary = "Talk to bot in conversation", description = "Talks to bot in conversation", tags = ["Message"]
     )
     @PostMapping("/talkToBotInConversation")
@@ -49,6 +39,4 @@ class MessagesController(
     ): ResponseEntity<List<Message>> {
         return ResponseEntity( conversationService.userCreateMessageInConversation(conversationId, message), HttpStatus.OK)
     }
-
-
 }

@@ -2,11 +2,13 @@ package com.thinkauth.thinkfusionauth.config
 
 import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.Business
+import com.thinkauth.thinkfusionauth.entities.Conversation
 import com.thinkauth.thinkfusionauth.entities.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
+import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.services.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,6 +27,7 @@ class DataLoader(
     private val businessService: BusinessService,
     private val industryService: CompanyProfileIndustryService,
     private val mediaEntityService: MediaEntityRepository,
+    private val conversationService: ConversationImpl,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -108,6 +111,15 @@ class DataLoader(
         }
 
     }
+    fun backdateAllConversations(){
+        val mediaEntities = conversationService.findEverythingPaged(0,1000)
+
+        mediaEntities.item.filter { conversation: Conversation -> conversation.conversationTitle == null }.forEachIndexed { index:Int,conversation: Conversation ->
+            conversation.conversationTitle = "title $index"
+            conversationService.createItem(conversation)
+        }
+
+    }
 
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
@@ -116,6 +128,7 @@ class DataLoader(
         checkIfBucketIsAvailable()
         addSwahiliSentences()
         industryItems()
+        backdateAllConversations()
 //        backdateAllMediaEntities()
     }
 }

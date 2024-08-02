@@ -4,7 +4,9 @@ spring:
 
 ---
 server:
-  port: 9081
+  http:
+    port: 9081
+  port: 9080
 #  ssl:
 #    enabled: true
 #    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore

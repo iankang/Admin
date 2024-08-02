@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 class Conversation(
     var userEmail:String,
     var botInformationId:String,
+    var conversationTitle:String?= null
 //    @DBRef
 //    @JsonIgnore
 //    var messages:MutableList<Message>

@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.Conversation
 import com.thinkauth.thinkfusionauth.entities.Message
+import com.thinkauth.thinkfusionauth.models.requests.ConversationRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.services.ConversationService
@@ -30,7 +31,7 @@ class ConversationController(
     )
     @PostMapping("/createConversation/{botId}")
     fun createAConversation(
-        @PathVariable("botId") botId:String
+        @RequestBody conversationRequest: ConversationRequest
     ): ResponseEntity<Conversation> {
         val userId = userManagementService.loggedInUser()!!
         return try {
@@ -38,7 +39,8 @@ class ConversationController(
                 conversationImpl.createItem(
                     Conversation(
                         userId,
-                        botId
+                        conversationRequest.botId,
+                        conversationRequest.conversationTitle?: "Title"
                     )
                 ), HttpStatus.OK
             )

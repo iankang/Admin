@@ -21,43 +21,6 @@ class ConversationService(
 ) {
 
     val logger = LoggerFactory.getLogger(ConversationService::class.java)
-    fun UserCreateMessage(
-        botInformationId:String,
-        message: MessageRequest
-    ): List<Message>? {
-        val botInfo = botInfoImpl.getItemById(botInformationId)
-        val userId = userManagementService.loggedInUser()!!
-        val conversational:Conversation?
-
-
-        val messageInput = Message(
-            message.content,
-            userId,
-            MessageEnum.USER_MESSAGE
-        )
-
-
-        val conversationExists = conversationImpl.existsByUserId(userId)
-
-        if(!conversationExists){
-            val conversationModel = Conversation(
-                userId,
-                botInformationId
-            )
-            logger.info("creating conversation if it does not exist")
-            conversational = conversationImpl.createItem(conversationModel)
-        } else {
-            conversational = conversationImpl.getConversation(botInformationId, userId)
-
-//            conversational?.messages?.add(messageItem)
-            logger.info("adding message from user: {}", messageInput.toString())
-        }
-        messageInput.conversationId = conversational?.id
-//        messagesImpl.createItem(messageInput)
-        val baseUrl = "${botInfo.botUrl}:${botInfo.botPort}/${botInfo.botPath}"
-        logger.info("the url: {}", baseUrl)
-        return BotCreateMessage(baseUrl, messageInput, botInformationId, conversational!!)
-    }
 
     fun userCreateMessageInConversation(
         conversationId:String,
@@ -65,7 +28,6 @@ class ConversationService(
     ): List<Message>? {
 
         val userId = userManagementService.loggedInUser()!!
-        val conversational:Conversation?
         val messageInput = Message(
             message.content,
             userId,
@@ -75,30 +37,19 @@ class ConversationService(
 
         val conversationExists = conversationImpl.existByConversationId(conversationId)
         logger.info("conversation exists: ${conversationExists}")
-        if(!conversationExists){
-            val conversationModel = Conversation(
-                userId,
-                conversationId
-            )
-            logger.info("creating conversation if it does not exist")
-            conversational = conversationImpl.createItem(conversationModel)
-        } else {
-            conversational = conversationImpl.getItemById(conversationId)
 
-//            conversational?.messages?.add(messageItem)
-            logger.info("adding message from user: {}", messageInput.toString())
-        }
-        messageInput.conversationId = conversational?.id
+        val conversational = conversationImpl.getItemById(conversationId)
+        messageInput.conversationId = conversational.id
 
         val botInfo = botInfoImpl.getItemById(conversational.botInformationId!!)
         logger.info("get bot info from conversation id: ${botInfo}")
         val baseUrl = "${botInfo.botUrl}:${botInfo.botPort}/${botInfo.botPath}"
         logger.info("the url: {}", baseUrl)
-        return BotCreateMessage(baseUrl, messageInput, botInfo.id!!, conversational!!)
+        return botCreateMessage(baseUrl, messageInput, botInfo.id!!, conversational!!)
     }
 
 
-    fun  BotCreateMessage(
+    fun  botCreateMessage(
         urlString: String,
         messageInput: Message,
         botInformationId: String,
