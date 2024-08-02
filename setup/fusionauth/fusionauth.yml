@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  fusionauth:
+    image: fusionauth/fusionauth-app:latest
+    environment:
+      DATABASE_URL: jdbc:postgresql://18.218.12.248:37821/fusionauth
+      FUSIONAUTH_APP_RUNTIME_MODE: development
+      # FUSIONAUTH_APP_URL: http://fusionauth:9011
+      DATABASE_ROOT_USERNAME: fusionauth
+      DATABASE_ROOT_PASSWORD: fusionauth
+      DATABASE_USERNAME: fusionauth
+      DATABASE_PASSWORD: fusionauth
+
+    restart: unless-stopped
+    ports:
+      - 9011:9011
+      - 9013:9013
+    volumes:
+      - /home/ubuntu/fusionauth/fusionauth.properties:/usr/local/fusionauth/config/fusionauth.properties
+      - /home/ubuntu/fusionauth/chain.pem:/usr/local/fusionauth/config/chain.pem
+      - /home/ubuntu/fusionauth/cert.pem:/usr/local/fusionauth/config/cert.pem
+      - /home/ubuntu/fusionauth/fullchain.pem:/usr/local/fusionauth/config/fullchain.pem
+      - /home/ubuntu/fusionauth/privkey.pem:/usr/local/fusionauth/config/privkey.pem
+      - /home/ubuntu/fusionauth/auth.think.ke.p12:/usr/local/fusionauth/config/auth.think.ke.p12
+      - /home/ubuntu/fusionauth/auth.think.ke.keystore:/usr/local/fusionauth/config/auth.think.ke.keystore
