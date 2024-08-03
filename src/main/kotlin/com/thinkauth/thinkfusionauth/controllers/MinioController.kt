@@ -84,7 +84,7 @@ import java.io.File
             LOGGER.error("filename: ", "$filename")
             return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                 .body(imageStream);
         }catch (e:Exception){
             LOGGER.error("error: ${e.message}")
