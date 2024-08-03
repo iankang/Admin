@@ -6,6 +6,7 @@ import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.repository.BusinessRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
+import org.aspectj.weaver.tools.cache.SimpleCacheFactory.path
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.Resource
@@ -22,7 +23,7 @@ import kotlin.io.path.name
 class BusinessService(
     private val businessRepository: BusinessRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
-    @Value("\${minio.bucket}")
+    @Value("\${minio.bucket} ")
     private val thinkResources: String,
     private val minioService: StorageService
 ) {
@@ -80,7 +81,7 @@ class BusinessService(
 
         val bizniz = getSingleBusiness(businessId)
 
-        val path = thinkResources+ File.separator+BucketName.BUSINESS_PROFILE_PIC.name+File.separator+file.originalFilename
+
         bizniz.businessImageProfile = path
         val onMediaUploadItemEvent = OnMediaUploadItemEvent(
             file,

@@ -15,9 +15,11 @@ import com.thinkauth.thinkfusionauth.services.ConversationService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -51,7 +53,21 @@ class BotInformationController(
         return ResponseEntity(resultBotInfo, HttpStatus.OK)
     }
 
+    @Operation(
+        summary = "Add a bot profile picture", description = "adds a bot profile image", tags = ["BotInfo"]
+    )
+    @PostMapping("/{botId}/addBotProfileImage" , consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun addBotProfileImage(
+        @PathVariable("botId") botId: String,
+        @RequestPart("file") file: MultipartFile
+    ): ResponseEntity<String> {
 
+        if(botInformationService.botExistsById(botId)){
+            botInformationService.addBotProfilePicture(botId,file)
+            return ResponseEntity("Uploaded",HttpStatus.OK)
+        }
+        return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
     @Operation(
         summary = "Get all bots", description = "gets all bots", tags = ["BotInfo"]
     )

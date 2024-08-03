@@ -50,6 +50,11 @@ class FileProcessingHelper {
 
                 }
 
+                BucketName.BOT_PROFILE_PIC -> {
+                    BucketName.BOT_PROFILE_PIC.name + File.separator + StringUtils.cleanPath(
+                        newFileName
+                    )
+                }
             }
             LOGGER.info("copy location: " + copyLocation)
             return copyLocation
@@ -88,6 +93,10 @@ class FileProcessingHelper {
 
             BucketName.STT_UPLOAD -> {
                 "mp3"
+            }
+
+            BucketName.BOT_PROFILE_PIC -> {
+                "jpg"
             }
         }
     }
