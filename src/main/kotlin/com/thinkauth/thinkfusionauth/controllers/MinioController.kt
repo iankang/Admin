@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.InputStreamResource
+import org.springframework.data.mongodb.repository.Query
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -64,6 +65,26 @@ import java.io.File
             return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + objectname + "\"")
+                .body(imageStream);
+        }catch (e:Exception){
+            LOGGER.error("error: ${e.message}")
+        }
+        return null
+    }
+    @GetMapping("/imageUrl")
+    @Operation(summary = "download a file", description = "Downloads an image", tags = ["Minio"])
+    @ResponseBody
+    fun geMediaStream(
+        @RequestParam("url") url:String
+    ): ResponseEntity<InputStreamResource>? {
+        try {
+            LOGGER.error("url: ", "$url")
+            val imageStream = storageService.getObject(thinking,url)
+            val filename = url.split("/").last()
+            LOGGER.error("filename: ", "$filename")
+            return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                 .body(imageStream);
         }catch (e:Exception){
             LOGGER.error("error: ${e.message}")
