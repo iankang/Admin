@@ -29,7 +29,7 @@ class ConversationController(
     @Operation(
         summary = "Add a conversation", description = "adds a conversation", tags = ["Conversation"]
     )
-    @PostMapping("/createConversation/{botId}")
+    @PostMapping("/createConversation")
     fun createAConversation(
         @RequestBody conversationRequest: ConversationRequest
     ): ResponseEntity<Conversation> {
