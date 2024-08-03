@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile
 
 data class BotInformationRequest(
     var botName:String? = null,
+    var botDescription:String? = null,
     var botLogoUrl:String? = null,
     var botUrl:String? = null,
     var botPath:String? = null,

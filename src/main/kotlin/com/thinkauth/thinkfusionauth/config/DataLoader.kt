@@ -8,6 +8,7 @@ import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
+import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.services.*
 import org.slf4j.Logger
@@ -28,6 +29,7 @@ class DataLoader(
     private val industryService: CompanyProfileIndustryService,
     private val mediaEntityService: MediaEntityRepository,
     private val conversationService: ConversationImpl,
+    private val botInfoImpl: BotInfoImpl,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -121,6 +123,13 @@ class DataLoader(
 
     }
 
+    fun addDescriptionsForBots(){
+        botInfoImpl.findEverythingPaged(0,1000).item.filter { it.botDescription == null }.forEach {
+            it.botDescription = faker.lorem().paragraph()
+            botInfoImpl.createItem(it)
+        }
+    }
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
@@ -129,6 +138,7 @@ class DataLoader(
         addSwahiliSentences()
         industryItems()
         backdateAllConversations()
+        addDescriptionsForBots()
 //        backdateAllMediaEntities()
     }
 }

@@ -29,6 +29,7 @@ class BotInformationService(
 
         val botInformation = BotInformation(
             botName = botInformationRequest.botName,
+            botDescription = botInformationRequest.botDescription,
             botUrl = botInformationRequest.botUrl,
             botPort = botInformationRequest.botPort,
             botLogoUrl = botInformationRequest.botLogoUrl,

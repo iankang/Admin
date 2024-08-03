@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document
 class BotInformation(
     var botName:String? = null,
+    var botDescription:String? = null,
     var botLogoUrl:String? = null,
     var botUrl:String? = null,
     var botPort:Int? = null,
