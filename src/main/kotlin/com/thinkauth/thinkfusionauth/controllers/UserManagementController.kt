@@ -27,7 +27,6 @@ import java.util.*
 @Tag(name = "UserManagement", description = "This manages users in the system.")
 class UserManagementController(
     private val fusionAuthClient: FusionAuthClient,
-
     @Value("\${fusionauth.applicationId}")
     private val applicationId:String,
     @Value("\${fusionauth.tenantId}")
