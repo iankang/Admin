@@ -32,6 +32,7 @@ class UserGroupsManagementController(
 
     @Operation(summary = "Create a user group", description = "Creates a user group", tags = ["UserGroup"])
     @PostMapping("/createUserGroup")
+    @PreAuthorize("permitAll()")
     fun createUserGroup(
         @RequestBody groupRequest: UserGroupRequest
     ): ResponseEntity<FusionApiResponse<GroupResponse>> {
@@ -51,6 +52,7 @@ class UserGroupsManagementController(
 
     @Operation(summary = "Gets user groups", description = "Gets user groups", tags = ["UserGroup"])
     @GetMapping("/getUserGroups")
+    @PreAuthorize("permitAll()")
     fun getGroups(): ResponseEntity<FusionApiResponse<GroupResponse?>> {
         val groupResponse = userGroupsManagementService.getGroups()
         return if (groupResponse?.wasSuccessful() == true) {
@@ -65,6 +67,7 @@ class UserGroupsManagementController(
 
     @Operation(summary = "Delete a user group", description = "Deletes A user-group", tags = ["UserGroup"])
     @DeleteMapping("/deleteUserGroup/{userGroupUUID}")
+    @PreAuthorize("permitAll()")
     fun deleteGroup(
         @RequestParam("userGroupUUID") userGroupId:UUID
     ): ResponseEntity<FusionApiResponse<Void>> {
@@ -78,6 +81,7 @@ class UserGroupsManagementController(
 
     @Operation(summary = "Add a user to group", description = "Adds  A user to group", tags = ["UserGroup"])
     @PostMapping("/addGroupUser")
+    @PreAuthorize("permitAll()")
     fun addUserToGroup(
         @RequestParam("userEmail", required = true) email:String,
         @RequestParam("groupId", required = true) groupId:UUID
@@ -109,6 +113,7 @@ class UserGroupsManagementController(
     }
     @Operation(summary = "Delete a user from group using member ID", description = "Deletes  A user from group using member ID", tags = ["UserGroup"])
     @DeleteMapping("/deleteUserFromGroup")
+    @PreAuthorize("permitAll()")
     fun deleteUserFromGroup(
        @RequestBody memberIds:List<UUID>
     ): ResponseEntity<FusionApiResponse<Void>> {
@@ -128,6 +133,7 @@ class UserGroupsManagementController(
 
     @Operation(summary = "Delete a user from group using Group Id and UserIds", description = "Deletes  A user from group using Group Id and UserIds", tags = ["UserGroup"])
     @DeleteMapping("/deleteUserFromGroupUsingGroupIdAndUserIds")
+    @PreAuthorize("permitAll()")
     fun deleteUserFromGroupByGroupIdAndUserIds(
         deleteRequest: GroupMemberDeleteRequest
     ):ResponseEntity<FusionApiResponse<Void>>{
