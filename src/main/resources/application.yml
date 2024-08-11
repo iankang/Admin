@@ -103,15 +103,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: https://auth.think.ke:9011/.well-known/jwks.json
-          issuer-uri: https://auth.think.ke:9011/
+          jwk-set-uri: https://auth.think.ke:9013/.well-known/jwks.json
+          issuer-uri: https://auth.think.ke:9013/
   config:
     activate:
       on-profile: production
 oidc:
   issuer: think.net
-  auth_url: https://auth.think.ke:9011/oauth2/authorize
-  token_url: https://auth.think.ke:9011/oauth2/token
+  auth_url: https://auth.think.ke:9013/oauth2/authorize
+  token_url: https://auth.think.ke:9013/oauth2/token
 
 springdoc:
   swagger-ui:
@@ -120,7 +120,7 @@ springdoc:
       client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
 fusionauth:
   apikey: 9hmUEht1z98FKCt4F0fareYJI_QdV6-hcB4imnTFvIl1_ovx5hjR9yNM
-  baseurl: https://auth.think.ke:9011/
+  baseurl: https://auth.think.ke:9013/
   tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
   applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
 minio:
