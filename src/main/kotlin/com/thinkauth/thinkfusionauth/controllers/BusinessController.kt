@@ -59,15 +59,15 @@ class BusinessController(
         return ResponseEntity(businessService.getBusinesses(),HttpStatus.OK)
     }
 
-    @Operation(
-        summary = "Get a business image", description = "gets a business image", tags = ["Business"]
-    )
-    @GetMapping("/{businessId}")
-    fun getBusinessProfileImage(
-        @PathVariable("businessId") businessId: String
-    ):Resource{
-        return businessService.getBusinessProfilePicture(businessId)
-    }
+//    @Operation(
+//        summary = "Get a business image", description = "gets a business image", tags = ["Business"]
+//    )
+//    @GetMapping("/{businessId}")
+//    fun getBusinessProfileImage(
+//        @PathVariable("businessId") businessId: String
+//    ):Resource{
+//        return businessService.getBusinessProfilePicture(businessId)
+//    }
     @Operation(
         summary = "Update a business", description = "Updates a business", tags = ["Business"]
     )

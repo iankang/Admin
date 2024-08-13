@@ -100,7 +100,7 @@ class StorageService(
         try {
             return minioService.getMinioObject(bucketName, objectName)
         } catch (e: Exception) {
-            logger.error("getObject: ${e.message}")
+            logger.error("getObject: ${e.toString()}")
         }
         return null
     }

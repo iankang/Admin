@@ -82,7 +82,7 @@ class BusinessService(
         val bizniz = getSingleBusiness(businessId)
 
 
-        bizniz.businessImageProfile = path
+        bizniz.businessImageProfile = file.originalFilename
         val onMediaUploadItemEvent = OnMediaUploadItemEvent(
             file,
             path,

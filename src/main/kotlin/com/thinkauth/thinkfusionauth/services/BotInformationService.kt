@@ -55,7 +55,7 @@ class BotInformationService(
         val path = thinkResources+ File.separator+ BucketName.BOT_PROFILE_PIC.name+ File.separator+file.originalFilename
         val response = fileManagerService.uploadFile(thinkResources,path,file.inputStream)
         val botInformation = botInfoImpl.getItemById(botId)
-        botInformation.botLogoUrl = response?.`object`()
+        botInformation.botLogoUrl = file.originalFilename
         return botInfoImpl.createItem(botInformation)
     }
 

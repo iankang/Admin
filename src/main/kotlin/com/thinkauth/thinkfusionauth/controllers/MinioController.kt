@@ -6,6 +6,7 @@ import com.thinkauth.thinkfusionauth.utils.BucketName
 import io.minio.GetObjectResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.apache.juli.logging.Log
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -71,6 +72,45 @@ import java.io.File
         }
         return null
     }
+
+    @GetMapping("/botProfilePicture/{objectName}")
+    @Operation(summary = "get bot profile picture", description = "gets a bot profile image", tags = ["Minio"])
+    @ResponseBody
+    fun getBotProfilePicture(
+        @PathVariable("objectName") objectname:String
+    ): ResponseEntity<InputStreamResource>? {
+        try {
+            val objectame = thinking+File.separator+BucketName.BOT_PROFILE_PIC.name+File.separator+objectname
+            LOGGER.info("object: $objectame")
+            val imageStream = storageService.getObject(thinking,objectame)
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + objectname + "\"")
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(InputStreamResource(imageStream?.inputStream!!));
+        }catch (e:Exception){
+            LOGGER.error("error: ${e.message}")
+        }
+        return null
+    }
+    @GetMapping("/businessProfilePicture/{objectName}")
+    @Operation(summary = "get a business profile picture", description = "gets a business profile picture", tags = ["Minio"])
+    @ResponseBody
+    fun getBusinessProfilePicture(
+        @PathVariable("objectName") objectname:String
+    ): ResponseEntity<InputStreamResource>? {
+        try {
+            val objectame = thinking+File.separator+BucketName.BUSINESS_PROFILE_PIC.name+File.separator+objectname
+            LOGGER.info("object: $objectame")
+            val imageStream = storageService.getObject(thinking,objectame)
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + objectname + "\"")
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(InputStreamResource(imageStream?.inputStream!!));
+        }catch (e:Exception){
+            LOGGER.error("error: ${e.message}")
+        }
+        return null
+    }
     @GetMapping("/imageUrl")
     @Operation(summary = "download a file", description = "Downloads an image", tags = ["Minio"])
     @ResponseBody
@@ -83,12 +123,15 @@ import java.io.File
             val filename = url.split("/").last()
             LOGGER.error("filename: ", "$filename")
             return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + filename + "\"")
                 .contentType(MediaType.IMAGE_JPEG)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                 .body(imageStream);
         }catch (e:Exception){
             LOGGER.error("error: ${e.message}")
         }
         return null
     }
+
+
+
  }
