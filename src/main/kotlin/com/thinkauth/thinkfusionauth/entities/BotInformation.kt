@@ -1,6 +1,8 @@
 package com.thinkauth.thinkfusionauth.entities
 
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.DocumentReference
 
 @Document
 class BotInformation(
@@ -11,6 +13,8 @@ class BotInformation(
     var botPort:Int? = null,
     var botPath:String? = null,
     var botIsAvailable:Boolean? = false,
-    var business: Business? = null
+    @DBRef
+    var business: Business? = null,
+    var botType:BotTypeEnum
 ): AuditMetadata(){
 }

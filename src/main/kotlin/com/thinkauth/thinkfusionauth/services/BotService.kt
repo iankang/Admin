@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.thinkauth.thinkfusionauth.models.requests.ActualBotInput
 
 import com.thinkauth.thinkfusionauth.models.requests.BotInput
+import com.thinkauth.thinkfusionauth.models.requests.NoHistoryBotInput
 import com.thinkauth.thinkfusionauth.models.responses.GeneralBotResponse
 import org.springframework.http.*
 import org.springframework.http.converter.StringHttpMessageConverter
@@ -30,6 +31,12 @@ class BotService(
     }
 
     fun interactWithBot(s: String, @RequestBody input: ActualBotInput): ResponseEntity<GeneralBotResponse> {
+        val headers =  HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        return ResponseEntity( restTemplate.postForObject(URI.create(s) ,  input, GeneralBotResponse::class.java), HttpStatus.OK)
+    }
+    fun interactWithNoHistoryBot(s: String, @RequestBody input: NoHistoryBotInput): ResponseEntity<GeneralBotResponse> {
         val headers =  HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
 

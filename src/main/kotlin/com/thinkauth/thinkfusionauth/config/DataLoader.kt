@@ -1,9 +1,7 @@
 package com.thinkauth.thinkfusionauth.config
 
 import com.github.javafaker.Faker
-import com.thinkauth.thinkfusionauth.entities.Business
-import com.thinkauth.thinkfusionauth.entities.Conversation
-import com.thinkauth.thinkfusionauth.entities.MediaAcceptanceState
+import com.thinkauth.thinkfusionauth.entities.*
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
@@ -79,7 +77,8 @@ class DataLoader(
         if(businessService.getBusinessCount() == 0L){
             repeat(10){
                 val biz = BusinessRequest(
-                    businessName = faker.company().name()
+                    businessName = faker.company().name(),
+                    businessDescription = faker.company().bs()
                 )
                 logger.info("business: "+ biz)
                 businessService.addBusiness(biz)
@@ -127,6 +126,15 @@ class DataLoader(
         botInfoImpl.findEverythingPaged(0,1000).item.filter { it.botDescription == null }.forEach {
             it.botDescription = faker.lorem().paragraph()
             botInfoImpl.createItem(it)
+        }
+    }
+
+    fun backdateBotInfo(){
+        botInfoImpl.findEverythingPaged(0,1000).item.forEach { botInformation: BotInformation ->
+            botInformation.botType = BotTypeEnum.HISTORY
+            botInformation.botDescription = "This is a ${botInformation.botName}. It belongs to Nick. This is a sample description"
+            logger.info("bot info backdated: $botInformation")
+            botInfoImpl.updateItem(botInformation.id!!,botInformation)
         }
     }
 

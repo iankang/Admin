@@ -58,6 +58,7 @@ class BotInfoImpl(
             botRepo.botPath = item.botPath
             botRepo.botIsAvailable = item.botIsAvailable
             botRepo.business = item.business
+            botRepo.botType = item.botType
             return createItem(botRepo)
         }
         return null

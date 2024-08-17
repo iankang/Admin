@@ -74,7 +74,4 @@ class UserManagementService(
         }
         return fetchUserEntityByEmail(email)
     }
-
-
-
 }

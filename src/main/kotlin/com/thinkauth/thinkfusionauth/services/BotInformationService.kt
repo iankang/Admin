@@ -45,6 +45,7 @@ class BotInformationService(
             botLogoUrl = botInformationRequest.botLogoUrl,
             botPath = botInformationRequest.botPath,
             botIsAvailable = botAvailability,
+            botType = botInformationRequest.botType,
             business = business
         )
         return botInformation

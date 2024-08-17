@@ -1,10 +1,13 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.entities.BotInformation
+import com.thinkauth.thinkfusionauth.entities.BotTypeEnum
 import com.thinkauth.thinkfusionauth.entities.Conversation
 import com.thinkauth.thinkfusionauth.entities.Message
 import com.thinkauth.thinkfusionauth.models.requests.ActualBotInput
 import com.thinkauth.thinkfusionauth.models.requests.MessageEnum
 import com.thinkauth.thinkfusionauth.models.requests.MessageRequest
+import com.thinkauth.thinkfusionauth.models.requests.NoHistoryBotInput
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.repository.impl.MessagesImpl
@@ -23,15 +26,12 @@ class ConversationService(
     val logger = LoggerFactory.getLogger(ConversationService::class.java)
 
     fun userCreateMessageInConversation(
-        conversationId:String,
-        message: MessageRequest
+        conversationId: String, message: MessageRequest
     ): List<Message>? {
 
         val userId = userManagementService.loggedInUser()!!
         val messageInput = Message(
-            message.content,
-            userId,
-            MessageEnum.USER_MESSAGE
+            message.content, userId, MessageEnum.USER_MESSAGE
         )
 
 
@@ -41,43 +41,52 @@ class ConversationService(
         val conversational = conversationImpl.getItemById(conversationId)
         messageInput.conversationId = conversational.id
 
-        val botInfo = botInfoImpl.getItemById(conversational.botInformationId!!)
+        val botInfo = botInfoImpl.getItemById(conversational.botInformationId)
         logger.info("get bot info from conversation id: ${botInfo}")
         val baseUrl = "${botInfo.botUrl}:${botInfo.botPort}/${botInfo.botPath}"
         logger.info("the url: {}", baseUrl)
-        return botCreateMessage(baseUrl, messageInput, botInfo.id!!, conversational!!)
+        return botCreateMessage(baseUrl, messageInput, botInfo, conversational, userId)
     }
 
 
-    fun  botCreateMessage(
+    fun botCreateMessage(
         urlString: String,
         messageInput: Message,
-        botInformationId: String,
-        responseConversation: Conversation
+        botInformation: BotInformation,
+        responseConversation: Conversation,
+        userInformation: String
     ): List<Message>? {
         val messageCount = messagesImpl.countAllByConversationId(responseConversation.id!!)
         logger.info("message Count: $messageCount")
-        val messageHistory:List<String>
-        if(messageCount>1L) {
+        val messageHistory: List<String>
+        if (messageCount > 1L) {
             messageHistory = messagesImpl.findAllByConversationIdListString(responseConversation.id!!)
-        } else{
+        } else {
             messageHistory = emptyList()
         }
         logger.info("message history: $messageHistory")
         logger.info("making bot request")
-       val response =  botService.interactWithBot(urlString, ActualBotInput(user_input = messageInput.content, chat_History = messageHistory))
+        val response = if (botInformation.botType == BotTypeEnum.HISTORY) {
+            botService.interactWithBot(
+                urlString,
+                ActualBotInput(user_input = messageInput.content, chat_History = messageHistory)
+            )
+        } else {
+            botService.interactWithNoHistoryBot(
+                urlString,
+                NoHistoryBotInput(user_info = userInformation, message = messageInput.content)
+            )
+        }
         logger.info("response: $response")
         logger.info("storing input ${messageInput}")
         messagesImpl.createItem(messageInput)
-        if(response.statusCodeValue == 200){
+        if (response.statusCodeValue == 200) {
 
             logger.info("successful response")
             val botAnswer = response.body?.response
 
             val mess = Message(
-                botAnswer ?: "",
-                botInformationId,
-                MessageEnum.BOT_MESSAGE
+                botAnswer ?: "", botInformation.id!!, MessageEnum.BOT_MESSAGE
             )
             mess.conversationId = responseConversation.id
             logger.info("message to be added to db: {}", mess)
@@ -86,7 +95,11 @@ class ConversationService(
             return messagesImpl.findAllByConversationId(responseConversation.id!!)
         } else {
             logger.error("something went wrong: {}", response.toString())
-            val errorMessage = Message(content = response?.body?.response?: "error", sender = "server", messageType = MessageEnum.SYSTEM_MESSAGE)
+            val errorMessage = Message(
+                content = response.body?.response ?: "error",
+                sender = "server",
+                messageType = MessageEnum.SYSTEM_MESSAGE
+            )
             messagesImpl.createItem(errorMessage)
             return mutableListOf(errorMessage)
         }

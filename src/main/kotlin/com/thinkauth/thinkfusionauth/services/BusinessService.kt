@@ -28,7 +28,7 @@ class BusinessService(
     private val minioService: StorageService
 ) {
     fun addBusiness(businessRequest: BusinessRequest): Business {
-        val business = Business(businessRequest.businessName)
+        val business = Business(businessRequest.businessName, businessRequest.businessDescription)
         return businessRepository.save(business)
     }
 
@@ -61,6 +61,7 @@ class BusinessService(
         val fetchedBusiness = businessRepository.findById(businessId)
         fetchedBusiness.map { biz ->
             biz.businessName = businessRequest.businessName
+            biz.businessDescription = businessRequest.businessDescription
         }
         return businessRepository.save(fetchedBusiness.get())
     }
