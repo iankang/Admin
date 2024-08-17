@@ -66,43 +66,73 @@ class ConversationService(
         }
         logger.info("message history: $messageHistory")
         logger.info("making bot request")
-        val response = if (botInformation.botType == BotTypeEnum.HISTORY) {
-            botService.interactWithBot(
-                urlString,
-                ActualBotInput(user_input = messageInput.content, chat_History = messageHistory)
-            )
-        } else {
-            botService.interactWithNoHistoryBot(
-                urlString,
-                NoHistoryBotInput(user_info = userInformation, message = messageInput.content)
-            )
-        }
-        logger.info("response: $response")
-        logger.info("storing input ${messageInput}")
-        messagesImpl.createItem(messageInput)
-        if (response.statusCodeValue == 200) {
+        when(botInformation.botType){
+            BotTypeEnum.HISTORY -> {
+                val response = botService.interactWithBot(
+                    urlString,
+                    ActualBotInput(user_input = messageInput.content, chat_History = messageHistory)
+                )
 
-            logger.info("successful response")
-            val botAnswer = response.body?.response
+                logger.info("response: $response")
+                logger.info("storing input ${messageInput}")
+                messagesImpl.createItem(messageInput)
+                if (response.statusCodeValue == 200) {
 
-            val mess = Message(
-                botAnswer ?: "", botInformation.id!!, MessageEnum.BOT_MESSAGE
-            )
-            mess.conversationId = responseConversation.id
-            logger.info("message to be added to db: {}", mess)
-            messagesImpl.createItem(mess)
+
+                    logger.info("successful response")
+                    val botAnswer = response.body?.response
+
+                    val mess = Message(
+                        botAnswer ?: "", botInformation.id!!, MessageEnum.BOT_MESSAGE
+                    )
+                    mess.conversationId = responseConversation.id
+                    logger.info("message to be added to db: {}", mess)
+                    messagesImpl.createItem(mess)
 //            responseConversation.messages.add(messItem)
-            return messagesImpl.findAllByConversationId(responseConversation.id!!)
-        } else {
-            logger.error("something went wrong: {}", response.toString())
-            val errorMessage = Message(
-                content = response.body?.response ?: "error",
-                sender = "server",
-                messageType = MessageEnum.SYSTEM_MESSAGE
-            )
-            messagesImpl.createItem(errorMessage)
-            return mutableListOf(errorMessage)
+                    return messagesImpl.findAllByConversationId(responseConversation.id!!)
+                } else {
+                    logger.error("something went wrong: {}", response.toString())
+                    val errorMessage = Message(
+                        content = response.body?.response ?: "error",
+                        sender = "server",
+                        messageType = MessageEnum.SYSTEM_MESSAGE
+                    )
+                    messagesImpl.createItem(errorMessage)
+                    return mutableListOf(errorMessage)
+                }
+            }
+            BotTypeEnum.NONHISTORY -> {
+                val response = botService.interactWithNoHistoryBot(
+                    urlString,
+                    NoHistoryBotInput(user_info = userInformation, message = messageInput.content)
+                )
+                logger.info("NHresponse: ${response.toString()}")
+                logger.info("NHstoring input ${messageInput}")
+                messagesImpl.createItem(messageInput)
+                if (response.statusCodeValue == 200) {
+                    logger.info("successful response")
+                    val botAnswer = response.body?.forEach {
+                        val mess = Message(
+                            it.message ?: "", botInformation.id!!, MessageEnum.BOT_MESSAGE
+                        )
+                        mess.conversationId = responseConversation.id
+                        logger.info("message to be added to db: {}", mess)
+                        messagesImpl.createItem(mess)
+                    }
+                    return messagesImpl.findAllByConversationId(responseConversation.id!!)
+                } else {
+                    logger.error("something went wrong: {}", response.toString())
+                    val errorMessage = Message(
+                        content = response.body?.toString() ?: "error",
+                        sender = "server",
+                        messageType = MessageEnum.SYSTEM_MESSAGE
+                    )
+                    messagesImpl.createItem(errorMessage)
+                    return mutableListOf(errorMessage)
+                }
+            }
         }
+
     }
 
 }
