@@ -1,5 +1,7 @@
 package com.thinkauth.thinkfusionauth.models.requests
 
+import java.time.LocalDate
+
 
 data class signUpRequest(
     var email: String?,
@@ -10,5 +12,6 @@ data class signUpRequest(
     var is_Admin: Boolean?,
     var is_Moderator: Boolean?,
     var password: String?,
-    var confirm_password: String?
+    var confirm_password: String?,
+    var dob:LocalDate?
 )

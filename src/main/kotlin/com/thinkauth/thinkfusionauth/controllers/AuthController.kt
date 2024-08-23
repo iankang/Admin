@@ -27,11 +27,9 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AnonymousAuthenticationToken
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
-import java.io.Serializable
+import java.time.LocalDate
 import java.util.*
 import javax.validation.Valid
 
@@ -44,28 +42,29 @@ class AuthController(
     private val fusionAuthClient: FusionAuthClient,
     private val applicationEventPublisher: ApplicationEventPublisher,
 
-    @Value("\${fusionauth.applicationId}")
-    private val applicationId:String,
-    @Value("\${fusionauth.tenantId}")
-    private val tenantId:String,
-){
+    @Value("\${fusionauth.applicationId}") private val applicationId: String,
+    @Value("\${fusionauth.tenantId}") private val tenantId: String,
+) {
     @PostMapping("/signin")
-    @Operation(summary = "sign in an existing user", description = "Signs In an existing User", tags = ["Authentication"])
+    @Operation(
+        summary = "sign in an existing user",
+        description = "Signs In an existing User",
+        tags = ["Authentication"]
+    )
     fun signIn(
         @Valid @RequestBody signInRequest: SignInRequest
-    ):ResponseEntity<FusionApiResponse<LoginResponse>>{
-        val loginRequest = LoginRequest()
-            .with{request ->
+    ): ResponseEntity<FusionApiResponse<LoginResponse>> {
+        val loginRequest = LoginRequest().with { request ->
                 request.loginId = signInRequest.email
                 request.password = signInRequest.password
                 request.applicationId = UUID.fromString(applicationId)
             }
 
-        val response:ClientResponse<LoginResponse,Errors> = fusionAuthClient.login(loginRequest)
-        return if(response.wasSuccessful()){
-            ResponseEntity(FusionApiResponse(response.status,response.successResponse,null),HttpStatus.OK)
+        val response: ClientResponse<LoginResponse, Errors> = fusionAuthClient.login(loginRequest)
+        return if (response.wasSuccessful()) {
+            ResponseEntity(FusionApiResponse(response.status, response.successResponse, null), HttpStatus.OK)
         } else {
-            ResponseEntity(FusionApiResponse(response.status, null,response.errorResponse),HttpStatus.UNAUTHORIZED)
+            ResponseEntity(FusionApiResponse(response.status, null, response.errorResponse), HttpStatus.UNAUTHORIZED)
         }
     }
 
@@ -80,12 +79,13 @@ class AuthController(
         @RequestParam("isAdmin") is_Admin: Boolean?,
         @RequestParam("isModerator") is_Moderator: Boolean?,
         @RequestParam("password") password: String?,
-        @RequestParam("confirmPassword") confirm_password: String?
+        @RequestParam("confirmPassword") confirm_password: String?,
+        @RequestParam("dob") dob: LocalDate?,
     ): ResponseEntity<FusionApiResponse<RegistrationResponse>> {
-        if(password != confirm_password){
-             throw PasswordMismatchException("Passwords do not match")
+        if (password != confirm_password) {
+            throw PasswordMismatchException("Passwords do not match")
         }
-        val user:User = User().with { other ->
+        val user: User = User().with { other ->
             other.email = email
             other.tenantId = UUID.fromString(tenantId)
             other.password = password
@@ -93,41 +93,49 @@ class AuthController(
             other.lastName = lastName
             other.mobilePhone = phoneNumber
             other.username = username
+            other.birthDate = dob
         }
 
-        val userReg:UserRegistration = UserRegistration().with { other ->
+        val userReg: UserRegistration = UserRegistration().with { other ->
             other.applicationId = UUID.fromString(applicationId)
             other.roles.add("basic")
-            if(is_Admin == true) {
+            if (is_Admin == true) {
                 other.roles.add("admin")
             }
-            if(is_Moderator == true){
+            if (is_Moderator == true) {
                 other.roles.add("editor")
             }
             other.username = username
         }
-        val registrationRequest:RegistrationRequest = RegistrationRequest(user,userReg)
-        val registrationResponse = fusionAuthClient.register(UUID.randomUUID(),registrationRequest)
+        val registrationRequest: RegistrationRequest = RegistrationRequest(user, userReg)
+        val registrationResponse = fusionAuthClient.register(UUID.randomUUID(), registrationRequest)
 
-        return if(registrationResponse.wasSuccessful()){
-            
+        return if (registrationResponse.wasSuccessful()) {
+
             val userRegisteredEvent = OnUserRegisteredEvent(email!!)
             applicationEventPublisher.publishEvent(userRegisteredEvent)
 
-            ResponseEntity(FusionApiResponse(registrationResponse.status,registrationResponse.successResponse,null),HttpStatus.OK)
+            ResponseEntity(
+                FusionApiResponse(registrationResponse.status, registrationResponse.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(registrationResponse.status,null,registrationResponse.errorResponse),HttpStatus.BAD_REQUEST)
+            ResponseEntity(
+                FusionApiResponse(registrationResponse.status, null, registrationResponse.errorResponse),
+                HttpStatus.BAD_REQUEST
+            )
         }
     }
+
     @Operation(summary = "sign up a new user", description = "Signs Up a new User", tags = ["Authentication"])
     @PostMapping("/signupUser")
     fun registerUser(
-       @RequestBody signUpRequest: signUpRequest
+        @RequestBody signUpRequest: signUpRequest
     ): ResponseEntity<FusionApiResponse<RegistrationResponse>> {
-        if(signUpRequest.password != signUpRequest.confirm_password){
-             throw PasswordMismatchException("Passwords do not match")
+        if (signUpRequest.password != signUpRequest.confirm_password) {
+            throw PasswordMismatchException("Passwords do not match")
         }
-        val user:User = User().with { other ->
+        val user: User = User().with { other ->
             other.email = signUpRequest.email
             other.tenantId = UUID.fromString(tenantId)
             other.password = signUpRequest.password
@@ -135,61 +143,82 @@ class AuthController(
             other.lastName = signUpRequest.lastName
             other.mobilePhone = signUpRequest.phoneNumber
             other.username = signUpRequest.username
+            other.birthDate = signUpRequest.dob
         }
 
-        val userReg:UserRegistration = UserRegistration().with { other ->
+        val userReg: UserRegistration = UserRegistration().with { other ->
             other.applicationId = UUID.fromString(applicationId)
             other.roles.add("basic")
-            if(signUpRequest.is_Admin == true) {
+            if (signUpRequest.is_Admin == true) {
                 other.roles.add("admin")
             }
-            if(signUpRequest.is_Moderator == true){
+            if (signUpRequest.is_Moderator == true) {
                 other.roles.add("editor")
             }
             other.username = signUpRequest.username
         }
-        val registrationRequest:RegistrationRequest = RegistrationRequest(user,userReg)
-        val registrationResponse = fusionAuthClient.register(UUID.randomUUID(),registrationRequest)
+        val registrationRequest: RegistrationRequest = RegistrationRequest(user, userReg)
+        val registrationResponse = fusionAuthClient.register(UUID.randomUUID(), registrationRequest)
 
-        return if(registrationResponse.wasSuccessful()){
+        return if (registrationResponse.wasSuccessful()) {
 
             val userRegisteredEvent = OnUserRegisteredEvent(signUpRequest.email!!)
             applicationEventPublisher.publishEvent(userRegisteredEvent)
 
-            ResponseEntity(FusionApiResponse(registrationResponse.status,registrationResponse.successResponse,null),HttpStatus.OK)
+            ResponseEntity(
+                FusionApiResponse(registrationResponse.status, registrationResponse.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(registrationResponse.status,null,registrationResponse.errorResponse),HttpStatus.BAD_REQUEST)
+            ResponseEntity(
+                FusionApiResponse(registrationResponse.status, null, registrationResponse.errorResponse),
+                HttpStatus.BAD_REQUEST
+            )
         }
     }
 
     @Operation(summary = "approve a device", description = "Approves a device", tags = ["Authentication"])
     @PostMapping("/approveDevice")
     fun approveDevice(
-        @RequestParam("clientId")  client_id:String,
-        @RequestParam("clientSecret")  client_secret:String,
-        @RequestParam("token")  token:String,
+        @RequestParam("clientId") client_id: String,
+        @RequestParam("clientSecret") client_secret: String,
+        @RequestParam("token") token: String,
         @RequestParam("userCode") user_code: String
     ): ResponseEntity<FusionApiResponse<DeviceApprovalResponse>> {
         val deviceApproval = fusionAuthClient.approveDevice(client_id, client_secret, token, user_code)
 
-        return if(deviceApproval.wasSuccessful()){
-            ResponseEntity(FusionApiResponse(deviceApproval.status,deviceApproval.successResponse,null),HttpStatus.OK)
+        return if (deviceApproval.wasSuccessful()) {
+            ResponseEntity(
+                FusionApiResponse(deviceApproval.status, deviceApproval.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(deviceApproval.status,null,deviceApproval.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity(
+                FusionApiResponse(deviceApproval.status, null, deviceApproval.errorResponse),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
+
     @Operation(summary = "Fetch Refresh token", description = "Fetches Refresh Token", tags = ["Authentication"])
     @PostMapping("/fetchRefreshToken")
     fun getRefreshToken(
-        @RequestParam("userId") userId:String
+        @RequestParam("userId") userId: String
     ): ResponseEntity<FusionApiResponse<RefreshTokenResponse>> {
         val refreshTokenResponse = fusionAuthClient.retrieveRefreshTokens(UUID.fromString(userId))
-        return if(refreshTokenResponse.wasSuccessful()){
-            ResponseEntity(FusionApiResponse(refreshTokenResponse.status,refreshTokenResponse.successResponse,null),HttpStatus.OK)
+        return if (refreshTokenResponse.wasSuccessful()) {
+            ResponseEntity(
+                FusionApiResponse(refreshTokenResponse.status, refreshTokenResponse.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(refreshTokenResponse.status,null,refreshTokenResponse.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity(
+                FusionApiResponse(refreshTokenResponse.status, null, refreshTokenResponse.errorResponse),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
+
     @Operation(summary = "Refresh JWT", description = "Refreshes JWT", tags = ["Authentication"])
     @PostMapping("/refreshJWT")
     fun getNewJWTUsingRefreshToken(
@@ -198,54 +227,79 @@ class AuthController(
         val refreshRequest = RefreshRequest(refreshToken)
         val refreshRequestResponse = fusionAuthClient.exchangeRefreshTokenForJWT(refreshRequest)
 
-        return if(refreshRequestResponse.wasSuccessful()){
-            ResponseEntity(FusionApiResponse(refreshRequestResponse.status,refreshRequestResponse.successResponse,null),HttpStatus.OK)
+        return if (refreshRequestResponse.wasSuccessful()) {
+            ResponseEntity(
+                FusionApiResponse(
+                    refreshRequestResponse.status,
+                    refreshRequestResponse.successResponse,
+                    null
+                ), HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(refreshRequestResponse.status,null,refreshRequestResponse.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity(
+                FusionApiResponse(refreshRequestResponse.status, null, refreshRequestResponse.errorResponse),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 
     @Operation(summary = "Fetch JWT", description = "Fetches JWT", tags = ["Authentication"])
     @GetMapping("/getJWT")
     fun getJWT(
-        @RequestParam("refreshToken") refreshToken: String,
-        @RequestParam("encodedJWT") encodedJWT: String
+        @RequestParam("refreshToken") refreshToken: String, @RequestParam("encodedJWT") encodedJWT: String
     ): ResponseEntity<FusionApiResponse<IssueResponse>> {
 
-        val getJWTResponse = fusionAuthClient.issueJWT(UUID.fromString(applicationId),encodedJWT, refreshToken)
-        return if(getJWTResponse.wasSuccessful()){
-            ResponseEntity(FusionApiResponse(getJWTResponse.status,getJWTResponse.successResponse,null),HttpStatus.OK)
+        val getJWTResponse = fusionAuthClient.issueJWT(UUID.fromString(applicationId), encodedJWT, refreshToken)
+        return if (getJWTResponse.wasSuccessful()) {
+            ResponseEntity(
+                FusionApiResponse(getJWTResponse.status, getJWTResponse.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(getJWTResponse.status,null,getJWTResponse.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity(
+                FusionApiResponse(getJWTResponse.status, null, getJWTResponse.errorResponse),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
 
     }
-    @Operation(summary = "Fetch User Info from JWT", description = "Fetches User Info from JWT", tags = ["Authentication"])
+
+    @Operation(
+        summary = "Fetch User Info from JWT",
+        description = "Fetches User Info from JWT",
+        tags = ["Authentication"]
+    )
     @GetMapping("/getJWTUserInfo")
     fun fetchUserInfoFromJWT(
         @RequestParam("encodedJWT") encodedJWT: String
     ): ResponseEntity<FusionApiResponse<UserinfoResponse>> {
         val userInfoResponse = fusionAuthClient.retrieveUserInfoFromAccessToken(encodedJWT)
-        return if(userInfoResponse.wasSuccessful()){
-            ResponseEntity(FusionApiResponse(userInfoResponse.status,userInfoResponse.successResponse,null),HttpStatus.OK)
+        return if (userInfoResponse.wasSuccessful()) {
+            ResponseEntity(
+                FusionApiResponse(userInfoResponse.status, userInfoResponse.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(userInfoResponse.status,null,null),HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity(FusionApiResponse(userInfoResponse.status, null, null), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @Operation(summary = "Logout user", description = "Logs out user", tags = ["Authentication"])
     @PostMapping("/logout")
     fun logout(
-        @RequestParam("global") global:Boolean,
+        @RequestParam("global") global: Boolean,
         @RequestParam("refreshToken") refreshToken: String,
     ): ResponseEntity<FusionApiResponse<Void>> {
 
         val logoutResponse = fusionAuthClient.logout(global, refreshToken)
-        return if(logoutResponse.wasSuccessful()){
+        return if (logoutResponse.wasSuccessful()) {
             SecurityContextHolder.clearContext()
-            ResponseEntity(FusionApiResponse(logoutResponse.status,logoutResponse.successResponse,null),HttpStatus.OK)
+            ResponseEntity(
+                FusionApiResponse(logoutResponse.status, logoutResponse.successResponse, null),
+                HttpStatus.OK
+            )
         } else {
-            ResponseEntity(FusionApiResponse(logoutResponse.status,null,null),HttpStatus.INTERNAL_SERVER_ERROR)
+            ResponseEntity(FusionApiResponse(logoutResponse.status, null, null), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -257,7 +311,7 @@ class AuthController(
             val userPrincipal = authentication.principal as String
 //            println("User principal name =" + userPrincipal.username)
 //            println("Is user enabled =" + userPrincipal.isEnabled)
-            return ResponseEntity(userPrincipal,HttpStatus.OK)
+            return ResponseEntity(userPrincipal, HttpStatus.OK)
         }
         return ResponseEntity("No one loggedIn", HttpStatus.UNAUTHORIZED)
     }
