@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -29,7 +30,9 @@ class LanguageController(
     )
     @PostMapping("/addLanguage")
     @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
-    fun addLanguage(languageRequest: LanguageRequest): ResponseEntity<Language> {
+    fun addLanguage(
+        @RequestBody languageRequest: LanguageRequest
+    ): ResponseEntity<Language> {
         if(!languageService.existsByLanguageName(languageRequest)){
 
             return ResponseEntity(languageService.addLanguage(languageRequest), HttpStatus.OK)
@@ -83,11 +86,12 @@ class LanguageController(
     fun getLanguageByLanguageName(
         @RequestParam(name = "languageName") languageName:String,
     ): ResponseEntity<List<Language?>> {
-        val languageReq = LanguageRequest(languageName = languageName)
+        val languageNameTitle = languageName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        val languageReq = LanguageRequest(languageName = languageNameTitle)
         if(languageService.existsByLanguageName(languageReq)){
-           return ResponseEntity(languageService.findLanguageByLanguageName(languageName = languageName), HttpStatus.OK)
+           return ResponseEntity(languageService.findLanguageByLanguageName(languageName = languageNameTitle), HttpStatus.OK)
         }
-        throw ResourceNotFoundException("Language with country: $languageName not found")
+        throw ResourceNotFoundException("Language with name: $languageName not found")
     }
 
 
@@ -123,7 +127,7 @@ class LanguageController(
         summary = "Delete all languages", description = "deletes all languages", tags = ["Language"]
     )
     @DeleteMapping("/deleteAllLanguages")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
     fun deleteAllLanguages(){
         languageService.deleteAllLanguages()
     }

@@ -1,5 +1,7 @@
 package com.thinkauth.thinkfusionauth.models.requests
 
+import java.time.LocalDate
+
 data class EditUserRequest(
     var email: String? = null,
     var firstName: String? = null,
@@ -8,5 +10,5 @@ data class EditUserRequest(
     var lastName: String? = null,
     var middleName: String? = null,
     var mobilePhone: String? = null,
-    var birthDate: String? = null
+    var birthDate: LocalDate? = null
 )

@@ -45,6 +45,18 @@ class UserManagementController(
             ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+    @Operation(summary = "get a user by username", description = "Gets a user by username", tags = ["UserManagement"])
+    @GetMapping("/fetchUserByUsername")
+    fun getUserByUsername(
+        @RequestParam("username") username: String?
+    ): ResponseEntity<FusionApiResponse<UserResponse>> {
+        val userResponse = fusionAuthClient.retrieveUserByUsername(username)
+        return if(userResponse.wasSuccessful()){
+            ResponseEntity(FusionApiResponse(userResponse.status,userResponse.successResponse,null), HttpStatus.OK)
+        } else {
+            ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
     @Operation(summary = "deactivate a user by id", description = "Deactivates a user by id", tags = ["UserManagement"])
     @PostMapping("/deactivateUserByUserId")
@@ -74,7 +86,7 @@ class UserManagementController(
     }
 
     @Operation(summary = "Delete a user by id", description = "Deletes a user by id", tags = ["UserManagement"])
-    @PostMapping("/deleteuserById")
+    @PostMapping("/deleteUserById")
     @PreAuthorize("hasAuthority('admin')")
     fun deleteUserById(
         @RequestParam("userId") userId: String?
@@ -118,19 +130,10 @@ class UserManagementController(
             if(userRequest.mobilePhone?.isNotBlank() == true || userRequest.mobilePhone?.isNotEmpty() == true){
                 curentUser.user.mobilePhone = userRequest.mobilePhone
             }
-            if(userRequest.birthDate?.isNotBlank() == true || userRequest.birthDate?.isNotEmpty() == true){
-                try {
-                    // Define a custom date format pattern
-                    val pattern = "dd/MM/yyyy"
+           if(userRequest.birthDate != null) {
+               curentUser.user.birthDate = userRequest.birthDate
+           }
 
-                    // Create a DateTimeFormatter with the custom pattern
-                    val formatter = DateTimeFormatter.ofPattern(pattern)
-                    curentUser.user.birthDate =  LocalDate.parse(userRequest.birthDate, formatter)
-                } catch (e:Exception){
-                    logger.error("error parsing data: ${e.message}")
-                }
-
-            }
             val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)
             return if(userEditedResponse.wasSuccessful()) {
                 ResponseEntity(
