@@ -5,7 +5,8 @@ import com.inversoft.rest.ClientResponse
 import com.thinkauth.thinkfusionauth.events.OnUserRegisteredEvent
 import com.thinkauth.thinkfusionauth.exceptions.PasswordMismatchException
 import com.thinkauth.thinkfusionauth.models.requests.SignInRequest
-import com.thinkauth.thinkfusionauth.models.requests.signUpRequest
+import com.thinkauth.thinkfusionauth.models.requests.SignUpRequest
+import com.thinkauth.thinkfusionauth.models.requests.SignUpRequestWithoutEmail
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
 import io.fusionauth.client.FusionAuthClient
 import io.fusionauth.domain.User
@@ -130,7 +131,7 @@ class AuthController(
     @Operation(summary = "sign up a new user", description = "Signs Up a new User", tags = ["Authentication"])
     @PostMapping("/signupUser")
     fun registerUser(
-        @RequestBody signUpRequest: signUpRequest
+        @RequestBody signUpRequest: SignUpRequest
     ): ResponseEntity<FusionApiResponse<RegistrationResponse>> {
         if (signUpRequest.password != signUpRequest.confirm_password) {
             throw PasswordMismatchException("Passwords do not match")
@@ -163,6 +164,54 @@ class AuthController(
         return if (registrationResponse.wasSuccessful()) {
 
             val userRegisteredEvent = OnUserRegisteredEvent(signUpRequest.email!!)
+            applicationEventPublisher.publishEvent(userRegisteredEvent)
+
+            ResponseEntity(
+                FusionApiResponse(registrationResponse.status, registrationResponse.successResponse, null),
+                HttpStatus.OK
+            )
+        } else {
+            ResponseEntity(
+                FusionApiResponse(registrationResponse.status, null, registrationResponse.errorResponse),
+                HttpStatus.BAD_REQUEST
+            )
+        }
+    }
+    @Operation(summary = "sign up a new user without email", description = "Signs Up a new User without email", tags = ["Authentication"])
+    @PostMapping("/signupUserWithoutEmail")
+    fun registerUserWithoutEmail(
+        @RequestBody signUpRequest: SignUpRequestWithoutEmail
+    ): ResponseEntity<FusionApiResponse<RegistrationResponse>> {
+        if (signUpRequest.password != signUpRequest.confirm_password) {
+            throw PasswordMismatchException("Passwords do not match")
+        }
+        val user: User = User().with { other ->
+            other.tenantId = UUID.fromString(tenantId)
+            other.password = signUpRequest.password
+            other.firstName = signUpRequest.firstName
+            other.lastName = signUpRequest.lastName
+            other.mobilePhone = signUpRequest.phoneNumber
+            other.username = signUpRequest.username
+            other.birthDate = signUpRequest.dob
+        }
+
+        val userReg: UserRegistration = UserRegistration().with { other ->
+            other.applicationId = UUID.fromString(applicationId)
+            other.roles.add("basic")
+            if (signUpRequest.is_Admin == true) {
+                other.roles.add("admin")
+            }
+            if (signUpRequest.is_Moderator == true) {
+                other.roles.add("editor")
+            }
+            other.username = signUpRequest.username
+        }
+        val registrationRequest: RegistrationRequest = RegistrationRequest(user, userReg)
+        val registrationResponse = fusionAuthClient.register(UUID.randomUUID(), registrationRequest)
+
+        return if (registrationResponse.wasSuccessful()) {
+
+            val userRegisteredEvent = OnUserRegisteredEvent(signUpRequest.username!!)
             applicationEventPublisher.publishEvent(userRegisteredEvent)
 
             ResponseEntity(

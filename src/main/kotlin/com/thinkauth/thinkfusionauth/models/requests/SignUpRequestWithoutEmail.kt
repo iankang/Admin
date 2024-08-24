@@ -3,8 +3,7 @@ package com.thinkauth.thinkfusionauth.models.requests
 import java.time.LocalDate
 
 
-data class signUpRequest(
-    var email: String?,
+data class SignUpRequestWithoutEmail(
     var username: String?,
     var firstName: String?,
     var lastName: String?,
