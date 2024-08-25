@@ -1,8 +1,13 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 
+import com.inversoft.error.Errors
+import com.thinkauth.thinkfusionauth.entities.GenderState
+import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
+import com.thinkauth.thinkfusionauth.models.requests.ProfileInfoRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
+import com.thinkauth.thinkfusionauth.services.DialectService
 import io.fusionauth.client.FusionAuthClient
 import io.fusionauth.domain.api.UserRequest
 import io.fusionauth.domain.api.UserResponse
@@ -19,6 +24,7 @@ import java.net.URI
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.log
 
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -31,6 +37,7 @@ class UserManagementController(
     private val applicationId:String,
     @Value("\${fusionauth.tenantId}")
     private val tenantId:String,
+    private val dialectService: DialectService
 ) {
     private val logger:Logger = LoggerFactory.getLogger(UserManagementController::class.java)
     @Operation(summary = "get a user by email", description = "Gets a user by email", tags = ["UserManagement"])
@@ -100,7 +107,7 @@ class UserManagementController(
     }
     @Operation(summary = "Edit a user by id", description = "Edits a user by id", tags = ["UserManagement"])
     @PutMapping("/editUserById")
-    @PreAuthorize("hasAuthority('admin') or hasAuthority('basic')or hasAuthority('editor')")
+    @PreAuthorize("permitAll()")
     fun editUserByUserId(
         @RequestParam("userId", required = true)  userId: UUID,
         @RequestBody userRequest:EditUserRequest
@@ -134,6 +141,20 @@ class UserManagementController(
                curentUser.user.birthDate = userRequest.birthDate
            }
 
+           if(userRequest.gender != null){
+               curentUser.user.data["gender"] = userRequest.gender!!.name
+           }
+
+           if(userRequest.dialectId != null){
+               if(dialectService.existsByDialectId(dialectId = userRequest.dialectId!!)) {
+                   val dialect = dialectService.getDialectById(userRequest.dialectId!!)
+                   curentUser.user.data["dialectId"] = dialect.id
+                   curentUser.user.data["languageId"] = dialect.language?.id
+               } else {
+                   throw ResourceNotFoundException("dialect with id ${userRequest.dialectId} not found")
+               }
+           }
+
             val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)
             return if(userEditedResponse.wasSuccessful()) {
                 ResponseEntity(
@@ -144,6 +165,50 @@ class UserManagementController(
                 ResponseEntity(FusionApiResponse(userEditedResponse.status,null,userEditedResponse.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
             }
 
+        }  else {
+            ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @Operation(summary = "Add profile information", description = "adds profile information", tags = ["UserManagement"])
+    @PostMapping("/addProfileInfo")
+    @PreAuthorize("permitAll()")
+    fun addUserProfileInformation(
+        @RequestParam("userId", required = true)  userId: UUID,
+        @RequestBody userProfileInfoRequest: ProfileInfoRequest
+    ): ResponseEntity<out FusionApiResponse<out UserResponse>> {
+        logger.info("input: $userProfileInfoRequest")
+        val userResponse = fusionAuthClient.retrieveUser(userId)
+        logger.info("userResponse ${userResponse.status}")
+        return  if(userResponse.wasSuccessful()){
+            var curentUser = UserRequest(userResponse.successResponse.user)
+            logger.info("currentUser: $curentUser")
+            if(userProfileInfoRequest.gender != null){
+                curentUser.user.data["gender"] = userProfileInfoRequest.gender!!.name
+            }
+
+            if(userProfileInfoRequest.dialectId != null){
+                if(dialectService.existsByDialectId(dialectId = userProfileInfoRequest.dialectId!!)) {
+                    val dialect = dialectService.getDialectById(userProfileInfoRequest.dialectId!!)
+                    logger.info("dialect: ${dialect.dialectName}")
+                    curentUser.user.data["dialectId"] = dialect.id
+                    curentUser.user.data["languageId"] = dialect.language?.id
+                } else {
+                    throw ResourceNotFoundException("dialect with id ${userProfileInfoRequest.dialectId} not found")
+                }
+            }
+            val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)
+            logger.info("userResponse: ${userEditedResponse.status}")
+            logger.info("userResponse: ${userEditedResponse.errorResponse}")
+            logger.info("userResponse: ${userEditedResponse.exception}")
+            return if(userEditedResponse.wasSuccessful()) {
+                ResponseEntity(
+                    FusionApiResponse(userEditedResponse.status, userEditedResponse.successResponse, null),
+                    HttpStatus.OK
+                )
+            }else{
+                ResponseEntity(FusionApiResponse(userEditedResponse.status,null, Errors().addGeneralError(userResponse.status.toString(),userResponse.exception.message)),HttpStatus.INTERNAL_SERVER_ERROR)
+            }
         }  else {
             ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
         }
