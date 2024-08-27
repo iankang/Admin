@@ -144,6 +144,9 @@ class UserManagementController(
            if(userRequest.gender != null){
                curentUser.user.data["gender"] = userRequest.gender!!.name
            }
+           if(userRequest.ageRangeEnum != null){
+               curentUser.user.data["ageRange"] = userRequest.ageRangeEnum!!.name
+           }
 
            if(userRequest.dialectId != null){
                if(dialectService.existsByDialectId(dialectId = userRequest.dialectId!!)) {
@@ -185,6 +188,9 @@ class UserManagementController(
             logger.info("currentUser: $curentUser")
             if(userProfileInfoRequest.gender != null){
                 curentUser.user.data["gender"] = userProfileInfoRequest.gender!!.name
+            }
+            if(userProfileInfoRequest.ageRangeEnum != null){
+                curentUser.user.data["ageRange"] = userProfileInfoRequest.ageRangeEnum
             }
 
             if(userProfileInfoRequest.dialectId != null){
