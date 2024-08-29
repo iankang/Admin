@@ -10,6 +10,7 @@ data class MediaEntity(
     var mediaPathId: String,
     var sentenceId: String?,
     var businessId: String?,
+    var genderState: GenderState,
     var accepted:Boolean? = false,
     var mediaState:MediaAcceptanceState =  MediaAcceptanceState.PENDING
 ):AuditMetadata()

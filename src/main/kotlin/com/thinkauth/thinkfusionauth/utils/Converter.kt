@@ -12,6 +12,7 @@ fun User.toUserEntity(): UserEntity {
         middleName =  if(this.middleName  == null) null else this.middleName,
         lastName =  if(this.lastName == null) null else  this.lastName,
         imageUrl = if(this.imageUrl == null) null else this.imageUrl.toString(),
-        mobilePhone = if(this.mobilePhone == null) null else this.mobilePhone
+        mobilePhone = if(this.mobilePhone == null) null else this.mobilePhone,
+        genderState = (if(this.data["gender"] == null) null else this.data["gender"]).toString()
     )
 }

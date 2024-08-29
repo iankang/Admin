@@ -10,7 +10,6 @@ interface AudioCollectionRepository : MongoRepository<SentenceEntity, String> {
 
     fun findAllByLanguageId(languageId: String): List<SentenceEntity>
 
-
     fun countAudioCollectionsByLanguageId(languageId: String): Long?
 
     fun findAllByBusinessId(businessId:String):List<SentenceEntity>

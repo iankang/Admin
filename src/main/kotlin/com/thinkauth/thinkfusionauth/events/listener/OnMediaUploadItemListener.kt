@@ -71,7 +71,10 @@ class OnMediaUploadItemListener(
            mediaObject = response?.`object`()!!,
            mediaPathId = path,
            sentenceId = sentenceId,
-           businessId = businessId
+           businessId = businessId,
+           userId = user?.id,
+           genderState = user?.
+
            )
         mediaEntityService.saveMediaEntity(mediaEntity)
     }
