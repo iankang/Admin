@@ -25,7 +25,8 @@ class BusinessService(
     private val applicationEventPublisher: ApplicationEventPublisher,
     @Value("\${minio.bucket} ")
     private val thinkResources: String,
-    private val minioService: StorageService
+    private val minioService: StorageService,
+    private val userManagementService: UserManagementService
 ) {
     fun addBusiness(businessRequest: BusinessRequest): Business {
         val business = Business(businessRequest.businessName, businessRequest.businessDescription)
@@ -82,14 +83,16 @@ class BusinessService(
 
         val bizniz = getSingleBusiness(businessId)
 
-
+        val user = userManagementService.fetchLoggedInUserEntity()
         bizniz.businessImageProfile = file.originalFilename
         val onMediaUploadItemEvent = OnMediaUploadItemEvent(
             file,
             path,
             BucketName.BUSINESS_PROFILE_PIC,
             null,
-            bizniz.id
+            bizniz.id,
+            null,
+            null
         )
         applicationEventPublisher.publishEvent(onMediaUploadItemEvent)
         return saveBusiness(bizniz)

@@ -6,6 +6,7 @@ import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
+import com.thinkauth.thinkfusionauth.repository.SentenceUploadRepository
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.services.*
@@ -27,6 +28,7 @@ class DataLoader(
     private val industryService: CompanyProfileIndustryService,
     private val mediaEntityService: MediaEntityRepository,
     private val conversationService: ConversationImpl,
+
     private val botInfoImpl: BotInfoImpl,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
@@ -103,10 +105,13 @@ class DataLoader(
     }
 
     fun backdateAllMediaEntities(){
-        val mediaEntities = mediaEntityService.findAll()
+        val mediaEntities = mediaEntityService.findAllByMediaName("VOICE_COLLECTION")
 
         mediaEntities.forEach {
-            it.mediaState = MediaAcceptanceState.PENDING
+
+            val sentence = audioCollectionService.getAudioCollectionById(it.sentenceId!!)
+            it.languageId = sentence.language.id
+            it.username = it.owner.username ?: ""
             logger.info("modifying the media: "+ it)
             mediaEntityService.save(it)
         }

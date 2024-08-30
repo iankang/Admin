@@ -1,9 +1,8 @@
 package com.thinkauth.thinkfusionauth.models.responses
 
-data class LanguageRecordingsResponse(
+data class UserLanguageRecordingsResponse(
     var languageName:String?,
     var languageId:String?,
-    var sentenceCount:Long,
     var recordingCount:Long
 
 )

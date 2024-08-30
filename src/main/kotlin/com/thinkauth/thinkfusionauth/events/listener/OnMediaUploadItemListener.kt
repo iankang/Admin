@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.events.listener
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
+import com.thinkauth.thinkfusionauth.services.AudioCollectionService
 import com.thinkauth.thinkfusionauth.services.MediaEntityService
 import com.thinkauth.thinkfusionauth.services.StorageService
 import com.thinkauth.thinkfusionauth.services.UserManagementService
@@ -17,6 +18,7 @@ class OnMediaUploadItemListener(
     private val fileManagerService: StorageService,
     private val userManagementService: UserManagementService,
     private val mediaEntityService: MediaEntityService,
+    private val audioManagementService: AudioCollectionService,
     @Value("\${minio.bucket}")
     private val bucketName:String
 ): ApplicationListener<OnMediaUploadItemEvent> {
@@ -66,12 +68,15 @@ class OnMediaUploadItemListener(
         logger.info("path: $path")
         val response = fileManagerService.uploadFile(bucketName,path,multipartFile.inputStream)
         val user = userManagementService.fetchLoggedInUserEntity()
+        val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
        val mediaEntity = MediaEntity(
            mediaName = resource.name,
            owner = user,
+           username = user.username ?: "",
            mediaObject = response?.`object`()!!,
            mediaPathId = path,
            sentenceId = sentenceId,
+           languageId = sentence.language.id,
            businessId = businessId,
            genderState = genderState
            )
