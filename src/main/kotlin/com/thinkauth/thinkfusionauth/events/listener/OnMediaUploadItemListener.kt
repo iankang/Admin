@@ -38,6 +38,7 @@ class OnMediaUploadItemListener(
         val resource = event.resource
         val sentenceId = event.sentenceId
         val businessId = event.businessId
+        val genderState = event.genderState
 
 //        if (authentication !is AnonymousAuthenticationToken) {
 //            val userPrincipal = authentication.principal as String
@@ -72,9 +73,7 @@ class OnMediaUploadItemListener(
            mediaPathId = path,
            sentenceId = sentenceId,
            businessId = businessId,
-           userId = user?.id,
-           genderState = user?.
-
+           genderState = genderState
            )
         mediaEntityService.saveMediaEntity(mediaEntity)
     }

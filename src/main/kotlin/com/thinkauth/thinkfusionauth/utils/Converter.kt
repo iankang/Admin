@@ -13,6 +13,7 @@ fun User.toUserEntity(): UserEntity {
         lastName =  if(this.lastName == null) null else  this.lastName,
         imageUrl = if(this.imageUrl == null) null else this.imageUrl.toString(),
         mobilePhone = if(this.mobilePhone == null) null else this.mobilePhone,
+        languageId = (if(this.data["languageId"] == null) null else this.data["languageId"]).toString(),
         genderState = (if(this.data["gender"] == null) null else this.data["gender"]).toString()
     )
 }

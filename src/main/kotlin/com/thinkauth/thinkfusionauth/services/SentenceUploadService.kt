@@ -18,6 +18,8 @@ class SentenceUploadService(
     private val sentenceManagement: AudioCollectionRepository,
     private val fileProcessingHelper: FileProcessingHelper,
     private val applicationEventPublisher: ApplicationEventPublisher,
+    private val userManagementService: UserManagementService,
+
 ) {
 
     fun addSentenceUpload(sentenceId:String, file: MultipartFile): SentenceUploadEntity {
@@ -29,13 +31,17 @@ class SentenceUploadService(
             mediaPathId = path
         )
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
+        val user = userManagementService.fetchLoggedInUserEntity()
 
         val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(
             file,
             path,
             BucketName.VOICE_COLLECTION,
             sentence.id,
-            sentence.business?.id
+            sentence.business?.id,
+            user.languageId,
+            user.genderState
+
         )
         applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
 
@@ -53,7 +59,16 @@ class SentenceUploadService(
             mediaPathId = path
         )
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
-        val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(file, path, BucketName.VOICE_COLLECTION, sentenceEntity.id, sentenceEntity.business?.id)
+        val user = userManagementService.fetchLoggedInUserEntity()
+        val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(
+            file,
+            path,
+            BucketName.VOICE_COLLECTION,
+            sentenceEntity.id,
+            sentenceEntity.business?.id,
+            user.languageId,
+            user.genderState
+            )
         applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
         LOGGER.info("finalCollection: "+ finalCollection.toString())
         return finalCollection

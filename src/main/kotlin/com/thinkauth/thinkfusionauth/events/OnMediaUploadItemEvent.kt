@@ -12,7 +12,6 @@ class OnMediaUploadItemEvent(
     val sentenceId: String?,
     val businessId: String?,
     val languageId:String?,
-    val userId:String?,
-    val genderState: GenderState
+    val genderState: String?
 ): ApplicationEvent(file) {
 }

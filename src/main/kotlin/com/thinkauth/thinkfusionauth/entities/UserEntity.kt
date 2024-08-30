@@ -13,6 +13,6 @@ data class UserEntity(
     var lastName:String?= null,
     var imageUrl:String?= null,
     var mobilePhone:String?= null,
+    var languageId:String? = null,
     var genderState: String? = null
-
 ):AuditMetadata()
