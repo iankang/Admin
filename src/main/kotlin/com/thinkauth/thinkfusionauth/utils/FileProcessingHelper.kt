@@ -55,6 +55,12 @@ class FileProcessingHelper {
                         newFileName
                     )
                 }
+
+                BucketName.LANGUAGE_DOC -> {
+                    BucketName.LANGUAGE_DOC.name + File.separator + StringUtils.cleanPath(
+                        newFileName
+                    )
+                }
             }
             LOGGER.info("copy location: " + copyLocation)
             return copyLocation
@@ -97,6 +103,10 @@ class FileProcessingHelper {
 
             BucketName.BOT_PROFILE_PIC -> {
                 "jpg"
+            }
+
+            BucketName.LANGUAGE_DOC -> {
+                "csv"
             }
         }
     }

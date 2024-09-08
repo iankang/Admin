@@ -54,7 +54,7 @@ class BotInformationService(
     fun addBotProfilePicture(botId:String, file: MultipartFile):BotInformation{
 
         val path = thinkResources+ File.separator+ BucketName.BOT_PROFILE_PIC.name+ File.separator+file.originalFilename
-        val response = fileManagerService.uploadFile(thinkResources,path,file.inputStream)
+        fileManagerService.uploadFile(thinkResources,path,file.inputStream)
         val botInformation = botInfoImpl.getItemById(botId)
         botInformation.botLogoUrl = file.originalFilename
         return botInfoImpl.createItem(botInformation)

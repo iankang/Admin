@@ -19,9 +19,8 @@ class OnMediaUploadItemListener(
     private val userManagementService: UserManagementService,
     private val mediaEntityService: MediaEntityService,
     private val audioManagementService: AudioCollectionService,
-    @Value("\${minio.bucket}")
-    private val bucketName:String
-): ApplicationListener<OnMediaUploadItemEvent> {
+    @Value("\${minio.bucket}") private val bucketName: String
+) : ApplicationListener<OnMediaUploadItemEvent> {
 
     private val logger: Logger = LoggerFactory.getLogger(OnMediaUploadItemListener::class.java)
 
@@ -34,7 +33,7 @@ class OnMediaUploadItemListener(
         logger.info("Finished uploading media")
     }
 
-    private fun uploadMedia(event: OnMediaUploadItemEvent){
+    private fun uploadMedia(event: OnMediaUploadItemEvent) {
         val multipartFile = event.file
         val path = event.copyLocation
         val resource = event.resource
@@ -66,20 +65,20 @@ class OnMediaUploadItemListener(
 //        }
 //        var bucko = mediaFullPath(resource, multipartFile.name).absolutePathString()
         logger.info("path: $path")
-        val response = fileManagerService.uploadFile(bucketName,path,multipartFile.inputStream)
+        val response = fileManagerService.uploadFile(bucketName, path, multipartFile.inputStream)
         val user = userManagementService.fetchLoggedInUserEntity()
         val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
-       val mediaEntity = MediaEntity(
-           mediaName = resource.name,
-           owner = user,
-           username = user.username ?: "",
-           mediaObject = response?.`object`()!!,
-           mediaPathId = path,
-           sentenceId = sentenceId,
-           languageId = sentence.language.id,
-           businessId = businessId,
-           genderState = genderState
-           )
+        val mediaEntity = MediaEntity(
+            mediaName = resource.name,
+            owner = user,
+            username = user.username ?: "",
+            mediaObject = response?.`object`()!!,
+            mediaPathId = path,
+            sentenceId = sentenceId,
+            languageId = sentence.language.id,
+            businessId = businessId,
+            genderState = genderState
+        )
         mediaEntityService.saveMediaEntity(mediaEntity)
     }
 }
