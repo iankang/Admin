@@ -6,7 +6,9 @@ import com.thinkauth.thinkfusionauth.entities.Language
 import com.thinkauth.thinkfusionauth.models.requests.LanguageRequest
 import com.thinkauth.thinkfusionauth.models.responses.LanguageScrapeResponse
 import com.thinkauth.thinkfusionauth.repository.LanguageRepository
+import com.thinkauth.thinkfusionauth.utils.toStandardCase
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class LanguageService(
@@ -30,8 +32,8 @@ class LanguageService(
         return languageRepository.saveAll(langs)
     }
     @TrackExecutionTime
-    fun existsByLanguageName(languageRequest: LanguageRequest):Boolean{
-        return languageRepository.existsByLanguageName(languageRequest.languageName?: "Swahili")
+    fun existsByLanguageName(languageName:String):Boolean{
+        return languageRepository.existsByLanguageName(languageName.toStandardCase())
     }
     @TrackExecutionTime
     fun existsByLanguageId(languageId:String):Boolean{
@@ -58,7 +60,7 @@ class LanguageService(
 
     @TrackExecutionTime
     fun findLanguageByLanguageName(languageName:String):List<Language?>{
-        return languageRepository.findByLanguageName(languageName = languageName)
+        return languageRepository.findByLanguageName(languageName = languageName.toStandardCase())
     }
     @TrackExecutionTime
     fun findLanguageCount(): Long {

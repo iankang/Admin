@@ -10,6 +10,9 @@ class SentenceEntity(
     var topic: String? = null,
     var source: String? = null,
     @DocumentReference var language: Language,
+    @DocumentReference var dialect: Dialect? = null,
     @DocumentReference var business: Business? = null
-) : AuditMetadata()
+) : AuditMetadata(){
+    var needUploads:Boolean = false
+}
 

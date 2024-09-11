@@ -6,6 +6,7 @@ import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.DialectRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.DialectService
+import com.thinkauth.thinkfusionauth.utils.toStandardCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.Logger
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
@@ -74,14 +74,24 @@ class DialectRestController(
     fun getDialectByLanguageName(
         @RequestParam(name = "languageName") languageName: String,
     ): ResponseEntity<List<Dialect>> {
-        val languageNameTitle =
-            languageName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-        val dialectCount = dialectService.getDialectCountByLanguageName(languageNameTitle)
+
+        val dialectCount = dialectService.getDialectCountByLanguageName(languageName.toStandardCase())
         logger.info("count of dialects: $dialectCount")
         if (dialectCount > 0L) {
-            return ResponseEntity(dialectService.getDialectByLanguageName(languageNameTitle), HttpStatus.OK)
+            return ResponseEntity(dialectService.getDialectByLanguageName(languageName.toStandardCase()), HttpStatus.OK)
         }
         throw ResourceNotFoundException("Dialect with language name: $languageName not found")
+    }
+
+    @Operation(
+        summary = "Get a dialect by dialectName", description = "gets a dialect by dialectName", tags = ["Dialect"]
+    )
+    @GetMapping("/dialectByDialectName")
+    @PreAuthorize("permitAll()")
+    fun getDialectByDialectName(
+        @RequestParam(name = "dialectName") dialectName: String,
+    ): ResponseEntity<List<Dialect>> {
+        return ResponseEntity(dialectService.getDialectByDialectName(dialectName), HttpStatus.OK)
     }
 
     @Operation(
@@ -90,11 +100,11 @@ class DialectRestController(
     @PutMapping("/updateDialect")
     @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
     fun updateDialect(
-        @RequestParam(name = "dialectId") dialectId: String,
-        @RequestBody dialect: Dialect
+        @RequestParam(name = "dialectId") dialectId: String, @RequestBody dialect: Dialect
     ) {
-        dialectService.updateDialect(dialectId,dialect)
+        dialectService.updateDialect(dialectId, dialect)
     }
+
     @Operation(
         summary = "Deletes a dialect", description = "deletes a dialect", tags = ["Dialect"]
     )

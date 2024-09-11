@@ -4,6 +4,7 @@ import com.thinkauth.thinkfusionauth.entities.Dialect
 import com.thinkauth.thinkfusionauth.interfaces.DataOperations
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.DialectRepository
+import com.thinkauth.thinkfusionauth.utils.toStandardCase
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 
@@ -51,11 +52,15 @@ class DialectImpl(
     }
 
     fun countDialectsByLanguageName(languageName:String): Long {
-        return dialectRepository.countAllByLanguageLanguageName(languageName)
+        return dialectRepository.countAllByLanguageLanguageName(languageName.toStandardCase())
     }
 
     fun getDialectsByLanguageName(languageName:String): List<Dialect> {
-        return dialectRepository.findAllByLanguageLanguageName(languageName)
+        return dialectRepository.findAllByLanguageLanguageName(languageName.toStandardCase())
+    }
+
+    fun getDialectByDialectName(dialectName: String): List<Dialect>? {
+        return dialectRepository.findAllByDialectName(dialectName.toStandardCase())
     }
 
     fun dialectCount(): Long {
@@ -65,6 +70,6 @@ class DialectImpl(
     fun existsByDialectName(
         dialectName:String
     ): Boolean {
-        return dialectRepository.existsByDialectName(dialectName)
+        return dialectRepository.existsByDialectName(dialectName.toStandardCase())
     }
 }

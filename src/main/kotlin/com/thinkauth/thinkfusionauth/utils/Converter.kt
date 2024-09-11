@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.utils
 
 import com.thinkauth.thinkfusionauth.entities.UserEntity
 import io.fusionauth.domain.User
+import java.util.*
 
 fun User.toUserEntity(): UserEntity {
     return UserEntity(
@@ -16,4 +17,9 @@ fun User.toUserEntity(): UserEntity {
         languageId = (if(this.data["languageId"] == null) null else this.data["languageId"]).toString(),
         genderState = (if(this.data["gender"] == null) null else this.data["gender"]).toString()
     )
+}
+
+fun String.toStandardCase(): String {
+   return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
 }

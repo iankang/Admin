@@ -4,6 +4,7 @@ import com.thinkauth.thinkfusionauth.entities.Dialect
 import com.thinkauth.thinkfusionauth.models.requests.DialectRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.DialectImpl
+import com.thinkauth.thinkfusionauth.utils.toStandardCase
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +18,7 @@ class DialectService(
     ): Dialect {
 
         val language = languageService.getLanguageByLanguageId(dialectRequest.languageId!!)
-        val dialect = Dialect(dialectRequest.dialectName, language)
+        val dialect = Dialect(dialectRequest.dialectName?.toStandardCase(), language)
         return dialectImpl.createItem(dialect)
     }
 
@@ -51,6 +52,12 @@ class DialectService(
         return dialectImpl.getDialectsByLanguageName(languageName)
     }
 
+    fun getDialectByDialectName(
+        dialectName: String
+    ): List<Dialect>? {
+        return dialectImpl.getDialectByDialectName(dialectName)
+    }
+
     fun countDialects():Long{
         return dialectImpl.dialectCount()
     }
@@ -64,7 +71,7 @@ class DialectService(
     fun existsByDialectName(
         dialectName:String
     ): Boolean {
-        return dialectImpl.existsByDialectName(dialectName)
+        return dialectImpl.existsByDialectName(dialectName.toStandardCase())
     }
 
     fun existsByDialectId(dialectId:String):Boolean{

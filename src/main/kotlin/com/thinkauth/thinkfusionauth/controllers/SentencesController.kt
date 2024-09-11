@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -66,12 +67,16 @@ class SentencesController(
     fun addSentenceDocument(
         @RequestPart("file") file: MultipartFile,
         @RequestParam("languageId") languageId:String,
+        @RequestParam("businessId") businessId:String,
         @RequestParam("dialectId") dialectId:String,
 
     ): ResponseEntity<SentenceDocumentEntity> {
+
+
         return ResponseEntity(sentenceDocumentImpl.addDBFile(
             languageId = languageId,
             dialectId = dialectId,
+            businessId = businessId,
             upload = file
         ),HttpStatus.OK)
     }

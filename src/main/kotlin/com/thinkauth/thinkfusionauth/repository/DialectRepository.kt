@@ -12,5 +12,7 @@ interface DialectRepository: MongoRepository<Dialect, String> {
 
     fun findAllByLanguageLanguageName(languageName:String):List<Dialect>
 
+    fun findAllByDialectName(dialectName: String):List<Dialect>?
+
     fun existsByDialectName(dialectName:String):Boolean
 }

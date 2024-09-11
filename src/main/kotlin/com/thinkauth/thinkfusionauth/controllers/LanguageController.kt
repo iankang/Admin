@@ -8,6 +8,7 @@ import com.thinkauth.thinkfusionauth.models.requests.SampleWords
 import com.thinkauth.thinkfusionauth.models.responses.LanguageScrapeResponse
 import com.thinkauth.thinkfusionauth.services.LanguageService
 import com.thinkauth.thinkfusionauth.services.ScrapingService
+import com.thinkauth.thinkfusionauth.utils.toStandardCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.bouncycastle.asn1.x500.style.RFC4519Style.l
@@ -33,7 +34,7 @@ class LanguageController(
     fun addLanguage(
         @RequestBody languageRequest: LanguageRequest
     ): ResponseEntity<Language> {
-        if(!languageService.existsByLanguageName(languageRequest)){
+        if(!languageService. existsByLanguageName(languageRequest.languageName?.toStandardCase() ?: "")){
 
             return ResponseEntity(languageService.addLanguage(languageRequest), HttpStatus.OK)
         }
@@ -86,10 +87,8 @@ class LanguageController(
     fun getLanguageByLanguageName(
         @RequestParam(name = "languageName") languageName:String,
     ): ResponseEntity<List<Language?>> {
-        val languageNameTitle = languageName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-        val languageReq = LanguageRequest(languageName = languageNameTitle)
-        if(languageService.existsByLanguageName(languageReq)){
-           return ResponseEntity(languageService.findLanguageByLanguageName(languageName = languageNameTitle), HttpStatus.OK)
+        if(languageService.existsByLanguageName(languageName.toStandardCase())){
+           return ResponseEntity(languageService.findLanguageByLanguageName(languageName = languageName.toStandardCase()), HttpStatus.OK)
         }
         throw ResourceNotFoundException("Language with name: $languageName not found")
     }

@@ -28,7 +28,6 @@ class DataLoader(
     private val industryService: CompanyProfileIndustryService,
     private val mediaEntityService: MediaEntityRepository,
     private val conversationService: ConversationImpl,
-
     private val botInfoImpl: BotInfoImpl,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {

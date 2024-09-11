@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.services
 
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.SentenceEntity
 import com.thinkauth.thinkfusionauth.entities.Language
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
@@ -42,7 +43,7 @@ class AudioCollectionService(
 ) {
     private val LOGGER: Logger = LoggerFactory.getLogger(AudioCollectionService::class.java)
 
-
+    @TrackExecutionTime
     fun addSentenceCollection(audioCollectionRequest: AudioCollectionRequest): SentenceEntity {
         val language = languageService.getLanguageByLanguageId(audioCollectionRequest.languageId)
         val biz = businessService.getSingleBusiness(businessId = audioCollectionRequest.businessId!!)
@@ -55,6 +56,14 @@ class AudioCollectionService(
         return audioRepository.save(collection)
     }
 
+    @TrackExecutionTime
+    fun bulkAddSentences(
+        sentences:List<SentenceEntity>
+    ): MutableList<SentenceEntity> {
+        return audioRepository.saveAll(sentences)
+    }
+
+    @TrackExecutionTime
     fun getAllSentences(
         page: Int, size: Int
     ): PagedResponse<MutableList<SentenceEntity>> {
@@ -70,14 +79,20 @@ class AudioCollectionService(
         )
     }
 
+    @TrackExecutionTime
     fun audioCollectionExists(audioCollectionId: String): Boolean {
         return audioRepository.existsById(audioCollectionId)
     }
-
+    @TrackExecutionTime
     fun audioCollectionExistsBySentence(audioCollectionRequest: AudioCollectionRequest): Boolean {
         return audioRepository.existsBySentence(audioCollectionRequest.sentence)
     }
+    @TrackExecutionTime
+    fun sentenceExistsBySentence(sentence:String): Boolean {
+        return audioRepository.existsBySentence(sentence)
+    }
 
+    @TrackExecutionTime
     fun getAudioCollectionById(audioCollectionId: String): SentenceEntity {
         return audioRepository.findById(audioCollectionId).get()
     }
@@ -102,36 +117,42 @@ class AudioCollectionService(
         IOUtils.copy(inputStream, response.outputStream)
         response.flushBuffer()
     }
-
+    @TrackExecutionTime
     fun getAudioCollectionByLanguageId(languageId: String): List<SentenceEntity> {
         return audioRepository.findAllByLanguageId(languageId)
     }
 
-
+    @TrackExecutionTime
     fun getLanguage(languageId: String): Language? {
         return languageService.getLanguageByLanguageId(languageId)
     }
 
+    @TrackExecutionTime
     fun languageIdExists(languageId: String): Boolean {
         return languageService.existsByLanguageId(languageId)
     }
 
+    @TrackExecutionTime
     fun deleteAllAudioCollection() {
         audioRepository.deleteAll()
     }
 
+    @TrackExecutionTime
     fun getCountOfAllAudioCollectionByLanguageId(languageId: String): Long? {
         return audioRepository.countAudioCollectionsByLanguageId(languageId)
     }
 
+    @TrackExecutionTime
     fun audioSentencesCount(): Long {
         return audioRepository.count()
     }
 
+    @TrackExecutionTime
     fun deleteAllSentences() {
         return audioRepository.deleteAll()
     }
 
+    @TrackExecutionTime
     fun getAllSentencesByBusinessId(businessId:String): List<SentenceEntity> {
         return audioRepository.findAllByBusinessId(businessId)
     }
