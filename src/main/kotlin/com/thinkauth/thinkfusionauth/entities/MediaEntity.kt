@@ -11,6 +11,7 @@ data class MediaEntity(
     var mediaPathId: String,
     var sentenceId: String?,
     var languageId:String?,
+    var languageName:String?,
     var businessId: String?,
     var genderState: String?,
     var accepted:Boolean? = false,

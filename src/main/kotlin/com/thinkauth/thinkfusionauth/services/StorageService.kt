@@ -23,6 +23,7 @@ class StorageService(
 ) : StorageServiceInterface {
 
     private val logger = LoggerFactory.getLogger(StorageService::class.java)
+
     override fun upload(
         bucketName: String, objectName: String, filename: String, contentType: String
     ): ObjectWriteResponse? {

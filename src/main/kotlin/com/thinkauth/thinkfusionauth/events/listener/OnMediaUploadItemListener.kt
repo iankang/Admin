@@ -2,10 +2,7 @@ package com.thinkauth.thinkfusionauth.events.listener
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
-import com.thinkauth.thinkfusionauth.services.AudioCollectionService
-import com.thinkauth.thinkfusionauth.services.MediaEntityService
-import com.thinkauth.thinkfusionauth.services.StorageService
-import com.thinkauth.thinkfusionauth.services.UserManagementService
+import com.thinkauth.thinkfusionauth.services.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -76,6 +73,7 @@ class OnMediaUploadItemListener(
             mediaPathId = path,
             sentenceId = sentenceId,
             languageId = sentence.language.id,
+            languageName = sentence.language.languageName,
             businessId = businessId,
             genderState = genderState
         )

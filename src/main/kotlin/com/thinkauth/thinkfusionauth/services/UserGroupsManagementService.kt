@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class UserGroupsManagementService(
+class  UserGroupsManagementService(
     private val fusionAuthClient: FusionAuthClient,
     private val userRepository: UserRepository
 ) {
