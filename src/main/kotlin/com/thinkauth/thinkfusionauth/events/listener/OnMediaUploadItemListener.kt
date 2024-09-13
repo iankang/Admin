@@ -72,6 +72,7 @@ class OnMediaUploadItemListener(
             mediaObject = response?.`object`()!!,
             mediaPathId = path,
             sentenceId = sentenceId,
+            actualSentence = sentence.sentence,
             languageId = sentence.language.id,
             languageName = sentence.language.languageName,
             businessId = businessId,
