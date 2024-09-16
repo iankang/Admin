@@ -3,11 +3,13 @@ package com.thinkauth.thinkfusionauth.controllers
 
 import com.inversoft.error.Errors
 import com.thinkauth.thinkfusionauth.entities.GenderState
+import com.thinkauth.thinkfusionauth.entities.UserEntity
 import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
 import com.thinkauth.thinkfusionauth.models.requests.ProfileInfoRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
 import com.thinkauth.thinkfusionauth.services.DialectService
+import com.thinkauth.thinkfusionauth.services.UserManagementService
 import io.fusionauth.client.FusionAuthClient
 import io.fusionauth.domain.api.UserRequest
 import io.fusionauth.domain.api.UserResponse
@@ -37,7 +39,8 @@ class UserManagementController(
     private val applicationId:String,
     @Value("\${fusionauth.tenantId}")
     private val tenantId:String,
-    private val dialectService: DialectService
+    private val dialectService: DialectService,
+    private val userManagementService: UserManagementService
 ) {
     private val logger:Logger = LoggerFactory.getLogger(UserManagementController::class.java)
     @Operation(summary = "get a user by email", description = "Gets a user by email", tags = ["UserManagement"])
@@ -218,5 +221,11 @@ class UserManagementController(
         }  else {
             ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
         }
+    }
+
+    @Operation(summary = "get all users", description = "Gets all users", tags = ["UserManagement"])
+    @GetMapping("/fetchAllUsers")
+    fun fetchAllUsers(): ResponseEntity<MutableList<UserEntity>> {
+        return ResponseEntity(userManagementService.fetchAllUsers(), HttpStatus.OK)
     }
 }

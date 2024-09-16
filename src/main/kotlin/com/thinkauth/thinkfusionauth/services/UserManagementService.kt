@@ -65,6 +65,10 @@ class UserManagementService(
         return userRepository.findByEmail(email)
     }
 
+    fun fetchAllUsers(): MutableList<UserEntity> {
+        return userRepository.findAll()
+    }
+
     fun fetchLoggedInUserEntity(): UserEntity {
         val email = loggedInUser()
         logger.info("fetchLoggedInUserEntity")
