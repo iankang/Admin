@@ -85,12 +85,12 @@ class OnSentenceDocumentUploadedListener(
                 logger.info("languages: {}, dialects: {}", languageEntityMap, dialectEntityMap)
             }
 //     d
-            val sentences = mutableListOf<SentenceEntity>()
+            val sentences = mutableListOf<SentenceEntitie>()
             csvItems.map {
                 if (!audioCollectionService.sentenceExistsBySentence(it.localLanguage ?: "")) {
                     logger.info("sentence doesn't exist: {}", it)
                     sentences.add(
-                        SentenceEntity(
+                        SentenceEntitie(
                             sentence = it.localLanguage,
                             language = languageEntityMap[it.language]!!,
                             dialect = dialectEntityMap[it.dialect],

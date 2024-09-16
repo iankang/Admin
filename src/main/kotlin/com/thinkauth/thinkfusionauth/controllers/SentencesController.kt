@@ -1,7 +1,7 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.SentenceDocumentEntity
-import com.thinkauth.thinkfusionauth.entities.SentenceEntity
+import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.SentenceDocumentImpl
@@ -33,7 +33,7 @@ class SentencesController(
     @PostMapping("/addSentence")
     fun addSentenceWithoutAudio(
         @RequestBody audioRequest: AudioCollectionRequest
-    ):ResponseEntity<SentenceEntity>{
+    ):ResponseEntity<SentenceEntitie>{
         if(audioCollectionService.languageIdExists(audioRequest.languageId)) {
             LOGGER.info("language Exists")
             if (!audioCollectionService.audioCollectionExistsBySentence(audioRequest)) {
@@ -54,7 +54,7 @@ class SentencesController(
     fun getAudios(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
-    ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
         return ResponseEntity(audioCollectionService.getAllSentences(page, size),HttpStatus.OK)
     }
 
@@ -66,7 +66,7 @@ class SentencesController(
         @RequestParam("languageId") languageId: String,
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
-    ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
         return ResponseEntity(audioCollectionService.getAllSentencesByLanguageId(languageId, page, size), HttpStatus.OK)
     }
 

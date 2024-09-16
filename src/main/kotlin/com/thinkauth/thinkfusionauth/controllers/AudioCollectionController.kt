@@ -1,7 +1,7 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 
-import com.thinkauth.thinkfusionauth.entities.SentenceEntity
+import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.SentenceUploadEntity
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
@@ -106,7 +106,7 @@ class AudioCollectionController(
     @PreAuthorize("hasRole('ADMIN')")
     fun addSentenceWithoutAudio(
        @RequestBody audioRequest:AudioCollectionRequest
-    ):ResponseEntity<SentenceEntity>{
+    ):ResponseEntity<SentenceEntitie>{
         if(audioCollectionService.languageIdExists(audioRequest.languageId)) {
 
             if (!audioCollectionService.audioCollectionExistsBySentence(audioRequest)) {
@@ -126,7 +126,7 @@ class AudioCollectionController(
     fun getSentencesPaged(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
-    ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
         return ResponseEntity(audioCollectionService.getAllSentences(page, size),HttpStatus.OK)
     }
     @Operation(
@@ -135,7 +135,7 @@ class AudioCollectionController(
     @GetMapping("/sentencesByBusinessId")
     fun getSentencesByBusinessId(
         @RequestParam("businessId") businessId:String
-    ): ResponseEntity<List<SentenceEntity>> {
+    ): ResponseEntity<List<SentenceEntitie>> {
         return ResponseEntity(audioCollectionService.getAllSentencesByBusinessId(businessId),HttpStatus.OK)
     }
 
@@ -158,7 +158,7 @@ class AudioCollectionController(
     fun getAudio(
         @PathVariable("audioId") audioId:String,
         response:HttpServletResponse
-    ): SentenceEntity {
+    ): SentenceEntitie {
 
         return audioCollectionService.getAudioCollectionById(audioId)
     }
@@ -168,7 +168,7 @@ class AudioCollectionController(
     @GetMapping("/audioCollectionByLanguageId/{languageId}")
     fun getAllAudioByLanguageId(
         @PathVariable("languageId") languageId:String
-    ): Page<SentenceEntity> {
+    ): Page<SentenceEntitie> {
 
         return audioCollectionService.getAudioCollectionByLanguageId(languageId)
     }
@@ -202,7 +202,7 @@ class AudioCollectionController(
 //    @GetMapping("/audioByLanguageAndNoAudio/{languageId}")
 //    fun getAudioByLanguageIdAndNoAudio(
 //        @PathVariable("languageId") languageId:String,
-//    ): List<SentenceEntity> {
+//    ): List<SentenceEntitie> {
 //
 //        return audioCollectionService.getAudioCollectionByLanguageWithNoAudio(languageId)
 //    }
@@ -213,7 +213,7 @@ class AudioCollectionController(
 //    @GetMapping("/audioByLanguageAndWithAudio/{languageId}")
 //    fun getAudioByLanguageIdAndWithAudio(
 //        @PathVariable("languageId") languageId:String,
-//    ): List<SentenceEntity> {
+//    ): List<SentenceEntitie> {
 //
 //        return audioCollectionService.getAudioCollectionByLanguageWithAudio(languageId)
 //    }

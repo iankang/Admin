@@ -1,6 +1,6 @@
 package com.thinkauth.thinkfusionauth.services
 
-import com.thinkauth.thinkfusionauth.entities.SentenceEntity
+import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.SentenceUploadEntity
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.repository.AudioCollectionRepository
@@ -27,7 +27,7 @@ class SentenceUploadService(
         val path = fileProcessingHelper.mediaFullPath(BucketName.VOICE_COLLECTION,file.originalFilename!!)
 //        sentence.audio = path.toString()
         val sentenceUpload = SentenceUploadEntity(
-            sentenceEntity = sentence,
+            SentenceEntitie = sentence,
             mediaPathId = path
         )
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
@@ -49,13 +49,13 @@ class SentenceUploadService(
     }
 
     fun addAudioEvent(
-        file: MultipartFile, sentenceEntity: SentenceEntity
+        file: MultipartFile, SentenceEntitie: SentenceEntitie
     ): SentenceUploadEntity {
         val path = fileProcessingHelper.mediaFullPath(BucketName.VOICE_COLLECTION, file.name)
         LOGGER.info("file_path_add_audio: "+ path.toString())
-//        sentenceEntity.audio = path
+//        SentenceEntitie.audio = path
         val sentenceUpload = SentenceUploadEntity(
-            sentenceEntity = sentenceEntity,
+            SentenceEntitie = SentenceEntitie,
             mediaPathId = path
         )
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
@@ -64,8 +64,8 @@ class SentenceUploadService(
             file,
             path,
             BucketName.VOICE_COLLECTION,
-            sentenceEntity.id,
-            sentenceEntity.business?.id,
+            SentenceEntitie.id,
+            SentenceEntitie.business?.id,
             user.languageId,
             user.genderState
             )

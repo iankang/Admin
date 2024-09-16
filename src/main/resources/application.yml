@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: production
+    active: development
 
 ---
 server:
@@ -35,6 +35,8 @@ spring:
       username: ian
       password: point90
       port: 9050
+      connections-per-host: 100
+      min-connections-per-host: 10
   security:
     oauth2:
       resourceserver:
@@ -99,6 +101,8 @@ spring:
       username: ian
       password: point90
       port: 9050
+      connections-per-host: 100
+      min-connections-per-host: 10
   security:
     oauth2:
       resourceserver:

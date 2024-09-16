@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference
 @Document
 data class SentenceUploadEntity(
     @DocumentReference
-    var sentenceEntity: SentenceEntity? = null,
+    var SentenceEntitie: SentenceEntitie? = null,
     var mediaPathId:String? = null,
     var isAccepted:Boolean? = false
 ):AuditMetadata()
