@@ -29,6 +29,7 @@ class DataLoader(
     private val mediaEntityService: MediaEntityRepository,
     private val conversationService: ConversationImpl,
     private val botInfoImpl: BotInfoImpl,
+    private val userManagementService: UserManagementService,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -142,6 +143,14 @@ class DataLoader(
         }
     }
 
+    fun backdateAllUserInfo(){
+        userManagementService.fetchAllUsers().forEach { userEntity:UserEntity ->
+            logger.debug("user update before: $userEntity")
+            userManagementService.addUserFromFusionAuthByEmail(userEntity.email?: userEntity.username!!)
+
+        }
+    }
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
@@ -151,6 +160,7 @@ class DataLoader(
         industryItems()
         backdateAllConversations()
         addDescriptionsForBots()
+        backdateAllUserInfo()
 //        backdateAllMediaEntities()
     }
 }

@@ -33,7 +33,7 @@ class UserManagementService(
 
 
     fun fetchUserByEmail(email: String): User? {
-        val userResponse = fusionAuthClient.retrieveUserByEmail(email)
+        val userResponse = fusionAuthClient.retrieveUserByLoginId(email)
         return if (userResponse.wasSuccessful()) {
             userResponse.successResponse.user
         } else {

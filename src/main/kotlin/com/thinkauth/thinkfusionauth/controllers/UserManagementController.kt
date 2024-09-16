@@ -221,7 +221,6 @@ class UserManagementController(
 
     @Operation(summary = "get all users", description = "Gets all users", tags = ["UserManagement"])
     @GetMapping("/fetchAllUsers")
-    @PreAuthorize("hasAuthority('admin')")
     fun fetchAllUsers(): ResponseEntity<MutableList<UserEntity>> {
         return ResponseEntity(userManagementService.fetchAllUsers(), HttpStatus.OK)
     }

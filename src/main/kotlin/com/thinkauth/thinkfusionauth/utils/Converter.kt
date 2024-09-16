@@ -15,7 +15,8 @@ fun User.toUserEntity(): UserEntity {
         imageUrl = if(this.imageUrl == null) null else this.imageUrl.toString(),
         mobilePhone = if(this.mobilePhone == null) null else this.mobilePhone,
         languageId = (if(this.data["languageId"] == null) null else this.data["languageId"]).toString(),
-        genderState = (if(this.data["gender"] == null) null else this.data["gender"]).toString()
+        genderState = (if(this.data["gender"] == null) null else this.data["gender"]).toString(),
+        ageGroup = (if(this.data["ageRange"] == null) null else this.data["ageRange"]).toString(),
     )
 }
 

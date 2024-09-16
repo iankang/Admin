@@ -7,8 +7,12 @@ import java.time.LocalDateTime
 
 @Document
 data class AudioAcceptedEntity(
-    @DocumentReference
-    var sentenceUploadEntity: SentenceUploadEntity? = null,
+    var sentenceId:String? = null,
+    var dialectId:String? = null,
+    var dialectName:String? = null,
+    var businessId:String? = null,
+    var businessName:String? = null,
+    var mediaItemId:String? = null,
     var acceptor: User? = null
 ):AuditMetadata(){
     var acceptedDate:LocalDateTime? = LocalDateTime.now()

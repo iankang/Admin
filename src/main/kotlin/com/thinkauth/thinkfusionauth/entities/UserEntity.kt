@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.entities
 
+import com.thinkauth.thinkfusionauth.entities.enums.AgeRangeEnum
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDate
 
@@ -14,5 +15,6 @@ data class UserEntity(
     var imageUrl:String?= null,
     var mobilePhone:String?= null,
     var languageId:String? = null,
-    var genderState: String? = null
+    var genderState: String? = null,
+    var ageGroup:String? =  null
 ):AuditMetadata()
