@@ -8,6 +8,5 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference
 data class SentenceAccepted(
     @DocumentReference
     var sentenceUploadEntity: SentenceUploadEntity? = null,
-
     var acceptor: User? = null
 ):AuditMetadata()

@@ -118,8 +118,10 @@ class AudioCollectionService(
         response.flushBuffer()
     }
     @TrackExecutionTime
-    fun getAudioCollectionByLanguageId(languageId: String): List<SentenceEntity> {
-        return audioRepository.findAllByLanguageId(languageId)
+    fun getAudioCollectionByLanguageId(languageId: String): Page<SentenceEntity> {
+        val paging = PageRequest.of(0, 100000, Sort.by("lastModifiedDate").descending())
+
+        return audioRepository.findAllByLanguageId(languageId, paging)
     }
 
     @TrackExecutionTime
@@ -140,6 +142,24 @@ class AudioCollectionService(
     @TrackExecutionTime
     fun getCountOfAllAudioCollectionByLanguageId(languageId: String): Long? {
         return audioRepository.countAudioCollectionsByLanguageId(languageId)
+    }
+    @TrackExecutionTime
+    fun getAllSentencesByLanguageId(
+        languageId: String,
+        page:Int,
+        size:Int
+    ): PagedResponse<MutableList<SentenceEntity>> {
+
+        var sentenceEntityList = mutableListOf<SentenceEntity>()
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
+        val sentenceEntityPage: Page<SentenceEntity> = audioRepository.findAllByLanguageId(languageId, paging)
+        sentenceEntityList = sentenceEntityPage.content
+        return PagedResponse<MutableList<SentenceEntity>>(
+            sentenceEntityList,
+            sentenceEntityPage.number,
+            sentenceEntityPage.totalElements,
+            sentenceEntityPage.totalPages
+        )
     }
 
     @TrackExecutionTime

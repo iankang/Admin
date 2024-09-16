@@ -1,6 +1,6 @@
 package com.thinkauth.thinkfusionauth.repository
 
-import com.thinkauth.thinkfusionauth.entities.MediaAcceptanceState
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,7 +28,7 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun countAllByMediaName(mediaName:String):Long
 
-    fun countAllByMediaStateAndMediaName(mediaAcceptanceState: MediaAcceptanceState,mediaName:String):Long
+    fun countAllByMediaStateAndMediaName(mediaAcceptanceState: MediaAcceptanceState, mediaName:String):Long
 
     fun countAllByLanguageIdAndMediaName(languageId:String,mediaName:String):Long
 }

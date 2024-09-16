@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.events.listener
 
 import com.thinkauth.thinkfusionauth.entities.*
+import com.thinkauth.thinkfusionauth.entities.enums.SentenceDocumentState
 import com.thinkauth.thinkfusionauth.events.OnSentenceDocumentMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.models.requests.DialectRequest
 import com.thinkauth.thinkfusionauth.models.requests.LanguageRequest

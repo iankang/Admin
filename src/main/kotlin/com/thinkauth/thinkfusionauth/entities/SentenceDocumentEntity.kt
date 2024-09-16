@@ -1,10 +1,8 @@
 package com.thinkauth.thinkfusionauth.entities
 
-import com.thinkauth.thinkfusionauth.utils.BucketName
+import com.thinkauth.thinkfusionauth.entities.enums.SentenceDocumentState
 import net.minidev.json.annotate.JsonIgnore
-import org.springframework.core.io.Resource
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.web.multipart.MultipartFile
 
 @Document
 class SentenceDocumentEntity(
@@ -15,7 +13,7 @@ class SentenceDocumentEntity(
     var dialectName:String?,
     var businessId:String?,
     var businessName:String?,
-    var sentenceDocumentState:SentenceDocumentState = SentenceDocumentState.UNPROCESSED
+    var sentenceDocumentState: SentenceDocumentState = SentenceDocumentState.UNPROCESSED
 ) : AuditMetadata(){
     var fileName:String? = null
     var fileType:String? = null

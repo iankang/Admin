@@ -1,6 +1,6 @@
 package com.thinkauth.thinkfusionauth.controllers
 
-import com.thinkauth.thinkfusionauth.entities.MediaAcceptanceState
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse

@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.entities
 
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
@@ -16,5 +17,5 @@ data class MediaEntity(
     var businessId: String?,
     var genderState: String?,
     var accepted:Boolean? = false,
-    var mediaState:MediaAcceptanceState =  MediaAcceptanceState.PENDING
+    var mediaState: MediaAcceptanceState =  MediaAcceptanceState.PENDING
 ):AuditMetadata()

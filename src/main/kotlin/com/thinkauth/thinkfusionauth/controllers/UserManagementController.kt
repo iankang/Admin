@@ -2,7 +2,6 @@ package com.thinkauth.thinkfusionauth.controllers
 
 
 import com.inversoft.error.Errors
-import com.thinkauth.thinkfusionauth.entities.GenderState
 import com.thinkauth.thinkfusionauth.entities.UserEntity
 import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
@@ -23,10 +22,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.net.URI
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.math.log
 
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -225,6 +221,7 @@ class UserManagementController(
 
     @Operation(summary = "get all users", description = "Gets all users", tags = ["UserManagement"])
     @GetMapping("/fetchAllUsers")
+    @PreAuthorize("hasAuthority('admin')")
     fun fetchAllUsers(): ResponseEntity<MutableList<UserEntity>> {
         return ResponseEntity(userManagementService.fetchAllUsers(), HttpStatus.OK)
     }

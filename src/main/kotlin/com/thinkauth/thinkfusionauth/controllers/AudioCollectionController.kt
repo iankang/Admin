@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -167,7 +168,7 @@ class AudioCollectionController(
     @GetMapping("/audioCollectionByLanguageId/{languageId}")
     fun getAllAudioByLanguageId(
         @PathVariable("languageId") languageId:String
-    ): List<SentenceEntity> {
+    ): Page<SentenceEntity> {
 
         return audioCollectionService.getAudioCollectionByLanguageId(languageId)
     }

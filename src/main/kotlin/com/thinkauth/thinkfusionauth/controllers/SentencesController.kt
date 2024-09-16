@@ -59,6 +59,18 @@ class SentencesController(
     }
 
     @Operation(
+        summary = "Get all sentences by language", description = "gets all sentences by language", tags = ["Sentences"]
+    )
+    @GetMapping("/sentencesByLanguageId")
+    fun getSentencesByLanguageId(
+        @RequestParam("languageId") languageId: String,
+        @RequestParam("page", defaultValue = "0") page:Int = 0,
+        @RequestParam("size", defaultValue = "10") size:Int = 10
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntity>>> {
+        return ResponseEntity(audioCollectionService.getAllSentencesByLanguageId(languageId, page, size), HttpStatus.OK)
+    }
+
+    @Operation(
         summary = "Upload sentence document", description = "Update a document for sentence", tags = ["Sentences"]
     )
     @PostMapping(
