@@ -3,10 +3,13 @@ package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.SentenceUploadEntity
+import com.thinkauth.thinkfusionauth.entities.SentenceUserIgnore
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.AudioCollectionService
 import com.thinkauth.thinkfusionauth.services.SentenceUploadService
+import com.thinkauth.thinkfusionauth.services.SentenceUserIgnoreService
+import com.thinkauth.thinkfusionauth.services.UserManagementService
 import io.minio.GetObjectResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -28,7 +31,9 @@ import javax.servlet.http.HttpServletResponse
 @Tag(name = "Audio", description = "This manages the audio in the system.")
 class AudioCollectionController(
     private val audioCollectionService: AudioCollectionService,
-    private val uploadService: SentenceUploadService
+    private val uploadService: SentenceUploadService,
+    private val sentenceUserIgnoreService: SentenceUserIgnoreService,
+    private val userManagementService: UserManagementService
 ) {
     private val LOGGER:Logger = LoggerFactory.getLogger(AudioCollectionController::class.java)
     @Operation(
@@ -128,6 +133,66 @@ class AudioCollectionController(
         @RequestParam("size", defaultValue = "10") size:Int = 10
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
         return ResponseEntity(audioCollectionService.getAllSentences(page, size),HttpStatus.OK)
+    }
+    @Operation(
+        summary = "Get all sentences filtered", description = "gets all sentences filtered", tags = ["Audio"]
+    )
+    @GetMapping("/sentencesFiltered")
+    fun getSentencesFilteredPaged(
+        @RequestParam("page", defaultValue = "0") page:Int = 0,
+        @RequestParam("size", defaultValue = "10") size:Int = 10
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
+        val userId = userManagementService.loggedInUser()!!
+        val toIgnore = sentenceUserIgnoreService.getAllUserIgnoredSentences(userId)
+        LOGGER.info("sentenceIds to ignore: ${toIgnore}")
+        return ResponseEntity(audioCollectionService.getAllSentencesNotInSentenceId(toIgnore,page, size),HttpStatus.OK)
+    }
+    @Operation(
+        summary = "Get all sentences filtered by ignore and languageId", description = "gets all sentences filtered by ignore and languageId", tags = ["Audio"]
+    )
+    @GetMapping("/sentencesFilteredByLanguageId")
+    fun getSentencesFilteredByLanguageIdPaged(
+        @RequestParam("languageId") languageId: String,
+        @RequestParam("page", defaultValue = "0") page:Int = 0,
+        @RequestParam("size", defaultValue = "10") size:Int = 10
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
+        val userId = userManagementService.loggedInUser()!!
+        val toIgnore = sentenceUserIgnoreService.getAllUserIgnoredSentences(userId)
+        LOGGER.info("sentenceIds to ignore: ${toIgnore}")
+        return ResponseEntity(audioCollectionService.getAllSentencesNotInSentenceIdFilterByLanguageId(toIgnore,languageId,page, size),HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Ignore Sentence", description = "Ignores a sentence", tags = ["Audio"]
+    )
+    @PostMapping("/ignoreSentence")
+    fun ignoreSentence(
+        @RequestParam("sentenceId") sentenceId:String
+    ): ResponseEntity<SentenceUserIgnore> {
+        val userId = userManagementService.loggedInUser()!!
+        return ResponseEntity(sentenceUserIgnoreService.addSentenceUserIgnore(userId, sentenceId),HttpStatus.OK)
+    }
+    @Operation(
+        summary = "Ignore Sentence by passing both user id and sentence id", description = "Ignores a sentence by passing both user id and sentence id", tags = ["Audio"]
+    )
+    @PostMapping("/ignoreSentenceExplicit")
+    fun ignoreSentenceExplicit(
+        @RequestParam("userId") userId:String,
+        @RequestParam("sentenceId") sentenceId:String
+    ): ResponseEntity<SentenceUserIgnore> {
+
+        return ResponseEntity(sentenceUserIgnoreService.addSentenceUserIgnore(userId, sentenceId),HttpStatus.OK)
+    }
+    @Operation(
+        summary = "UnIgnore Sentence by passing both user id and sentence id", description = "UnIgnores a sentence by passing both user id and sentence id", tags = ["Audio"]
+    )
+    @DeleteMapping("/unIgnoreSentence")
+    fun unIgnoreSentenceExplicit(
+        @RequestParam("userId") userId:String,
+        @RequestParam("sentenceId") sentenceId:String
+    ): ResponseEntity<Unit> {
+
+        return ResponseEntity(sentenceUserIgnoreService.removeSentenceUserIgnore(userId, sentenceId),HttpStatus.OK)
     }
     @Operation(
         summary = "Get all sentences", description = "gets all sentences", tags = ["Audio"]

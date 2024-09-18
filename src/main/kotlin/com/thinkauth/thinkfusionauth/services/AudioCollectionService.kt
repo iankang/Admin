@@ -176,4 +176,35 @@ class AudioCollectionService(
     fun getAllSentencesByBusinessId(businessId:String): List<SentenceEntitie> {
         return audioRepository.findAllByBusinessId(businessId)
     }
+
+    @TrackExecutionTime
+    fun getAllSentencesNotInSentenceId(sentenceId:List<String>,
+                                       page:Int,
+                                       size:Int
+    ): PagedResponse<MutableList<SentenceEntitie>> {
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
+        val sentences = audioRepository.findSentencesNotIn(sentenceId, paging)
+        return PagedResponse<MutableList<SentenceEntitie>>(
+            sentences.content,
+            sentences.number,
+            sentences.totalElements,
+            sentences.totalPages
+        )
+    }
+    @TrackExecutionTime
+    fun getAllSentencesNotInSentenceIdFilterByLanguageId(
+                                sentenceId:List<String>,
+                                languageId: String,
+                                page:Int,
+                                size:Int
+    ): PagedResponse<MutableList<SentenceEntitie>> {
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
+        val sentences = audioRepository.findSentencesNotInAndLanguageId(sentenceId,languageId, paging)
+        return PagedResponse<MutableList<SentenceEntitie>>(
+            sentences.content,
+            sentences.number,
+            sentences.totalElements,
+            sentences.totalPages
+        )
+    }
 }
