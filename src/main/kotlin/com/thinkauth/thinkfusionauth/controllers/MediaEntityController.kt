@@ -40,7 +40,7 @@ class MediaEntityController(
     }
 
     @Operation(
-        summary = "Get a media entities", description = "gets a media entity", tags = ["MediaEntities"]
+        summary = "Get a media entity", description = "gets a media entity", tags = ["MediaEntities"]
     )
     @GetMapping("/mediaEntity")
     fun getSingleMediaEntity(

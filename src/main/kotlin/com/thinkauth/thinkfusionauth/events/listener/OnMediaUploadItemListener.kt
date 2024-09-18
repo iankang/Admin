@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
+import kotlin.math.log
 
 @Component
 class OnMediaUploadItemListener(
@@ -64,8 +65,11 @@ class OnMediaUploadItemListener(
 //        var bucko = mediaFullPath(resource, multipartFile.name).absolutePathString()
             logger.info("path: $path")
             val response = fileManagerService.uploadFile(bucketName, path, multipartFile.inputStream)
+            logger.info("uploading response: ${response.toString()}")
             val user = userManagementService.fetchLoggedInUserEntity()
+            logger.info("logged in user: ${user}")
             val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
+            logger.info("sentence: $sentence")
             val mediaEntity = MediaEntity(
                 mediaName = resource.name,
                 owner = user,
