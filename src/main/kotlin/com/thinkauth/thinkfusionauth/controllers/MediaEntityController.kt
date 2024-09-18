@@ -27,6 +27,17 @@ class MediaEntityController(
     ): ResponseEntity<PagedResponse<List<MediaEntity>>> {
             return ResponseEntity(mediaEntityService.fetchAllMediaEntityPaged(page, size), HttpStatus.OK)
     }
+    @Operation(
+        summary = "Get all media entities by languageId", description = "gets all media entities by languageId", tags = ["MediaEntities"]
+    )
+    @GetMapping("/allMediaEntitiesByLanguageId")
+    fun getAllMediaEntitiesByLanguageId(
+        @RequestParam("languageId") languageId:String,
+        @RequestParam("page", defaultValue = "0") page:Int = 0,
+        @RequestParam("size", defaultValue = "10") size:Int = 10
+    ): ResponseEntity<PagedResponse<List<MediaEntity>>> {
+            return ResponseEntity(mediaEntityService.fetchAllMediaEntityPagedByLanguageId(languageId,page, size), HttpStatus.OK)
+    }
 
     @Operation(
         summary = "Get a media entities", description = "gets a media entity", tags = ["MediaEntities"]

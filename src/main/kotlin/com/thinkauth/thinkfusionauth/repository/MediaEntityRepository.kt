@@ -14,6 +14,8 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllBySentenceId(sentenceId:String):List<MediaEntity>
 
+    fun findAllByLanguageId(languageId: String,pageable: Pageable):Page<MediaEntity>
+
     fun findAllByCreatedByUser(userEmail:String):List<MediaEntity>
 
     fun countAllByUsernameAndMediaName(userEmail:String,mediaName:String):Long
@@ -31,4 +33,6 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
     fun countAllByMediaStateAndMediaName(mediaAcceptanceState: MediaAcceptanceState, mediaName:String):Long
 
     fun countAllByLanguageIdAndMediaName(languageId:String,mediaName:String):Long
+
+    fun countAllByLanguageId(languageId:String):Long
 }

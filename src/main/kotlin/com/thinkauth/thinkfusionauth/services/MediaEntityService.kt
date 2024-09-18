@@ -35,6 +35,21 @@ class MediaEntityService(
             content.totalPages
         )
     }
+
+    fun fetchAllMediaEntityPagedByLanguageId(
+        languageId:String,
+        page:Int = 0,
+        size:Int= 10
+    ): PagedResponse<List<MediaEntity>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val content = mediaEntityRepository.findAllByLanguageId(languageId,paging)
+        return PagedResponse<List<MediaEntity>>(
+            content.content,
+            content.number,
+            content.totalElements,
+            content.totalPages
+        )
+    }
     fun fetchMediaEntityById(id:String): MediaEntity {
         return mediaEntityRepository.findById(id).get()
     }
@@ -68,6 +83,9 @@ class MediaEntityService(
         return mediaEntityRepository.findAllByAccepted(acceptedState)
     }
 
+    fun countAllVoiceCollectionsByLanguageId(languageId: String): Long {
+        return mediaEntityRepository.countAllByLanguageId(languageId)
+    }
     fun countAllVoiceCollections(
     ):MutableMap<String,Long>{
         val voiceMap = mutableMapOf<String,Long>()

@@ -31,12 +31,13 @@ class OnMediaUploadItemListener(
     }
 
     private fun uploadMedia(event: OnMediaUploadItemEvent) {
-        val multipartFile = event.file
-        val path = event.copyLocation
-        val resource = event.resource
-        val sentenceId = event.sentenceId
-        val businessId = event.businessId
-        val genderState = event.genderState
+        try {
+            val multipartFile = event.file
+            val path = event.copyLocation
+            val resource = event.resource
+            val sentenceId = event.sentenceId
+            val businessId = event.businessId
+            val genderState = event.genderState
 
 //        if (authentication !is AnonymousAuthenticationToken) {
 //            val userPrincipal = authentication.principal as String
@@ -61,23 +62,26 @@ class OnMediaUploadItemListener(
 //            }
 //        }
 //        var bucko = mediaFullPath(resource, multipartFile.name).absolutePathString()
-        logger.info("path: $path")
-        val response = fileManagerService.uploadFile(bucketName, path, multipartFile.inputStream)
-        val user = userManagementService.fetchLoggedInUserEntity()
-        val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
-        val mediaEntity = MediaEntity(
-            mediaName = resource.name,
-            owner = user,
-            username = user.username ?: "",
-            mediaObject = response?.`object`()!!,
-            mediaPathId = path,
-            sentenceId = sentenceId,
-            actualSentence = sentence.sentence,
-            languageId = sentence.language.id,
-            languageName = sentence.language.languageName,
-            businessId = businessId,
-            genderState = genderState
-        )
-        mediaEntityService.saveMediaEntity(mediaEntity)
+            logger.info("path: $path")
+            val response = fileManagerService.uploadFile(bucketName, path, multipartFile.inputStream)
+            val user = userManagementService.fetchLoggedInUserEntity()
+            val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
+            val mediaEntity = MediaEntity(
+                mediaName = resource.name,
+                owner = user,
+                username = user.username ?: user.email,
+                mediaObject = response?.`object`()!!,
+                mediaPathId = path,
+                sentenceId = sentenceId,
+                actualSentence = sentence.sentence,
+                languageId = sentence.language.id,
+                languageName = sentence.language.languageName,
+                businessId = businessId,
+                genderState = genderState
+            )
+            mediaEntityService.saveMediaEntity(mediaEntity)
+        }catch (e:Exception){
+            logger.error("OnMediaUploadListener: ${e.toString()}")
+        }
     }
 }
