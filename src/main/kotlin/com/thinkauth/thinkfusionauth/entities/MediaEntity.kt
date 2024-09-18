@@ -8,7 +8,6 @@ data class MediaEntity(
     var mediaName: String?,
     var owner: UserEntity,
     var username:String?,
-    var mediaObject: String,
     var mediaPathId: String,
     var sentenceId: String?,
     var actualSentence:String?,

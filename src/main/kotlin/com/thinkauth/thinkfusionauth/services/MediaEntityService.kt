@@ -22,10 +22,9 @@ class MediaEntityService(
     private val userManagementService: UserManagementService,
     private val audioCollectionService: AudioCollectionService,
     private val languageService: LanguageService,
-    private val fileManagerService: StorageService,
     private val audioManagementService: AudioCollectionService,
     private val userIgnoreService: SentenceUserIgnoreService,
-    @Value("\${minio.bucket}") private val bucketName: String
+
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MediaEntityService::class.java)
     fun saveMediaEntity(mediaEntity: MediaEntity): MediaEntity {
@@ -184,7 +183,7 @@ class MediaEntityService(
     @Async
     fun uploadMedia(event: OnMediaUploadItemEvent) {
         try {
-            val multipartFile = event.file
+
             val path = event.copyLocation
             val resource = event.resource
             val sentenceId = event.sentenceId
@@ -217,15 +216,13 @@ class MediaEntityService(
 
             logger.info("logged in user: ${user}")
             logger.info("path: $path")
-            val response = fileManagerService.uploadFile(bucketName, path, multipartFile.inputStream)
-            logger.info("uploading response: ${response.toString()}")
+
             val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
             logger.info("sentence: $sentence")
             val mediaEntity = MediaEntity(
                 mediaName = resource.name,
                 owner = user!!,
                 username = user.username ?: user.email,
-                mediaObject = response?.`object`()!!,
                 mediaPathId = path,
                 sentenceId = sentenceId,
                 actualSentence = sentence.sentence,

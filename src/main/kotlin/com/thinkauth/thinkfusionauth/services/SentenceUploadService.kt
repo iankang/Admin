@@ -8,6 +8,7 @@ import com.thinkauth.thinkfusionauth.repository.SentenceUploadRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import com.thinkauth.thinkfusionauth.utils.FileProcessingHelper
 import io.swagger.v3.oas.integration.StringOpenApiConfigurationLoader.LOGGER
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -19,7 +20,9 @@ class SentenceUploadService(
     private val fileProcessingHelper: FileProcessingHelper,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val userManagementService: UserManagementService,
-    private val mediaEntityService: MediaEntityService
+    private val mediaEntityService: MediaEntityService,
+    private val fileManagerService: StorageService,
+    @Value("\${minio.bucket}") private val bucketName: String
 
 ) {
 
@@ -34,6 +37,8 @@ class SentenceUploadService(
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
         val user = userManagementService.fetchLoggedInUserEntity()
 
+        val response = fileManagerService.uploadFile(bucketName, path, file.inputStream)
+        LOGGER.info("uploading response: ${response.toString()}")
         val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(
             file,
             path,
@@ -42,7 +47,6 @@ class SentenceUploadService(
             sentence.business?.id,
             user
         )
-//        mediaEntityService.uploadMedia(onMediaUploadAudioCollectionEvent)
         applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
 
         return finalCollection
@@ -61,6 +65,9 @@ class SentenceUploadService(
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
         val user = userManagementService.fetchLoggedInUserEntity()
         LOGGER.info("userInfo add audio event: ${user}")
+
+        val response = fileManagerService.uploadFile(bucketName, path, file.inputStream)
+        LOGGER.info("uploading response: ${response.toString()}")
         val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(
             file,
             path,
