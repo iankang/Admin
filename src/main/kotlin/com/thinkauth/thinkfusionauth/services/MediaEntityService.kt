@@ -165,7 +165,7 @@ class MediaEntityService(
             content.totalPages
         )
     }
-    @Async
+//    @Async
     fun uploadMedia(event: OnMediaUploadItemEvent) {
         try {
             val multipartFile = event.file
