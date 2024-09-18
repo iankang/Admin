@@ -24,6 +24,7 @@ class MediaEntityService(
     private val languageService: LanguageService,
     private val fileManagerService: StorageService,
     private val audioManagementService: AudioCollectionService,
+    private val userIgnoreService: SentenceUserIgnoreService,
     @Value("\${minio.bucket}") private val bucketName: String
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MediaEntityService::class.java)
@@ -165,6 +166,21 @@ class MediaEntityService(
             content.totalPages
         )
     }
+    fun findAllVoiceCollectionsByLoggedInUserLanguageId(
+        languageId: String,
+        page:Int,
+        size:Int
+    ): PagedResponse<List<MediaEntity>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val user = userManagementService.fetchLoggedInUserEntity()
+        val content = mediaEntityRepository.findAllByUsernameAndMediaNameAndLanguageId( user.username!!,"VOICE_COLLECTION",languageId,paging)
+        return PagedResponse<List<MediaEntity>>(
+            content.content,
+            content.number,
+            content.totalElements,
+            content.totalPages
+        )
+    }
     @Async
     fun uploadMedia(event: OnMediaUploadItemEvent) {
         try {
@@ -219,6 +235,12 @@ class MediaEntityService(
                 genderState = user.genderState
             )
            saveMediaEntity(mediaEntity)
+            //once uploaded, the sentence should not be visible
+            if(user.email != null) {
+                userIgnoreService.addSentenceUserIgnore(userId = user.email!!, sentenceId)
+            } else{
+                userIgnoreService.addSentenceUserIgnore(userId = user.username!!,sentenceId)
+            }
         }catch (e:Exception){
             logger.error("OnMediaUploadListener: ${e.toString()}")
         }

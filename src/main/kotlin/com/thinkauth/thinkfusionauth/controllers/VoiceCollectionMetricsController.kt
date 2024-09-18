@@ -69,6 +69,17 @@ class VoiceCollectionMetricsController(
     ): ResponseEntity<PagedResponse<List<MediaEntity>>> {
         return ResponseEntity(mediaEntityService.findAllVoiceCollectionsByLoggedInUser(page,size), HttpStatus.OK)
     }
+    @Operation(
+        summary = "Get all voice collections by logged in user and language id", description = "gets all voice collections by logged in user and language id", tags = ["Metrics"]
+    )
+    @GetMapping("/allVoiceCollectionByLoggedInUserLanguageId")
+    fun getAllRecordingsByLoggedInUserLanguageId(
+        @RequestParam(name = "languageId")languageId:String,
+        @RequestParam(name = "page", defaultValue = "0") page:Int= 0,
+        @RequestParam(name = "size", defaultValue = "100") size:Int = 0,
+    ): ResponseEntity<PagedResponse<List<MediaEntity>>> {
+        return ResponseEntity(mediaEntityService.findAllVoiceCollectionsByLoggedInUserLanguageId(languageId,page,size), HttpStatus.OK)
+    }
 //
 //    @Operation(
 //        summary = "Get a media entities", description = "gets a media entity", tags = ["MediaEntities"]

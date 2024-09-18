@@ -23,6 +23,7 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
     fun countAllByUsernameAndMediaNameAndLanguageId(userEmail:String,mediaName:String,languageId:String):Long
 
     fun findAllByUsernameAndMediaName( userEmail:String, mediaName:String,pageable: Pageable): Page<MediaEntity>
+    fun findAllByUsernameAndMediaNameAndLanguageId( username:String, mediaName:String,languageId: String,pageable: Pageable): Page<MediaEntity>
 
     fun findAllByAccepted(boolean: Boolean):List<MediaEntity>
 
