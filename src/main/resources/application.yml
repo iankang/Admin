@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: production
+    active: development
 
 ---
 server:
@@ -29,7 +29,7 @@ spring:
     mongodb:
       #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
       #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBTest?tls=false?authSource=
-      database: ThinkDBTest
+      database: ThinkDBPilot
       authentication-database: admin
       host: 18.218.12.248
       username: ian
@@ -95,7 +95,7 @@ spring:
     mongodb:
       #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
       #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBTest?tls=false?authSource=
-      database: ThinkDBTest
+      database: ThinkDBPilot
       authentication-database: admin
       host: 18.218.12.248
       username: ian

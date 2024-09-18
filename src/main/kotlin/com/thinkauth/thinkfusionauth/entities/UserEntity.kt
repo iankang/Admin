@@ -16,5 +16,6 @@ data class UserEntity(
     var mobilePhone:String?= null,
     var languageId:String? = null,
     var genderState: String? = null,
-    var ageGroup:String? =  null
+    var ageGroup:String? =  null,
+    var nationalId:Long? = null
 ):AuditMetadata()
