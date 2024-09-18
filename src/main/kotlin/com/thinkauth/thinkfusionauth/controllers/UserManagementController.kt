@@ -147,6 +147,9 @@ class UserManagementController(
                curentUser.user.data["ageRange"] = userRequest.ageRangeEnum!!.name
            }
 
+           if(userRequest.nationalId != null){
+               curentUser.user.data["nationalId"] = userRequest.nationalId
+           }
            if(userRequest.dialectId != null){
                if(dialectService.existsByDialectId(dialectId = userRequest.dialectId!!)) {
                    val dialect = dialectService.getDialectById(userRequest.dialectId!!)
@@ -190,6 +193,9 @@ class UserManagementController(
             }
             if(userProfileInfoRequest.ageRangeEnum != null){
                 curentUser.user.data["ageRange"] = userProfileInfoRequest.ageRangeEnum
+            }
+            if(userProfileInfoRequest.nationalId != null){
+                curentUser.user.data["nationalId"] = userProfileInfoRequest.nationalId
             }
 
             if(userProfileInfoRequest.dialectId != null){

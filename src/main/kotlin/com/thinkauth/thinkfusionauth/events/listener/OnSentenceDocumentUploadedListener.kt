@@ -22,10 +22,7 @@ import org.springframework.stereotype.Component
 @Component
 class OnSentenceDocumentUploadedListener(
     private val csvService: CsvService,
-    private val sentenceDocumentImpl: SentenceDocumentImpl,
-    private val languageService: LanguageService,
-    private val dialectService: DialectService,
-    private val audioCollectionService: AudioCollectionService
+
 ) : ApplicationListener<OnSentenceDocumentMediaUploadItemEvent> {
 
     private val logger: Logger = LoggerFactory.getLogger(OnSentenceDocumentUploadedListener::class.java)
@@ -34,92 +31,8 @@ class OnSentenceDocumentUploadedListener(
     override fun onApplicationEvent(event: OnSentenceDocumentMediaUploadItemEvent) {
 
         logger.info("uploading sentences")
-        processCSV(event)
+        csvService.processCSV(event)
         logger.info("finished uploading  sentences")
-    }
-
-    @Async
-    fun processCSV(event: OnSentenceDocumentMediaUploadItemEvent) {
-        val multipartFile = event.file
-        val business = event.business
-        val fileId = event.fileId
-
-        val csvItems = csvService.uploadCsvFile(multipartFile)
-        if (csvItems.isNotEmpty()) {
-            logger.info("adding sentences to db")
-            uploadTheSentences(csvItems, business, fileId)
-        }
-    }
-
-    fun uploadTheSentences(
-        csvItems: List<SentenceDocumentCSV>, business: Business, fileId: String
-    ) {
-        try {
-
-            val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
-            logger.info("sentence upload entity: {}", sentenceDoc)
-            val dialects =
-                csvItems.map { LangAndDialect(language = it.language, dialect = it.dialect)}.distinct()
-            logger.info("dialectsMap: {}", dialects)
-            val languageEntityMap: MutableMap<String, Language> = mutableMapOf()
-            val dialectEntityMap: MutableMap<String, Dialect> = mutableMapOf()
-            dialects.forEach { item ->
-                if (!languageService.existsByLanguageName(item.language!!)) {
-                    logger.info("language does not exist: {}", item.language)
-                    languageEntityMap[item.language!!] = languageService.addLanguage(languageRequest = LanguageRequest(item.language!!))
-
-                } else {
-                    logger.info("language exists: {}", item.language)
-                    languageEntityMap[item.language!!] = (languageService.findLanguageByLanguageName(item.language!!).first())!!
-                }
-                if (!dialectService.existsByDialectName(item.dialect!!)) {
-                    logger.info("dialect does not exist: {}", item.dialect!!)
-                    val languageStuff = languageService.findLanguageByLanguageName(item.language!!).first()
-                    dialectEntityMap[item.dialect!!] =
-                        dialectService.addDialect(DialectRequest(dialectName = item.dialect, languageId = languageStuff?.id))
-
-                } else {
-                    logger.info("dialect exists: {}", item.language)
-                    dialectEntityMap[item.dialect!!] = dialectService.getDialectByDialectName(item.dialect!!)?.first()!!
-                }
-                logger.info("languages: {}, dialects: {}", languageEntityMap, dialectEntityMap)
-            }
-//     d
-            val sentences = mutableListOf<SentenceEntitie>()
-            csvItems.map {
-                if (!audioCollectionService.sentenceExistsBySentence(it.localLanguage ?: "")) {
-                    logger.info("sentence doesn't exist: {}", it)
-                    sentences.add(
-                        SentenceEntitie(
-                            sentence = it.localLanguage,
-                            language = languageEntityMap[it.language]!!,
-                            dialect = dialectEntityMap[it.dialect],
-                            englishTranslation = it.textTranslation,
-                            topic = it.topic,
-                            source = it.source,
-                            business = business
-                        )
-                    )
-                }
-            }
-
-            if (sentences.isNotEmpty()) {
-                logger.info("Adding {} sentences", sentences.size)
-                audioCollectionService.bulkAddSentences(sentences)
-                sentenceDoc.sentenceCount = sentences.size
-                sentenceDoc.sentenceDocumentState = SentenceDocumentState.PROCESSED
-
-            } else {
-                logger.info("sentences is empty")
-                sentenceDoc.sentenceDocumentState = SentenceDocumentState.PROCESSED
-            }
-            sentenceDocumentImpl.createItem(sentenceDoc)
-        } catch (e: Exception) {
-            logger.error("something went wrong: {}", e.toString())
-            val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
-            sentenceDoc.sentenceDocumentState = SentenceDocumentState.FAILED
-            sentenceDocumentImpl.createItem(sentenceDoc)
-        }
     }
 
 }

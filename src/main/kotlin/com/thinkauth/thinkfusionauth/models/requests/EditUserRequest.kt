@@ -15,5 +15,6 @@ data class EditUserRequest(
     var birthDate: LocalDate? = null,
     var ageRangeEnum: AgeRangeEnum?,
     var gender: GenderState?,
-    var dialectId:String? = null
+    var dialectId:String? = null,
+    var nationalId:Long? = null
 )

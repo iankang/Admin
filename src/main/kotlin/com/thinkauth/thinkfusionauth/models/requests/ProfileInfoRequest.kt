@@ -6,5 +6,6 @@ import com.thinkauth.thinkfusionauth.entities.enums.GenderState
 data class ProfileInfoRequest(
     var ageRangeEnum: AgeRangeEnum?,
     var gender: GenderState?,
-    var dialectId:String?
+    var dialectId:String?,
+    var nationalId:String?
 )
