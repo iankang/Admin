@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationListener
 import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 import kotlin.math.log
 
 @Component
+@EnableAsync
 class OnMediaUploadItemListener(
     private val fileManagerService: StorageService,
     private val userManagementService: UserManagementService,

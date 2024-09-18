@@ -6,9 +6,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 
 @Component
+@EnableAsync
 class OnUserRegisteredListener(
     private val userManagementService: UserManagementService
 ) : ApplicationListener<OnUserRegisteredEvent> {
