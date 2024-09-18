@@ -19,6 +19,7 @@ class SentenceUploadService(
     private val fileProcessingHelper: FileProcessingHelper,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val userManagementService: UserManagementService,
+    private val mediaEntityService: MediaEntityService
 
 ) {
 
@@ -43,7 +44,8 @@ class SentenceUploadService(
             user.genderState
 
         )
-        applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
+        mediaEntityService.uploadMedia(onMediaUploadAudioCollectionEvent)
+//        applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
 
         return finalCollection
     }
