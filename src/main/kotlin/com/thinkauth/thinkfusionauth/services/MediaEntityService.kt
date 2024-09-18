@@ -165,7 +165,7 @@ class MediaEntityService(
             content.totalPages
         )
     }
-//    @Async
+    @Async
     fun uploadMedia(event: OnMediaUploadItemEvent) {
         try {
             val multipartFile = event.file
@@ -173,7 +173,7 @@ class MediaEntityService(
             val resource = event.resource
             val sentenceId = event.sentenceId
             val businessId = event.businessId
-            val genderState = event.genderState
+            val user = event.user
 
 //        if (authentication !is AnonymousAuthenticationToken) {
 //            val userPrincipal = authentication.principal as String
@@ -198,16 +198,16 @@ class MediaEntityService(
 //            }
 //        }
 //        var bucko = mediaFullPath(resource, multipartFile.name).absolutePathString()
+
+            logger.info("logged in user: ${user}")
             logger.info("path: $path")
             val response = fileManagerService.uploadFile(bucketName, path, multipartFile.inputStream)
             logger.info("uploading response: ${response.toString()}")
-            val user = userManagementService.fetchLoggedInUserEntity()
-            logger.info("logged in user: ${user}")
             val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
             logger.info("sentence: $sentence")
             val mediaEntity = MediaEntity(
                 mediaName = resource.name,
-                owner = user,
+                owner = user!!,
                 username = user.username ?: user.email,
                 mediaObject = response?.`object`()!!,
                 mediaPathId = path,
@@ -216,7 +216,7 @@ class MediaEntityService(
                 languageId = sentence.language.id,
                 languageName = sentence.language.languageName,
                 businessId = businessId,
-                genderState = genderState
+                genderState = user.genderState
             )
            saveMediaEntity(mediaEntity)
         }catch (e:Exception){

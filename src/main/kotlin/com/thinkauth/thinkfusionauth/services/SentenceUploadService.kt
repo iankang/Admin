@@ -40,12 +40,10 @@ class SentenceUploadService(
             BucketName.VOICE_COLLECTION,
             sentence.id,
             sentence.business?.id,
-            user.languageId,
-            user.genderState
-
+            user
         )
-        mediaEntityService.uploadMedia(onMediaUploadAudioCollectionEvent)
-//        applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
+//        mediaEntityService.uploadMedia(onMediaUploadAudioCollectionEvent)
+        applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
 
         return finalCollection
     }
@@ -62,14 +60,14 @@ class SentenceUploadService(
         )
         val finalCollection = sentenceUploadRepository.save(sentenceUpload)
         val user = userManagementService.fetchLoggedInUserEntity()
+        LOGGER.info("userInfo add audio event: ${user}")
         val onMediaUploadAudioCollectionEvent = OnMediaUploadItemEvent(
             file,
             path,
             BucketName.VOICE_COLLECTION,
             SentenceEntitie.id,
             SentenceEntitie.business?.id,
-            user.languageId,
-            user.genderState
+            user
             )
         applicationEventPublisher.publishEvent(onMediaUploadAudioCollectionEvent)
         LOGGER.info("finalCollection: "+ finalCollection.toString())

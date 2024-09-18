@@ -91,8 +91,7 @@ class BusinessService(
             BucketName.BUSINESS_PROFILE_PIC,
             null,
             bizniz.id,
-            null,
-            null
+            user
         )
         applicationEventPublisher.publishEvent(onMediaUploadItemEvent)
         return saveBusiness(bizniz)

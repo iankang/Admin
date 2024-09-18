@@ -6,7 +6,6 @@ import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
-import com.thinkauth.thinkfusionauth.repository.SentenceUploadRepository
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.services.*
@@ -14,8 +13,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
+import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
 class DataLoader(
@@ -144,12 +143,30 @@ class DataLoader(
     }
 
     fun backdateAllUserInfo(){
-        userManagementService.fetchAllUsers().forEach { userEntity:UserEntity ->
-            logger.debug("user update before: $userEntity")
-            userManagementService.addUserFromFusionAuthByEmail(userEntity.email?: userEntity.username!!)
+        logger.info("trying to run")
+        val userSet = mutableSetOf<UserEntity>()
+        val allUsers = userManagementService.fetchAllUsers().toSet()
+        userSet.addAll(allUsers)
+        userManagementService.deleteAllUsers()
+        userManagementService.addAllUsers(allUsers.toList())
+        logger.info("allusers: ")
+    }
 
+    fun userInfoGreaterThanOne(){
+        logger.info("users must be unique")
+        val allUserEmails = userManagementService.fetchAllUsers().map { it.email }.toSet()
+        allUserEmails.forEach {
+            val userCount = userManagementService.countUserInstancesEmail(it ?: "")
+            if(userCount>1) {
+                logger.info("username: ${it}, count: ${userCount}")
+                val allRelatedUsers = userManagementService.fetchAllUsersWithEmail(it ?: "").first()
+                userManagementService.deleteAllUsersByEmail(it ?: "")
+                userManagementService.addUserEntity(allRelatedUsers)
+                logger.info("lastuser: ${allRelatedUsers}")
+            }
         }
     }
+
 
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
@@ -159,8 +176,10 @@ class DataLoader(
         addSwahiliSentences()
         industryItems()
         backdateAllConversations()
-        addDescriptionsForBots()
-        backdateAllUserInfo()
+//        addDescriptionsForBots(
+//        logger.info("running after 5 seconds delay")
+//        backdateAllUserInfo()
 //        backdateAllMediaEntities()
+//        userInfoGreaterThanOne()
     }
 }

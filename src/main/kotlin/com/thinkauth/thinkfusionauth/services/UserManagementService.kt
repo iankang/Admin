@@ -51,24 +51,57 @@ class UserManagementService(
 
     fun addUserFromFusionAuthByEmail(email: String) {
         val userENt = fetchUserEntityByEmailFromFusionAuth(email)
-        if (userENt != null) {
-            addUserEntity(userENt)
+
+        if (userENt != null ) {
+            val userExists = userRepository.existsByEmail(email)
+            if(!userExists) {
+                addUserEntity(userENt)
+            }
         }
     }
 
 
     fun addUserEntity(userEntity: UserEntity): UserEntity {
-        return userRepository.save(userEntity)
+        return if(!userRepository.existsByEmail(userEntity.email ?: "")) {
+             userRepository.save(userEntity)
+        } else{
+            userEntity
+        }
     }
+
+
 
     fun fetchUserEntityByEmail(email: String): UserEntity {
         return userRepository.findByEmail(email)
+    }
+
+    fun fetchAllUsersWithEmail(email: String): List<UserEntity> {
+        return userRepository.findAllByEmail(email)
     }
 
     fun fetchAllUsers(): MutableList<UserEntity> {
         return userRepository.findAll()
     }
 
+    fun countUserInstancesEmail(email: String):Long{
+        return userRepository.countByEmail(email)
+    }
+    fun countUserInstancesUsername(username: String):Long{
+        return userRepository.countByUsername(username)
+    }
+
+    fun deleteAllUsers(){
+        logger.warn("deleting all useUrs")
+        userRepository.deleteAll()
+    }
+
+    fun deleteAllUsersByEmail(email:String){
+        userRepository.deleteAllByEmail(email)
+    }
+
+    fun addAllUsers(allUsers:List<UserEntity>): MutableList<UserEntity> {
+       return  userRepository.saveAll(allUsers)
+    }
     fun fetchLoggedInUserEntity(): UserEntity {
         val email = loggedInUser()
         logger.info("fetchLoggedInUserEntity")
