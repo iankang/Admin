@@ -22,6 +22,7 @@ class OnUserRegisteredListener(
         logger.info("finishing adding user to user entity")
     }
 
+    @Async
     fun addUserToUserEntity(event: OnUserRegisteredEvent) {
         val email = event.email
         userManagementService.addUserFromFusionAuthByEmail(email)

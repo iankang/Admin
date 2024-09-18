@@ -30,6 +30,7 @@ class OnSentenceDocumentUploadedListener(
 
     private val logger: Logger = LoggerFactory.getLogger(OnSentenceDocumentUploadedListener::class.java)
 
+
     override fun onApplicationEvent(event: OnSentenceDocumentMediaUploadItemEvent) {
 
         logger.info("uploading sentences")
@@ -37,6 +38,7 @@ class OnSentenceDocumentUploadedListener(
         logger.info("finished uploading  sentences")
     }
 
+    @Async
     fun processCSV(event: OnSentenceDocumentMediaUploadItemEvent) {
         val multipartFile = event.file
         val business = event.business

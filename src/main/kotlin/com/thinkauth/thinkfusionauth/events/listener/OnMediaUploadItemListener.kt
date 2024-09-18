@@ -23,6 +23,7 @@ class OnMediaUploadItemListener(
 
     private val logger: Logger = LoggerFactory.getLogger(OnMediaUploadItemListener::class.java)
 
+
     override fun onApplicationEvent(event: OnMediaUploadItemEvent) {
 
         logger.info("uploading media")
@@ -30,7 +31,7 @@ class OnMediaUploadItemListener(
         uploadMedia(event)
         logger.info("Finished uploading media")
     }
-
+    @Async
     private fun uploadMedia(event: OnMediaUploadItemEvent) {
         try {
             val multipartFile = event.file
