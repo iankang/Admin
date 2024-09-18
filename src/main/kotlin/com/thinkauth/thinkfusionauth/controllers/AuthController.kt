@@ -63,6 +63,7 @@ class AuthController(
 
         val response: ClientResponse<LoginResponse, Errors> = fusionAuthClient.login(loginRequest)
         return if (response.wasSuccessful()) {
+
             ResponseEntity(FusionApiResponse(response.status, response.successResponse, null), HttpStatus.OK)
         } else {
             ResponseEntity(FusionApiResponse(response.status, null, response.errorResponse), HttpStatus.UNAUTHORIZED)

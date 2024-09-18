@@ -20,7 +20,6 @@ import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 
 @Component
-@EnableAsync
 class OnSentenceDocumentUploadedListener(
     private val csvService: CsvService,
     private val sentenceDocumentImpl: SentenceDocumentImpl,
@@ -31,7 +30,6 @@ class OnSentenceDocumentUploadedListener(
 
     private val logger: Logger = LoggerFactory.getLogger(OnSentenceDocumentUploadedListener::class.java)
 
-    @Async
     override fun onApplicationEvent(event: OnSentenceDocumentMediaUploadItemEvent) {
 
         logger.info("uploading sentences")

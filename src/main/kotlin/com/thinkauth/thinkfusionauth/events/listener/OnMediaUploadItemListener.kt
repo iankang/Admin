@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component
 import kotlin.math.log
 
 @Component
-@EnableAsync
 class OnMediaUploadItemListener(
     private val fileManagerService: StorageService,
     private val userManagementService: UserManagementService,
@@ -24,7 +23,6 @@ class OnMediaUploadItemListener(
 
     private val logger: Logger = LoggerFactory.getLogger(OnMediaUploadItemListener::class.java)
 
-    @Async
     override fun onApplicationEvent(event: OnMediaUploadItemEvent) {
 
         logger.info("uploading media")

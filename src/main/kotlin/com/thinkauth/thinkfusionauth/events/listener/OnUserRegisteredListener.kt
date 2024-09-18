@@ -10,14 +10,12 @@ import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 
 @Component
-@EnableAsync
 class OnUserRegisteredListener(
     private val userManagementService: UserManagementService
 ) : ApplicationListener<OnUserRegisteredEvent> {
 
     private val logger: Logger = LoggerFactory.getLogger(OnUserRegisteredEvent::class.java)
 
-    @Async
     override fun onApplicationEvent(event: OnUserRegisteredEvent) {
         logger.info("starting to add user to user entity")
         addUserToUserEntity(event)
