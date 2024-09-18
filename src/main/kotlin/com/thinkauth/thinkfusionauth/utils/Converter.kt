@@ -17,6 +17,7 @@ fun User.toUserEntity(): UserEntity {
         languageId = (if(this.data["languageId"] == null) null else this.data["languageId"]).toString(),
         genderState = (if(this.data["gender"] == null) null else this.data["gender"]).toString(),
         ageGroup = (if(this.data["ageRange"] == null) null else this.data["ageRange"]).toString(),
+        nationalId = (if(this.data["nationalId"] == null) null else this.data["nationalId"]).toString()
     )
 }
 

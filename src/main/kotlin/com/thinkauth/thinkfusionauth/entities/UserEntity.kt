@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.entities
 
 import com.thinkauth.thinkfusionauth.entities.enums.AgeRangeEnum
 import org.checkerframework.common.aliasing.qual.Unique
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDate
 
@@ -14,9 +15,11 @@ data class UserEntity(
     var middleName:String?= null,
     var lastName:String?= null,
     var imageUrl:String?= null,
+    @Indexed(unique = true)
     var mobilePhone:String?= null,
     var languageId:String? = null,
     var genderState: String? = null,
     var ageGroup:String? =  null,
-    var nationalId:Long? = null
+    @Indexed(unique = true)
+    var nationalId:String? = null
 ):AuditMetadata()
