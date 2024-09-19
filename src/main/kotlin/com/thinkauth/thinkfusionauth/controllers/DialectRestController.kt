@@ -29,7 +29,7 @@ class DialectRestController(
         summary = "Add a dialect", description = "adds a dialect", tags = ["Dialect"]
     )
     @PostMapping("/addDialect")
-    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
+    @PreAuthorize("permitAll()")
     fun addDialect(
         @RequestBody dialectRequest: DialectRequest
     ): ResponseEntity<Dialect> {
@@ -98,7 +98,7 @@ class DialectRestController(
         summary = "Updates a dialect", description = "Updates a dialect", tags = ["Dialect"]
     )
     @PutMapping("/updateDialect")
-    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
+    @PreAuthorize("permitAll()")
     fun updateDialect(
         @RequestParam(name = "dialectId") dialectId: String, @RequestBody dialect: Dialect
     ) {
@@ -109,7 +109,7 @@ class DialectRestController(
         summary = "Deletes a dialect", description = "deletes a dialect", tags = ["Dialect"]
     )
     @DeleteMapping("/deleteADialect")
-    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
+    @PreAuthorize("permitAll()")
     fun deleteADialect(
         @RequestParam(name = "dialectId") dialectId: String,
     ) {
@@ -120,7 +120,7 @@ class DialectRestController(
         summary = "Delete all dialects", description = "deletes all dialects", tags = ["Dialect"]
     )
     @DeleteMapping("/deleteAllDialects")
-    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
+    @PreAuthorize("permitAll()")
     fun deleteAllLanguages() {
         dialectService.deleteAllDialects()
     }

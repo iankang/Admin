@@ -76,13 +76,14 @@ class MediaEntityService(
         return mediaEntityRepository.findAllBySentenceId(sentenceId)
     }
 
-    fun acceptMediaEntity(sentenceId: String): MediaEntity {
-        val mediaEntity = fetchMediaEntityById(sentenceId)
+    fun acceptMediaEntity(mediaId: String): MediaEntity {
+        val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.ACCEPTED
+
         return saveMediaEntity(mediaEntity)
     }
-    fun rejectMediaEntity(sentenceId: String): MediaEntity {
-        val mediaEntity = fetchMediaEntityById(sentenceId)
+    fun rejectMediaEntity(mediaId: String): MediaEntity {
+        val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.REJECTED
         return saveMediaEntity(mediaEntity)
     }
