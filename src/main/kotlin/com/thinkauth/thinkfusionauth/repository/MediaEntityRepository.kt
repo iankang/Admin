@@ -25,7 +25,7 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
     fun findAllByUsernameAndMediaName( userEmail:String, mediaName:String,pageable: Pageable): Page<MediaEntity>
     fun findAllByUsernameAndMediaNameAndLanguageId( username:String, mediaName:String,languageId: String,pageable: Pageable): Page<MediaEntity>
 
-    fun findAllByAccepted(boolean: Boolean):List<MediaEntity>
+//    fun findAllByAccepted(boolean: Boolean):List<MediaEntity>
 
     fun findAllByMediaName(mediaName:String):List<MediaEntity>
 

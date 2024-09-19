@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.entities
 
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.LocalDateTime
 
 @Document
 data class MediaEntity(
@@ -15,6 +16,25 @@ data class MediaEntity(
     var languageName:String?,
     var businessId: String?,
     var genderState: String?,
-    var accepted:Boolean? = false,
     var mediaState: MediaAcceptanceState =  MediaAcceptanceState.PENDING
-):AuditMetadata()
+):AuditMetadata(){
+
+    fun toMediaEntityUserUpload(
+    ):MediaEntityUserUploadState{
+        val mediaUploadState = MediaEntityUserUploadState(
+            owner = owner,
+            phoneNumber = owner.mobilePhone,
+            nationalId = owner.nationalId,
+            sentenceId = sentenceId,
+            actualSentence = actualSentence,
+            languageId = languageId,
+            languageName = languageName,
+            businessId = businessId,
+            genderState = owner.genderState,
+            mediaEntityId = id,
+            mediaState = mediaState
+        )
+        mediaUploadState.uploadDate = LocalDateTime.now()
+        return mediaUploadState
+    }
+}

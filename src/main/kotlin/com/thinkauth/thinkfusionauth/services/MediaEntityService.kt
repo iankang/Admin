@@ -24,6 +24,7 @@ class MediaEntityService(
     private val languageService: LanguageService,
     private val audioManagementService: AudioCollectionService,
     private val userIgnoreService: SentenceUserIgnoreService,
+    private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService
 
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MediaEntityService::class.java)
@@ -86,11 +87,11 @@ class MediaEntityService(
         return saveMediaEntity(mediaEntity)
     }
 
-    fun fetchMediaEntitiesByAcceptedState(
-        acceptedState:Boolean = false
-    ): List<MediaEntity> {
-        return mediaEntityRepository.findAllByAccepted(acceptedState)
-    }
+//    fun fetchMediaEntitiesByAcceptedState(
+//        acceptedState:Boolean = false
+//    ): List<MediaEntity> {
+//        return mediaEntityRepository.findAllByAccepted(acceptedState)
+//    }
 
     fun countAllVoiceCollectionsByLanguageId(languageId: String): Long {
         return mediaEntityRepository.countAllByLanguageId(languageId)
@@ -231,7 +232,9 @@ class MediaEntityService(
                 businessId = businessId,
                 genderState = user.genderState
             )
-           saveMediaEntity(mediaEntity)
+           val mediaent = saveMediaEntity(mediaEntity)
+            mediaEntityUserUploadStateService.addMediaEntityUploadState(mediaent)
+
             //once uploaded, the sentence should not be visible
             if(user.email != null) {
                 userIgnoreService.addSentenceUserIgnore(userId = user.email!!, sentenceId)
