@@ -19,19 +19,27 @@ class MediaEntityUserUploadStateService(
     }
 
     fun acceptMediaEntityUserUploadState(
-        mediaEntityId:String
+        mediaEntityId:String,
+        acceptedCount:Long,
+        rejectedCount:Long,
     ): MediaEntityUserUploadState? {
         val mediaEntityUserUploadState = mediaEntityUserUploadStateImpl.getByMediaItemId(mediaEntityId)
         mediaEntityUserUploadState.mediaState = MediaAcceptanceState.ACCEPTED
-        return mediaEntityUserUploadStateImpl.updateItem(mediaEntityUserUploadState.id!!, mediaEntityUserUploadState)
+        mediaEntityUserUploadState.acceptedCount = acceptedCount
+        mediaEntityUserUploadState.rejectedCount = rejectedCount
+        return mediaEntityUserUploadStateImpl.createItem(mediaEntityUserUploadState)
     }
 
     fun rejectMediaEntityUserUploadState(
-        mediaEntityId:String
+        mediaEntityId:String,
+        acceptedCount:Long,
+        rejectedCount:Long,
     ): MediaEntityUserUploadState? {
         val mediaEntityUserUploadState = mediaEntityUserUploadStateImpl.getByMediaItemId(mediaEntityId)
         mediaEntityUserUploadState.mediaState = MediaAcceptanceState.REJECTED
-        return mediaEntityUserUploadStateImpl.updateItem(mediaEntityUserUploadState.id!!, mediaEntityUserUploadState)
+        mediaEntityUserUploadState.acceptedCount = acceptedCount
+        mediaEntityUserUploadState.rejectedCount = rejectedCount
+        return mediaEntityUserUploadStateImpl.createItem(mediaEntityUserUploadState)
     }
 
 
@@ -59,5 +67,11 @@ class MediaEntityUserUploadStateService(
         size: Int
     ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
         return mediaEntityUserUploadStateImpl.getByLanguageIdAcceptanceStatePaymentState(languageId, mediaAcceptanceState, paymentState, page, size)
+    }
+
+    fun getByMediaEntityId(
+        mediaEntityId: String
+    ): MediaEntityUserUploadState {
+        return mediaEntityUserUploadStateImpl.getByMediaItemId(mediaEntityId)
     }
 }
