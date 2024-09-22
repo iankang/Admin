@@ -6,7 +6,7 @@ import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.SentenceIgnoreRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
-import javax.xml.crypto.Data
+
 @Component
 class SentenceIgnoreImpl(
     private val sentenceIgnoreRepository: SentenceIgnoreRepository

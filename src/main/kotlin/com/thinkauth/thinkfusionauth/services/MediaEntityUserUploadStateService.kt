@@ -51,4 +51,13 @@ class MediaEntityUserUploadStateService(
         return mediaEntityUserUploadStateImpl.findEverythingPaged(page, size)
     }
 
+    fun getAllByLanguageIdAndMediaAcceptanceAndPaymentState(
+        languageId: String,
+        mediaAcceptanceState: MediaAcceptanceState?,
+        paymentState: PaymentState?,
+        page: Int,
+        size: Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        return mediaEntityUserUploadStateImpl.getByLanguageIdAcceptanceStatePaymentState(languageId, mediaAcceptanceState, paymentState, page, size)
+    }
 }

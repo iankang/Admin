@@ -13,14 +13,11 @@ import com.thinkauth.thinkfusionauth.services.DialectService
 import com.thinkauth.thinkfusionauth.services.LanguageService
 import org.apache.commons.io.IOUtils
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.gridfs.GridFsOperations
 import org.springframework.data.mongodb.gridfs.GridFsTemplate
-import org.springframework.scheduling.annotation.Async
-import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
@@ -35,24 +32,21 @@ class SentenceDocumentImpl(
     private val template: GridFsTemplate,
     private val operations: GridFsOperations,
     private val applicationEventPublisher: ApplicationEventPublisher
-):DataOperations<SentenceDocumentEntity> {
+) : DataOperations<SentenceDocumentEntity> {
     override fun itemExistsById(id: String): Boolean {
-       return sentenceDocumentRepository.existsById(id)
+        return sentenceDocumentRepository.existsById(id)
     }
 
     override fun findEverythingPaged(page: Int, size: Int): PagedResponse<List<SentenceDocumentEntity>> {
         val paged = PageRequest.of(page, size)
         val section = sentenceDocumentRepository.findAll(paged)
         return PagedResponse(
-            section.content,
-            section.number,
-            section.totalElements,
-            section.totalPages
+            section.content, section.number, section.totalElements, section.totalPages
         )
     }
 
     override fun getItemById(id: String): SentenceDocumentEntity {
-       return sentenceDocumentRepository.findById(id).get()
+        return sentenceDocumentRepository.findById(id).get()
     }
 
     override fun deleteItemById(id: String) {
@@ -64,7 +58,7 @@ class SentenceDocumentImpl(
     }
 
     override fun updateItem(id: String, item: SentenceDocumentEntity): SentenceDocumentEntity? {
-       val sentenceDoc = getItemById(id)
+        val sentenceDoc = getItemById(id)
         sentenceDoc.sentenceDocumentState = item.sentenceDocumentState
         sentenceDoc.documentUploadId = item.documentUploadId
         sentenceDoc.dialectId = item.dialectId
@@ -82,10 +76,7 @@ class SentenceDocumentImpl(
 
     @Throws(IOException::class)
     fun addDBFile(
-        languageId:String,
-        dialectId:String,
-        businessId:String,
-        upload: MultipartFile
+        languageId: String, dialectId: String, businessId: String, upload: MultipartFile
     ): SentenceDocumentEntity {
         val metadata: DBObject = BasicDBObject()
         metadata.put("fileSize", upload.size)
@@ -107,11 +98,7 @@ class SentenceDocumentImpl(
         downloadFile(sentenceDocumentEntity)
         createItem(sentenceDocumentEntity)
         val onDocumentUploadEvent = OnSentenceDocumentMediaUploadItemEvent(
-            file = upload,
-            business = business,
-            language = language,
-            dialect = dialect,
-            fileId = fileID.toString()
+            file = upload, business = business, language = language, dialect = dialect, fileId = fileID.toString()
         )
         applicationEventPublisher.publishEvent(onDocumentUploadEvent)
         return sentenceDocumentEntity
@@ -123,8 +110,8 @@ class SentenceDocumentImpl(
         val gridFSFile: GridFSFile = template.findOne(Query(Criteria.where("_id").`is`(loadFile.documentUploadId)))
 
 
-        if (gridFSFile?.metadata != null) {
-            loadFile.fileName =gridFSFile.filename
+        if (gridFSFile.metadata != null) {
+            loadFile.fileName = gridFSFile.filename
 
             loadFile.fileType = gridFSFile.metadata!!["_contentType"].toString()
 
@@ -136,7 +123,7 @@ class SentenceDocumentImpl(
         return loadFile
     }
 
-    fun getSentenceDocumentByFileId(fileId:String): SentenceDocumentEntity {
+    fun getSentenceDocumentByFileId(fileId: String): SentenceDocumentEntity {
         return sentenceDocumentRepository.findByDocumentUploadId(fileId)
     }
 }

@@ -1,10 +1,13 @@
 package com.thinkauth.thinkfusionauth.repository.impl
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserUploadState
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
+import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
 import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.interfaces.DataOperations
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityUserUploadStateRepository
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 
@@ -65,5 +68,45 @@ data class MediaEntityUserUploadStateImpl(
 
     fun getByMediaItemId(mediaItemId:String): MediaEntityUserUploadState {
         return mediaEntityUserUploadStateRepository.findByMediaEntityId(mediaItemId)
+    }
+
+    fun getByLanguageIdAcceptanceStatePaymentState(
+        languageId: String,
+        mediaAcceptanceState: MediaAcceptanceState?,
+        paymentState: PaymentState?,
+        page: Int,
+        size: Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        val paged = PageRequest.of(page, size)
+        val section: Page<MediaEntityUserUploadState> = when {
+            mediaAcceptanceState == null && paymentState == null -> {
+                mediaEntityUserUploadStateRepository.findAllByLanguageId(languageId, paged)
+            }
+            paymentState != null && mediaAcceptanceState != null -> {
+                mediaEntityUserUploadStateRepository.findAllByLanguageIdAndPaymentStateAndMediaState(
+                    languageId, paymentState, mediaAcceptanceState, paged
+                )
+            }
+            paymentState != null && mediaAcceptanceState == null -> {
+                mediaEntityUserUploadStateRepository.findAllByLanguageIdAndPaymentState(
+                    languageId, paymentState, paged
+                )
+            }
+            paymentState == null && mediaAcceptanceState != null -> {
+                mediaEntityUserUploadStateRepository.findAllByLanguageIdAndMediaState(
+                    languageId, mediaAcceptanceState, paged
+                )
+            }
+            else -> {
+                throw IllegalArgumentException("Invalid combination of states")
+            }
+        }
+
+        return PagedResponse(
+            section.content,
+            section.number,
+            section.totalElements,
+            section.totalPages
+        )
     }
 }
