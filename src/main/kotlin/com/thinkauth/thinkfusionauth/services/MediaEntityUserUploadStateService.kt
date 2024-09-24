@@ -49,7 +49,7 @@ class MediaEntityUserUploadStateService(
         val mediaEntityUserUploadState = mediaEntityUserUploadStateImpl.getByMediaItemId(mediaEntityId)
         mediaEntityUserUploadState.paymentDate = LocalDateTime.now()
         mediaEntityUserUploadState.paymentState = PaymentState.PAID
-        return mediaEntityUserUploadStateImpl.updateItem(mediaEntityUserUploadState.id!!, mediaEntityUserUploadState)
+        return mediaEntityUserUploadStateImpl.createItem(mediaEntityUserUploadState)
     }
 
     fun getAllMediaEntityUploadState(
