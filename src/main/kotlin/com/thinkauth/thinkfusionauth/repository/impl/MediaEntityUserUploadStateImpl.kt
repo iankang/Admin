@@ -9,7 +9,9 @@ import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityUserUploadStateRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 data class MediaEntityUserUploadStateImpl(
@@ -102,6 +104,53 @@ data class MediaEntityUserUploadStateImpl(
             }
         }
 
+        return PagedResponse(
+            section.content,
+            section.number,
+            section.totalElements,
+            section.totalPages
+        )
+    }
+
+    fun getByUploadDate(
+        uploadDate:LocalDateTime,
+        page:Int,
+        size: Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val section = mediaEntityUserUploadStateRepository.findAllByUploadDate(uploadDate, paging)
+        return PagedResponse(
+            section.content,
+            section.number,
+            section.totalElements,
+            section.totalPages
+        )
+    }
+
+    fun getByUploadDateAndMediaState(
+        uploadDate:LocalDateTime,
+        mediaAcceptanceState: MediaAcceptanceState?,
+        page:Int,
+        size: Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val section = mediaEntityUserUploadStateRepository.findAllByUploadDateAndMediaState(uploadDate,mediaAcceptanceState!!, paging)
+        return PagedResponse(
+            section.content,
+            section.number,
+            section.totalElements,
+            section.totalPages
+        )
+    }
+
+    fun getByUploadDateAndPaymentState(
+        uploadDate:LocalDateTime,
+        paymentState: PaymentState?,
+        page: Int,
+        size: Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val section = mediaEntityUserUploadStateRepository.findAllByUploadDateAndPaymentState(uploadDate,paymentState!!, paging)
         return PagedResponse(
             section.content,
             section.number,

@@ -25,7 +25,7 @@ class MediaEntityUserApprovalStateService(
         mediaEntityId: String
     ): MediaEntityUserApprovalState {
         val loggedInUser = userManagementService.fetchLoggedInUserEntity()
-        val uploadedMedia = mediaEntityUserUploadStateService.getByMediaEntityId(mediaEntityId)
+        val uploadedMedia = mediaEntityUserUploadStateService.getByUserUploadMediaEntityId(mediaEntityId)
         if (!mediaEntityUserApprovalStateImpl.checkIfApprovalAlreadyAdded(
                 loggedInUser.email ?: loggedInUser.username!!, mediaEntityId
             )
@@ -85,7 +85,7 @@ class MediaEntityUserApprovalStateService(
         mediaEntityId: String
     ): MediaEntityUserApprovalState {
         val loggedInUser = userManagementService.fetchLoggedInUserEntity()
-        val uploadedMedia = mediaEntityUserUploadStateService.getByMediaEntityId(mediaEntityId)
+        val uploadedMedia = mediaEntityUserUploadStateService.getByUserUploadMediaEntityId(mediaEntityId)
         if (!mediaEntityUserApprovalStateImpl.checkIfApprovalAlreadyAdded(
                 loggedInUser.email ?: loggedInUser.username!!, mediaEntityId
             )

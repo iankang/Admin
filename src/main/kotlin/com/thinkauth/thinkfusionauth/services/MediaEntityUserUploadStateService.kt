@@ -6,6 +6,7 @@ import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.MediaEntityUserUploadStateImpl
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -42,7 +43,6 @@ class MediaEntityUserUploadStateService(
         return mediaEntityUserUploadStateImpl.createItem(mediaEntityUserUploadState)
     }
 
-
     fun makePayment(
         mediaEntityId:String
     ): MediaEntityUserUploadState? {
@@ -69,9 +69,37 @@ class MediaEntityUserUploadStateService(
         return mediaEntityUserUploadStateImpl.getByLanguageIdAcceptanceStatePaymentState(languageId, mediaAcceptanceState, paymentState, page, size)
     }
 
-    fun getByMediaEntityId(
+    fun getByUserUploadMediaEntityId(
         mediaEntityId: String
     ): MediaEntityUserUploadState {
         return mediaEntityUserUploadStateImpl.getByMediaItemId(mediaEntityId)
+    }
+
+    fun getAllByUploadDate(
+        uploadDate:LocalDateTime,
+        page:Int,
+        size:Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        return mediaEntityUserUploadStateImpl.getByUploadDate(uploadDate, page, size)
+    }
+
+    fun getAllByUploadDateAndMediaState(
+        uploadDate:LocalDateTime,
+        mediaAcceptanceState: MediaAcceptanceState?,
+        page:Int,
+        size:Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        return mediaEntityUserUploadStateImpl.getByUploadDateAndMediaState(uploadDate,mediaAcceptanceState, page, size)
+    }
+
+    fun getAllByUploadDateAndPaymentState(
+        uploadDate:LocalDateTime,
+        paymentState: PaymentState?,
+        page:Int,
+        size:Int
+    ): PagedResponse<MutableList<MediaEntityUserUploadState>> {
+        return mediaEntityUserUploadStateImpl.getByUploadDateAndPaymentState(
+            uploadDate, paymentState, page, size
+        )
     }
 }

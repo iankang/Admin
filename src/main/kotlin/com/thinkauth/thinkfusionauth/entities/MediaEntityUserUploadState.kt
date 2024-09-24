@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Document
-data class MediaEntityUserUploadState(
+data class  MediaEntityUserUploadState(
     var owner:UserEntity,
     @Indexed
     var phoneNumber:String?,
@@ -32,6 +32,5 @@ data class MediaEntityUserUploadState(
     var acceptedCount:Long? = null,
     var rejectedCount:Long? = null
 ):AuditMetadata(){
-
 
 }
