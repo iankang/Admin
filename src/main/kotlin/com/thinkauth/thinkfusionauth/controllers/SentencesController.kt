@@ -80,7 +80,7 @@ class SentencesController(
         @RequestPart("file") file: MultipartFile,
         @RequestParam("languageId") languageId:String,
         @RequestParam("businessId") businessId:String,
-        @RequestParam("dialectId") dialectId:String,
+        @RequestParam("dialectId", required = false) dialectId:String,
 
     ): ResponseEntity<SentenceDocumentEntity> {
 

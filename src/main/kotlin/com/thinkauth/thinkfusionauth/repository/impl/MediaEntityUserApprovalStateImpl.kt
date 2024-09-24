@@ -2,11 +2,15 @@ package com.thinkauth.thinkfusionauth.repository.impl
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
+import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
 import com.thinkauth.thinkfusionauth.interfaces.DataOperations
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityUserApprovalStateRepository
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 class MediaEntityUserApprovalStateImpl(
@@ -98,5 +102,40 @@ class MediaEntityUserApprovalStateImpl(
         approverEmail: String
     ): MediaEntityUserApprovalState {
         return mediaEntityUserApprovalStateRepository.findByMediaEntityIdAndApproverEmail(mediaEntityId, approverEmail)
+    }
+
+    fun countTheNumberOfReviewsOnAMediaEntity(
+        mediaEntityId: String
+    ): Long {
+        return mediaEntityUserApprovalStateRepository.countByMediaEntityId(mediaEntityId)
+    }
+
+    fun getAllApprovalsByApproverEmailAndPaymentState(
+        approverEmail:String,
+        paymentState: PaymentState,
+        page: Int,
+        size: Int
+    ): Page<MediaEntityUserApprovalState> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        return mediaEntityUserApprovalStateRepository.findAllByApproverEmailAndPaymentState(approverEmail,paymentState,paging)
+    }
+
+    fun getByReviewDateAndPaymentState(
+        reviewDate:LocalDateTime,
+        paymentState: PaymentState,
+        page: Int,
+        size: Int
+    ): Page<MediaEntityUserApprovalState> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        return mediaEntityUserApprovalStateRepository.findAllByReviewDateAndPaymentStateOrderByReviewDateDesc( reviewDate, paymentState, paging)
+    }
+
+    fun getByReviewDate(
+        reviewDate: LocalDateTime,
+        page: Int,
+        size: Int
+    ): Page<MediaEntityUserApprovalState> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        return mediaEntityUserApprovalStateRepository.findAllByReviewDate(reviewDate,paging)
     }
 }

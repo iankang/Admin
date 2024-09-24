@@ -5,12 +5,11 @@ import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.MediaEntityUserApprovalStateImpl
-import com.thinkauth.thinkfusionauth.repository.impl.MediaEntityUserUploadStateImpl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import kotlin.math.log
 
 @Service
 class MediaEntityUserApprovalStateService(
@@ -23,11 +22,14 @@ class MediaEntityUserApprovalStateService(
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     fun acceptMediaEntity(
-        mediaEntityId:String
+        mediaEntityId: String
     ): MediaEntityUserApprovalState {
         val loggedInUser = userManagementService.fetchLoggedInUserEntity()
         val uploadedMedia = mediaEntityUserUploadStateService.getByMediaEntityId(mediaEntityId)
-        if(!mediaEntityUserApprovalStateImpl.checkIfApprovalAlreadyAdded(loggedInUser.email ?: loggedInUser.username!!, mediaEntityId)) {
+        if (!mediaEntityUserApprovalStateImpl.checkIfApprovalAlreadyAdded(
+                loggedInUser.email ?: loggedInUser.username!!, mediaEntityId
+            )
+        ) {
             val approvalState = MediaEntityUserApprovalState(
                 owner = loggedInUser,
                 approverEmail = loggedInUser.email,
@@ -50,23 +52,29 @@ class MediaEntityUserApprovalStateService(
             mediaEntityUserApprovalStateImpl.createItem(approvalState)
 
             mediaEntityUserUploadStateService.acceptMediaEntityUserUploadState(
-                mediaEntityId,
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.ACCEPTED),
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.REJECTED)
+                mediaEntityId, mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.ACCEPTED
+                ), mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.REJECTED
+                )
             )
             mediaEntityService.acceptMediaEntity(mediaEntityId)
             return approvalState
         } else {
-            val approvalState = mediaEntityUserApprovalStateImpl.getMediaEntityForAnApprover(mediaEntityId,loggedInUser.email ?: loggedInUser.username!!)
-            logger.info("approvalState: "+ approvalState)
+            val approvalState = mediaEntityUserApprovalStateImpl.getMediaEntityForAnApprover(
+                mediaEntityId, loggedInUser.email ?: loggedInUser.username!!
+            )
+            logger.info("approvalState: " + approvalState)
             approvalState.reviewDate = LocalDateTime.now()
-            mediaEntityUserApprovalStateImpl.updateItem(approvalState.id!!,approvalState)
-            val acceptedCount = mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.ACCEPTED)
-            logger.info("acceptedcount: "+ acceptedCount)
+            mediaEntityUserApprovalStateImpl.updateItem(approvalState.id!!, approvalState)
+            val acceptedCount = mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                mediaEntityId, MediaAcceptanceState.ACCEPTED
+            )
+            logger.info("acceptedcount: " + acceptedCount)
             mediaEntityUserUploadStateService.acceptMediaEntityUserUploadState(
-                mediaEntityId,
-                acceptedCount,
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.REJECTED)
+                mediaEntityId, acceptedCount, mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.REJECTED
+                )
             )
             mediaEntityService.acceptMediaEntity(mediaEntityId)
             return approvalState
@@ -74,11 +82,14 @@ class MediaEntityUserApprovalStateService(
     }
 
     fun rejectMediaEntity(
-        mediaEntityId:String
+        mediaEntityId: String
     ): MediaEntityUserApprovalState {
         val loggedInUser = userManagementService.fetchLoggedInUserEntity()
         val uploadedMedia = mediaEntityUserUploadStateService.getByMediaEntityId(mediaEntityId)
-        if(!mediaEntityUserApprovalStateImpl.checkIfApprovalAlreadyAdded(loggedInUser.email ?: loggedInUser.username!!, mediaEntityId)) {
+        if (!mediaEntityUserApprovalStateImpl.checkIfApprovalAlreadyAdded(
+                loggedInUser.email ?: loggedInUser.username!!, mediaEntityId
+            )
+        ) {
             val approvalState = MediaEntityUserApprovalState(
                 owner = loggedInUser,
                 approverEmail = loggedInUser.email,
@@ -99,19 +110,25 @@ class MediaEntityUserApprovalStateService(
             mediaEntityUserApprovalStateImpl.createItem(approvalState)
 
             mediaEntityUserUploadStateService.rejectMediaEntityUserUploadState(
-                mediaEntityId,
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.ACCEPTED),
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.REJECTED)
+                mediaEntityId, mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.ACCEPTED
+                ), mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.REJECTED
+                )
             )
             mediaEntityService.rejectMediaEntity(mediaEntityId)
             return approvalState
         } else {
-            val approvalState = mediaEntityUserApprovalStateImpl.getMediaEntityForAnApprover(mediaEntityId,loggedInUser.email ?: loggedInUser.username!!)
-            mediaEntityUserApprovalStateImpl.updateItem(approvalState.id!!,approvalState)
+            val approvalState = mediaEntityUserApprovalStateImpl.getMediaEntityForAnApprover(
+                mediaEntityId, loggedInUser.email ?: loggedInUser.username!!
+            )
+            mediaEntityUserApprovalStateImpl.updateItem(approvalState.id!!, approvalState)
             mediaEntityUserUploadStateService.rejectMediaEntityUserUploadState(
-                mediaEntityId,
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.ACCEPTED),
-                mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(mediaEntityId, MediaAcceptanceState.REJECTED)
+                mediaEntityId, mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.ACCEPTED
+                ), mediaEntityUserApprovalStateImpl.countByMediaEntityIdAndMediaState(
+                    mediaEntityId, MediaAcceptanceState.REJECTED
+                )
             )
             mediaEntityService.rejectMediaEntity(mediaEntityId)
             return approvalState
@@ -119,28 +136,45 @@ class MediaEntityUserApprovalStateService(
     }
 
     fun makePayment(
-        mediaEntityId:String,
-        approverEmail:String
+        mediaEntityId: String, approverEmail: String
     ): MediaEntityUserApprovalState {
 
-        val mediaEntityUserApprovalState = mediaEntityUserApprovalStateImpl.getMediaEntityForAnApprover(mediaEntityId, approverEmail)
+        val mediaEntityUserApprovalState =
+            mediaEntityUserApprovalStateImpl.getMediaEntityForAnApprover(mediaEntityId, approverEmail)
         mediaEntityUserApprovalState.paymentState = PaymentState.PAID
         mediaEntityUserApprovalState.paymentDate = LocalDateTime.now()
         return mediaEntityUserApprovalStateImpl.createItem(mediaEntityUserApprovalState)
     }
 
     fun getMediaEntityUserApproval(
-        page:Int,
-        size:Int
+        page: Int, size: Int
     ): PagedResponse<List<MediaEntityUserApprovalState>> {
         return mediaEntityUserApprovalStateImpl.findEverythingPaged(page, size)
     }
 
     fun getAllApprovalsOfSpecificMedia(
-        mediaEntityId: String,
-        page:Int,
-        size:Int
+        mediaEntityId: String, page: Int, size: Int
     ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         return mediaEntityUserApprovalStateImpl.getAllApprovalsOfSpecificMedia(mediaEntityId, page, size)
+    }
+
+    fun getAllByApproverEmailAndPaymentState(
+        approverEmail: String, paymentState: PaymentState, page: Int, size: Int
+    ): Page<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getAllApprovalsByApproverEmailAndPaymentState(
+            approverEmail, paymentState, page, size
+        )
+    }
+
+    fun getAllByReviewDateAndPaymentState(
+        reviewDate: LocalDateTime, paymentState: PaymentState, page: Int, size: Int
+    ): Page<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getByReviewDateAndPaymentState(reviewDate, paymentState, page, size)
+    }
+
+    fun getAllByReviewDate(
+        reviewDate: LocalDateTime, page: Int, size: Int
+    ): Page<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getByReviewDate(reviewDate, page, size)
     }
 }
