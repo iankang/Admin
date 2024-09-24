@@ -102,4 +102,30 @@ class MediaEntityUserUploadStateService(
             uploadDate, paymentState, page, size
         )
     }
+
+    fun getAllGreaterThanUploadDate(
+        uploadDate:LocalDateTime,
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateImpl.getAllGreaterThanUploadDate(uploadDate)
+    }
+
+    fun getAllByUploadDateWithinDateRange(
+        uploadDateStart:LocalDateTime,
+        uploadDateEnd:LocalDateTime
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateImpl.getAllByUploadDateRange(uploadDateStart, uploadDateEnd)
+    }
+
+    fun getAllByGreaterThanPaymentDate(
+        paymentDate:LocalDateTime,
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateImpl.getAllGreaterThanPaymentDate(paymentDate)
+    }
+
+    fun getAllByPaymentDateRange(
+        paymentDateStart:LocalDateTime,
+        paymentDateEnd:LocalDateTime
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateImpl.getAllByPaymentDateRange(paymentDateStart, paymentDateEnd)
+    }
 }

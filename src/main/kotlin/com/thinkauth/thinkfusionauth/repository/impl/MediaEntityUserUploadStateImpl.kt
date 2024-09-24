@@ -158,4 +158,30 @@ data class MediaEntityUserUploadStateImpl(
             section.totalPages
         )
     }
+
+    fun getAllGreaterThanUploadDate(
+        uploadDate:LocalDateTime,
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateRepository.findAllGreaterThanUploadDate(uploadDate)
+    }
+
+    fun getAllByUploadDateRange(
+        uploadDateStart:LocalDateTime,
+        uploadDateEnd:LocalDateTime
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateRepository.findAllByUploadDateRange(uploadDateStart, uploadDateEnd)
+    }
+
+    fun getAllGreaterThanPaymentDate(
+        paymentDateStart:LocalDateTime,
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateRepository.findAllGreaterThanPaymentDate(paymentDateStart)
+    }
+
+    fun getAllByPaymentDateRange(
+        paymentDateStart:LocalDateTime,
+        paymentDateEnd:LocalDateTime,
+    ): List<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateRepository.findAllByPaymentDateRange(paymentDateStart, paymentDateEnd)
+    }
 }
