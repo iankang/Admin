@@ -138,4 +138,32 @@ class MediaEntityUserApprovalStateImpl(
         val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
         return mediaEntityUserApprovalStateRepository.findAllByReviewDate(reviewDate,paging)
     }
+
+    fun getByReviewDateStartAndReviewDateEnd(
+        reviewDateStart: LocalDateTime,
+        reviewDateEnd: LocalDateTime
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateRepository.findAllByReviewDateStartAndReviewDateEnd(reviewDateStart, reviewDateEnd)
+    }
+
+    fun getByReviewDateStart(
+        reviewDateStart: LocalDateTime,
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateRepository.findAllByReviewDateStart(reviewDateStart)
+    }
+
+    fun getByPaymentDateStartAndPaymentDateEnd(
+        paymentDateStart: LocalDateTime,
+        paymentDateEnd: LocalDateTime
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateRepository.findAllByPaymentDateStartAndPaymentDateEnd(
+            paymentDateStart, paymentDateEnd
+        )
+    }
+
+    fun getAllByPaymentDateGreaterThanPaymentStart(
+        paymentDateStart: LocalDateTime
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateRepository.findAllByPaymentDateStart(paymentDateStart)
+    }
 }

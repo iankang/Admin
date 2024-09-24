@@ -7,9 +7,11 @@ import com.thinkauth.thinkfusionauth.services.MediaEntityUserApprovalStateServic
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Page
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -50,8 +52,7 @@ class MediaEntityUserApprovalStateController(
         @RequestParam("approverEmail", required = true) approverEmail: String,
     ): ResponseEntity<MediaEntityUserApprovalState> {
         return ResponseEntity(
-            mediaEntityUserApprovalStateService.makePayment(mediaEntityId, approverEmail),
-            HttpStatus.OK
+            mediaEntityUserApprovalStateService.makePayment(mediaEntityId, approverEmail), HttpStatus.OK
         )
     }
 
@@ -66,9 +67,7 @@ class MediaEntityUserApprovalStateController(
     ): ResponseEntity<PagedResponse<MutableList<MediaEntityUserApprovalState>>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllApprovalsOfSpecificMedia(
-                mediaEntityId,
-                page,
-                size
+                mediaEntityId, page, size
             ), HttpStatus.OK
         )
     }
@@ -87,10 +86,7 @@ class MediaEntityUserApprovalStateController(
     ): ResponseEntity<Page<MediaEntityUserApprovalState>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllByApproverEmailAndPaymentState(
-                approverEmail,
-                paymentState,
-                page,
-                size
+                approverEmail, paymentState, page, size
             ), HttpStatus.OK
         )
     }
@@ -102,16 +98,15 @@ class MediaEntityUserApprovalStateController(
     )
     @GetMapping("/reviewDateAndPaymentState")
     fun getAllByReviewDateAndPaymentState(
-        @RequestParam("reviewDate", required = true) reviewDate: LocalDateTime,
+        @RequestParam("reviewDate", required = true) reviewDate: LocalDate,
         @RequestParam("paymentState", required = true) paymentState: PaymentState,
         @RequestParam("page", required = true) page: Int,
         @RequestParam("size", required = true) size: Int
     ): ResponseEntity<Page<MediaEntityUserApprovalState>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllByReviewDateAndPaymentState(
-                reviewDate, paymentState, page, size
-            ),
-            HttpStatus.OK
+                reviewDate.atStartOfDay(), paymentState, page, size
+            ), HttpStatus.OK
         )
     }
 
@@ -120,15 +115,81 @@ class MediaEntityUserApprovalStateController(
         description = "Gets approvals by review date",
         tags = ["MediaEntitiesApprovalState"]
     )
-    @GetMapping("/reviewDate" )
+    @GetMapping("/reviewDate")
     fun getAllByReviewDate(
-        @RequestParam("reviewDate", required = true) reviewDate: LocalDateTime,
+        @RequestParam("reviewDate", required = true)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) reviewDate: LocalDate,
         @RequestParam("page", required = true) page: Int,
         @RequestParam("size", required = true) size: Int
     ): ResponseEntity<Page<MediaEntityUserApprovalState>> {
         return ResponseEntity(
-            mediaEntityUserApprovalStateService.getAllByReviewDate(reviewDate, page, size),
-            HttpStatus.OK
+            mediaEntityUserApprovalStateService.getAllByReviewDate(reviewDate.atStartOfDay(), page, size), HttpStatus.OK
+        )
+    }
+
+    @Operation(
+        summary = "get approvals by review date range",
+        description = "Gets approvals by review date range",
+        tags = ["MediaEntitiesApprovalState"]
+    )
+    @GetMapping("/reviewDateRange")
+    fun getAllByReviewDateRange(
+        @RequestParam("reviewDateStart", required = true)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) reviewDateStart: LocalDate,
+        @RequestParam("reviewDateEnd", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) reviewDateEnd: LocalDate
+    ): ResponseEntity<List<MediaEntityUserApprovalState>> {
+        return ResponseEntity(
+            mediaEntityUserApprovalStateService.getAllByReviewDateRange(reviewDateStart, reviewDateEnd), HttpStatus.OK
+        )
+    }
+
+    @Operation(
+        summary = "get approvals greater than review date start",
+        description = "Gets approvals greater than review date start",
+        tags = ["MediaEntitiesApprovalState"]
+    )
+    @GetMapping("/reviewDateStart")
+    fun getAllByReviewDateStart(
+        @RequestParam("reviewDateStart", required = true)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        reviewDateStart: LocalDate
+    ): ResponseEntity<List<MediaEntityUserApprovalState>> {
+        return ResponseEntity(
+            mediaEntityUserApprovalStateService.getAllReviewGreaterThanDate(reviewDateStart), HttpStatus.OK
+        )
+    }
+
+    @Operation(
+        summary = "get approvals by payment date range",
+        description = "Gets approvals by payment date range",
+        tags = ["MediaEntitiesApprovalState"]
+    )
+    @GetMapping("/paymentDateRange")
+    fun getAllByPaymentDateRange(
+        @RequestParam("reviewDateStart", required = true)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) paymentDateStart: LocalDate,
+        @RequestParam("reviewDateEnd", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) paymentDateEnd: LocalDate
+    ): ResponseEntity<List<MediaEntityUserApprovalState>> {
+        return ResponseEntity(
+            mediaEntityUserApprovalStateService.getAllByPaymentDateRange(paymentDateStart, paymentDateEnd), HttpStatus.OK
+        )
+    }
+
+    @Operation(
+        summary = "get approvals greater than payment date start",
+        description = "Gets approvals greater than payment date start",
+        tags = ["MediaEntitiesApprovalState"]
+    )
+    @GetMapping("/paymentDateStart")
+    fun getAllByPaymentDateStart(
+        @RequestParam("paymentDateStart", required = true)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        paymentDateStart: LocalDate
+    ): ResponseEntity<List<MediaEntityUserApprovalState>> {
+        return ResponseEntity(
+            mediaEntityUserApprovalStateService.getAllByPaymentDateStart(paymentDateStart), HttpStatus.OK
         )
     }
 

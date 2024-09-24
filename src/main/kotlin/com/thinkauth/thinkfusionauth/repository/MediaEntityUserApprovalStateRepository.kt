@@ -6,6 +6,7 @@ import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.data.mongodb.repository.Query
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -23,6 +24,18 @@ interface MediaEntityUserApprovalStateRepository:MongoRepository<MediaEntityUser
     fun findAllByReviewDateAndPaymentStateOrderByReviewDateDesc(reviewDate:LocalDateTime, paymentState: PaymentState,pageable: Pageable):Page<MediaEntityUserApprovalState>
 
     fun findAllByReviewDate(reviewDate:LocalDateTime,pageable: Pageable):Page<MediaEntityUserApprovalState>
+
+    @Query("{ 'reviewDate' : { \$gte: ?0, \$lte: ?1 } }")
+    fun findAllByReviewDateStartAndReviewDateEnd(reviewDateStart:LocalDateTime, reviewDaeEnd:LocalDateTime):List<MediaEntityUserApprovalState>
+
+    @Query("{ 'reviewDate' : { \$gte: ?0} }")
+    fun findAllByReviewDateStart(reviewDateStart:LocalDateTime):List<MediaEntityUserApprovalState>
+
+    @Query("{ 'paymentDate' : { \$gte: ?0, \$lte: ?1 } }")
+    fun findAllByPaymentDateStartAndPaymentDateEnd(paymentDateStart:LocalDateTime, paymentDateEnd:LocalDateTime):List<MediaEntityUserApprovalState>
+
+    @Query("{ 'paymentDate' : { \$gte: ?0} }")
+    fun findAllByPaymentDateStart(paymentDateStart:LocalDateTime):List<MediaEntityUserApprovalState>
 
     fun countByMediaEntityIdAndMediaState(mediaEntityId: String, mediaState:MediaAcceptanceState):Long
 

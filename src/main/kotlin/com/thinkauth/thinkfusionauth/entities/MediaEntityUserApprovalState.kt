@@ -30,6 +30,8 @@ data class MediaEntityUserApprovalState(
     var mediaState: MediaAcceptanceState =  MediaAcceptanceState.PENDING,
     var paymentState: PaymentState = PaymentState.UNPAID
 ):AuditMetadata(){
+    @Indexed
     var reviewDate:LocalDateTime? = null
+    @Indexed
     var paymentDate:LocalDateTime? = null
 }

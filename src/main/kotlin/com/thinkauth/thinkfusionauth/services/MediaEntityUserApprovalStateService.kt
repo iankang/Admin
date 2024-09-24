@@ -9,6 +9,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -176,5 +177,36 @@ class MediaEntityUserApprovalStateService(
         reviewDate: LocalDateTime, page: Int, size: Int
     ): Page<MediaEntityUserApprovalState> {
         return mediaEntityUserApprovalStateImpl.getByReviewDate(reviewDate, page, size)
+    }
+
+    fun getAllByReviewDateRange(
+        reviewDateStart: LocalDate,
+        reviewDateEnd: LocalDate,
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getByReviewDateStartAndReviewDateEnd(reviewDateStart.atStartOfDay(), reviewDateEnd.atStartOfDay())
+    }
+
+    fun getAllReviewGreaterThanDate(
+        reviewDateStart: LocalDate,
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getByReviewDateStart(reviewDateStart.atStartOfDay())
+    }
+
+    fun getAllByPaymentDateRange(
+        paymentDateStart: LocalDate,
+        paymentDateEnd: LocalDate,
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getByPaymentDateStartAndPaymentDateEnd(
+            paymentDateStart.atStartOfDay(),
+            paymentDateEnd.atStartOfDay()
+        )
+    }
+
+    fun getAllByPaymentDateStart(
+        paymentDateStart: LocalDate
+    ): List<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getAllByPaymentDateGreaterThanPaymentStart(
+            paymentDateStart.atStartOfDay()
+        )
     }
 }
