@@ -75,8 +75,8 @@ fusionauth-app.search-engine-type=database
 
 ### Running docker compose
 ```
-        docker-compose pull
-        docker-compose up --force-recreate --build -d
-        docker image prune -f
+    docker-compose pull
+    docker-compose up --force-recreate --build -d
+    docker image prune -f
 
 ```
