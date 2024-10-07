@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.models.requests
 
 import com.thinkauth.thinkfusionauth.entities.enums.AgeRangeEnum
+import com.thinkauth.thinkfusionauth.entities.enums.EducationLevel
 import com.thinkauth.thinkfusionauth.entities.enums.GenderState
 import java.time.LocalDate
 
@@ -15,6 +16,7 @@ data class EditUserRequest(
     var birthDate: LocalDate? = null,
     var ageRangeEnum: AgeRangeEnum?,
     var gender: GenderState?,
+    var educationLevel:EducationLevel?,
     var dialectId:String? = null,
     var nationalId:Long? = null
 )

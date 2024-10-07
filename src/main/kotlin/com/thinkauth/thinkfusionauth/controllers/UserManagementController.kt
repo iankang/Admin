@@ -147,6 +147,10 @@ class UserManagementController(
                curentUser.user.data["ageRange"] = userRequest.ageRangeEnum!!.name
            }
 
+           if(userRequest.educationLevel != null){
+               curentUser.user.data["education_level"] = userRequest.educationLevel!!.name
+           }
+
            if(userRequest.nationalId != null){
                curentUser.user.data["nationalId"] = userRequest.nationalId
            }
@@ -196,6 +200,9 @@ class UserManagementController(
             }
             if(userProfileInfoRequest.nationalId != null){
                 curentUser.user.data["nationalId"] = userProfileInfoRequest.nationalId
+            }
+            if(userProfileInfoRequest.educationLevel != null){
+                curentUser.user.data["education_level"] = userProfileInfoRequest.educationLevel!!.name
             }
 
             if(userProfileInfoRequest.dialectId != null){
