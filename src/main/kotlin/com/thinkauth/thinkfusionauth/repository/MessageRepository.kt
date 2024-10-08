@@ -11,4 +11,5 @@ interface MessageRepository:MongoRepository<Message,String> {
 
     fun countAllByConversationId(conversationId: String):Long
 
+    fun deleteAllBySender(sender:String)
 }

@@ -97,4 +97,10 @@ class ConversationImpl(
     ): Boolean {
         return conversationRepository.existsById(conversationId)
     }
+
+    fun deleteAllByUserEmail(
+        userEmail:String
+    ){
+        return conversationRepository.deleteAllByUserEmail(userEmail)
+    }
 }

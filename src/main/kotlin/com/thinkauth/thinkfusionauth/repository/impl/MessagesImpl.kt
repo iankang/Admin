@@ -69,4 +69,8 @@ class MessagesImpl(
         logger.info("Message item creation: {}", item.toString())
         return messageRepository.save(item)
     }
+
+    fun deleteAllBySender(sender:String){
+        messageRepository.deleteAllBySender(sender)
+    }
 }

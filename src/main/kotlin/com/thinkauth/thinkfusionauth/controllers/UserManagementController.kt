@@ -7,6 +7,7 @@ import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
 import com.thinkauth.thinkfusionauth.models.requests.ProfileInfoRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
+import com.thinkauth.thinkfusionauth.services.ConversationService
 import com.thinkauth.thinkfusionauth.services.DialectService
 import com.thinkauth.thinkfusionauth.services.UserManagementService
 import io.fusionauth.client.FusionAuthClient
@@ -36,7 +37,8 @@ class UserManagementController(
     @Value("\${fusionauth.tenantId}")
     private val tenantId:String,
     private val dialectService: DialectService,
-    private val userManagementService: UserManagementService
+    private val userManagementService: UserManagementService,
+    private val conversationService: ConversationService,
 ) {
     private val logger:Logger = LoggerFactory.getLogger(UserManagementController::class.java)
     @Operation(summary = "get a user by email", description = "Gets a user by email", tags = ["UserManagement"])
@@ -102,6 +104,31 @@ class UserManagementController(
             ResponseEntity(FusionApiResponse(deleteUserResponse.status,deleteUserResponse.successResponse,null),HttpStatus.OK)
         } else {
             ResponseEntity(FusionApiResponse(deleteUserResponse.status,null,deleteUserResponse.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @Operation(summary = "Delete all user data", description = "Deletes a user data", tags = ["UserManagement"])
+    @PostMapping("/deleteUserData")
+    fun deleteUserData(
+        @RequestParam("email") email: String?
+    ): ResponseEntity<FusionApiResponse<Void>> {
+
+        val userResponse = fusionAuthClient.retrieveUserByEmail(email)
+         return if(userResponse.wasSuccessful()){
+             logger.info("delete local user first email: {}", email)
+             userManagementService.deleteAllUsersByEmail(email!!)
+             conversationService.deleteConversationsByUserEmail(email)
+             conversationService.deleteAllBySender(email)
+
+             val deleteUserResponse = fusionAuthClient.deleteUser(userResponse.successResponse.user.id)
+
+              if(deleteUserResponse.wasSuccessful()){
+                 ResponseEntity(FusionApiResponse(deleteUserResponse.status,deleteUserResponse.successResponse,null),HttpStatus.OK)
+             } else {
+                 ResponseEntity(FusionApiResponse(deleteUserResponse.status,null,deleteUserResponse.errorResponse),HttpStatus.INTERNAL_SERVER_ERROR)
+             }
+        } else {
+            ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
     @Operation(summary = "Edit a user by id", description = "Edits a user by id", tags = ["UserManagement"])

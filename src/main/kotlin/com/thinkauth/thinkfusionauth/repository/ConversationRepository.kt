@@ -13,4 +13,6 @@ interface ConversationRepository:MongoRepository<Conversation,String> {
 
     fun existsByUserEmail(userEmail: String):Boolean
 
+    fun deleteAllByUserEmail(userEmail: String)
+
 }

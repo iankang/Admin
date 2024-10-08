@@ -41,6 +41,7 @@ class SecurityConfig(
            ?.antMatchers("/api/auth/**")?.permitAll()
            ?.antMatchers("/api/accountRecovery/**")?.permitAll()
            ?.antMatchers("/api/userManagement/fetchUserByEmail")?.permitAll()
+           ?.antMatchers("/api/userManagement/deleteUserData")?.permitAll()
            ?.antMatchers("/api/dialect/dialects/**")?.permitAll()
            ?.antMatchers("/api/language/languages/**")?.permitAll()
            ?.antMatchers("/swagger-ui/**")?.permitAll()

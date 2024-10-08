@@ -135,4 +135,16 @@ class ConversationService(
 
     }
 
+
+    fun deleteConversationsByUserEmail(
+        email:String
+    ){
+        conversationImpl.deleteAllByUserEmail(email)
+    }
+
+    fun deleteAllBySender(
+        sender:String
+    ){
+        messagesImpl.deleteAllBySender(sender)
+    }
 }
