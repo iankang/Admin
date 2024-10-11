@@ -195,6 +195,10 @@ class UserManagementController(
                curentUser.user.data["countyId"] = userRequest.countyId
            }
 
+           if(userRequest.constituencyId != null){
+               curentUser.user.data["constituencyId"] = userRequest.constituencyId
+           }
+
             val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)
             return if(userEditedResponse.wasSuccessful()) {
                 ResponseEntity(
@@ -240,6 +244,9 @@ class UserManagementController(
                 curentUser.user.data["countyId"] = userProfileInfoRequest.countyId
             }
 
+            if(userProfileInfoRequest.constituencyId  != null){
+                curentUser.user.data["constituencyId"] = userProfileInfoRequest.constituencyId
+            }
             if(userProfileInfoRequest.dialectId != null){
                 if(dialectService.existsByDialectId(dialectId = userProfileInfoRequest.dialectId!!)) {
                     val dialect = dialectService.getDialectById(userProfileInfoRequest.dialectId!!)
