@@ -1,7 +1,9 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.entities.CountyEntity
 import com.thinkauth.thinkfusionauth.entities.UserEntity
 import com.thinkauth.thinkfusionauth.repository.UserRepository
+import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.utils.toUserEntity
 import io.fusionauth.client.FusionAuthClient
 import io.fusionauth.domain.User
@@ -13,7 +15,8 @@ import org.springframework.stereotype.Service
 @Service
 class UserManagementService(
     private val fusionAuthClient: FusionAuthClient,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val countyServiceImple: CountyServiceImple
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(UserManagementService::class.java)
@@ -110,5 +113,9 @@ class UserManagementService(
             addUserFromFusionAuthByEmail(email)
         }
         return fetchUserEntityByEmail(email)
+    }
+
+    fun fetchAllCounties(): MutableList<CountyEntity> {
+        return countyServiceImple.getAll()
     }
 }

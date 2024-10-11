@@ -1,5 +1,7 @@
 package com.thinkauth.thinkfusionauth.config
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.*
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
@@ -8,6 +10,7 @@ import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryReque
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
+import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.services.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
+import java.io.InputStream
 
 @Component
 class DataLoader(
@@ -29,11 +33,24 @@ class DataLoader(
     private val conversationService: ConversationImpl,
     private val botInfoImpl: BotInfoImpl,
     private val userManagementService: UserManagementService,
+    private val countyService: CountyServiceImple,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    val mapper = ObjectMapper()
 
+    val countyTypeReference = object : TypeReference<ArrayList<CountyEntity>>() {}
+    val countyTypeInputStream: InputStream? = TypeReference::class.java.getResourceAsStream("/json/counties.json")
+
+    fun addCounties(){
+        val countyJson = mapper.readValue(countyTypeInputStream, countyTypeReference)
+        val counties = mutableListOf<CountyEntity>()
+        if (countyJson.size > countyService.count()) {
+           val counties =  countyJson.map { county -> CountyEntity(county.countyId, county.name,county.code, county.capital) }
+            countyService.saveAll(counties)
+        }
+    }
     fun loadingLanguageData() {
         if (languageService.getLanguagesCount() == 0L) {
             logger.debug("loading data from wikipedia....")
@@ -176,6 +193,7 @@ class DataLoader(
         addSwahiliSentences()
         industryItems()
         backdateAllConversations()
+        addCounties()
 //        addDescriptionsForBots(
 //        logger.info("running after 5 seconds delay")
 //        backdateAllUserInfo()

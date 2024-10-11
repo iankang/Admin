@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.controllers
 
 
 import com.inversoft.error.Errors
+import com.thinkauth.thinkfusionauth.entities.CountyEntity
 import com.thinkauth.thinkfusionauth.entities.UserEntity
 import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
@@ -278,5 +279,11 @@ class UserManagementController(
     @GetMapping("/fetchAllUsers")
     fun fetchAllUsers(): ResponseEntity<MutableList<UserEntity>> {
         return ResponseEntity(userManagementService.fetchAllUsers(), HttpStatus.OK)
+    }
+
+    @Operation(summary = "get all counties", description = "Gets all counties", tags = ["UserManagement"])
+    @GetMapping("/fetchAllCounties")
+    fun fetchAllCounties(): ResponseEntity<MutableList<CountyEntity>> {
+        return ResponseEntity(userManagementService.fetchAllCounties(),HttpStatus.OK)
     }
 }
