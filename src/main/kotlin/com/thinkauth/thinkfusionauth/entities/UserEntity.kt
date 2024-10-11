@@ -21,5 +21,7 @@ data class UserEntity(
     var genderState: String? = null,
     var ageGroup:String? =  null,
     @Indexed(unique = true)
-    var nationalId:String? = null
+    var nationalId:String? = null,
+    var countyId:Int? = null,
+    var constituency:String? = null
 ):AuditMetadata()

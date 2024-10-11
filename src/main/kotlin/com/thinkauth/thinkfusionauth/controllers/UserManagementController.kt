@@ -191,6 +191,10 @@ class UserManagementController(
                }
            }
 
+           if(userRequest.countyId != null){
+               curentUser.user.data["countyId"] = userRequest.countyId
+           }
+
             val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)
             return if(userEditedResponse.wasSuccessful()) {
                 ResponseEntity(
@@ -230,6 +234,10 @@ class UserManagementController(
             }
             if(userProfileInfoRequest.educationLevel != null){
                 curentUser.user.data["education_level"] = userProfileInfoRequest.educationLevel!!.name
+            }
+
+            if(userProfileInfoRequest.countyId != null){
+                curentUser.user.data["countyId"] = userProfileInfoRequest.countyId
             }
 
             if(userProfileInfoRequest.dialectId != null){

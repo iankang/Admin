@@ -9,5 +9,6 @@ data class ProfileInfoRequest(
     var gender: GenderState?,
     var educationLevel: EducationLevel?,
     var dialectId:String?,
-    var nationalId:String?
+    var nationalId:String?,
+    var countyId:Int?
 )

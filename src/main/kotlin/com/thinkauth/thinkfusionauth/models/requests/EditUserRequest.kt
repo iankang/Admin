@@ -18,5 +18,6 @@ data class EditUserRequest(
     var gender: GenderState?,
     var educationLevel:EducationLevel?,
     var dialectId:String? = null,
-    var nationalId:Long? = null
+    var nationalId:Long? = null,
+    var countyId:Int? = null
 )

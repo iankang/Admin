@@ -120,7 +120,7 @@ class MediaEntityService(
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse> {
         val languageList = mutableListOf<LanguageRecordingsResponse>()
         val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { it.languageId }.distinct()
-            languagesIds.forEach { languageId:String? ->
+        languagesIds.forEach { languageId:String? ->
 
             val sentenceCount = audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageId!!)
             val recordingsCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(languageId,"VOICE_COLLECTION")
