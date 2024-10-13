@@ -2,13 +2,17 @@ package com.thinkauth.thinkfusionauth.config
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.*
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
+import com.thinkauth.thinkfusionauth.models.responses.Constituency
+import com.thinkauth.thinkfusionauth.models.responses.CountyResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
+import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.services.*
@@ -34,6 +38,7 @@ class DataLoader(
     private val botInfoImpl: BotInfoImpl,
     private val userManagementService: UserManagementService,
     private val countyService: CountyServiceImple,
+    private val constituencyImpl: ConstituencyImpl,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -43,12 +48,37 @@ class DataLoader(
     val countyTypeReference = object : TypeReference<ArrayList<CountyEntity>>() {}
     val countyTypeInputStream: InputStream? = TypeReference::class.java.getResourceAsStream("/json/counties.json")
 
+    val constituencyTypeReference = object : TypeReference<ArrayList<CountyResponse>>() {}
+    val constituencyTypeInputStream: InputStream? = TypeReference::class.java.getResourceAsStream("/json/counties_constituencies.json")
+
     fun addCounties(){
         val countyJson = mapper.readValue(countyTypeInputStream, countyTypeReference)
-        val counties = mutableListOf<CountyEntity>()
         if (countyJson.size > countyService.count()) {
            val counties =  countyJson.map { county -> CountyEntity(county.countyId, county.name,county.code, county.capital) }
             countyService.saveAll(counties)
+        }
+    }
+
+    fun addConstituencies(){
+        val constituencyData = mapper.readValue(constituencyTypeInputStream,constituencyTypeReference)
+        if(constituencyData.size > constituencyImpl.count() ){
+            val constitutes:MutableList<ConstituencyEntity> = mutableListOf()
+            constituencyData.forEach { countyResponse: CountyResponse ->
+                countyResponse.constituencies?.forEach { constituency: Constituency? ->
+                    constituency?.wards?.forEach {
+                        val constituent = ConstituencyEntity(
+                            wardName = it ?: "",
+                            countyId = countyResponse.no ?: 0,
+                            countyName = countyResponse?.name ?: "",
+                            constituencyName = constituency.name
+                        )
+                        logger.info("adding: {}",constituent)
+                        constitutes.add(constituent)
+                    }
+                }
+            }
+
+            constituencyImpl.saveAll(constitutes)
         }
     }
     fun loadingLanguageData() {
@@ -194,6 +224,7 @@ class DataLoader(
         industryItems()
         backdateAllConversations()
         addCounties()
+        addConstituencies()
 //        addDescriptionsForBots(
 //        logger.info("running after 5 seconds delay")
 //        backdateAllUserInfo()

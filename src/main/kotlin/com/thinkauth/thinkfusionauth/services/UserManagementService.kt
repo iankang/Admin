@@ -1,8 +1,10 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.entities.ConstituencyEntity
 import com.thinkauth.thinkfusionauth.entities.CountyEntity
 import com.thinkauth.thinkfusionauth.entities.UserEntity
 import com.thinkauth.thinkfusionauth.repository.UserRepository
+import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.utils.toUserEntity
 import io.fusionauth.client.FusionAuthClient
@@ -16,7 +18,8 @@ import org.springframework.stereotype.Service
 class UserManagementService(
     private val fusionAuthClient: FusionAuthClient,
     private val userRepository: UserRepository,
-    private val countyServiceImple: CountyServiceImple
+    private val countyServiceImple: CountyServiceImple,
+    private val constituencyImpl: ConstituencyImpl
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(UserManagementService::class.java)
@@ -117,5 +120,23 @@ class UserManagementService(
 
     fun fetchAllCounties(): MutableList<CountyEntity> {
         return countyServiceImple.getAll()
+    }
+
+    fun fetchConstituenciesByCountyId(
+        countyId:Int
+    ): List<ConstituencyEntity> {
+        return constituencyImpl.getByCountyId(countyId)
+    }
+
+    fun fetchConstituenciesByCountyName(
+        countyName:String
+    ): List<ConstituencyEntity> {
+        return constituencyImpl.getByCountyName(countyName)
+    }
+
+    fun fetchByConstituencyName(
+        constituencyName:String
+    ): List<ConstituencyEntity> {
+        return constituencyImpl.getByConstituencyName(constituencyName)
     }
 }

@@ -6,14 +6,14 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference
 import java.time.LocalDateTime
 
 @Document
-data class AudioAcceptedEntity(
+data class SentenceAccepted(
     var sentenceId:String? = null,
     var dialectId:String? = null,
     var dialectName:String? = null,
+    var languageId:String? = null,
     var businessId:String? = null,
     var businessName:String? = null,
     var mediaItemId:String? = null,
-    var acceptor: User? = null
 ):AuditMetadata(){
     var acceptedDate:LocalDateTime? = LocalDateTime.now()
 }
