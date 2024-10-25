@@ -70,4 +70,5 @@ class ConstituencyImpl(
         return constituencyRepository.findAllByConstituencyName(constituencyName)
     }
 
+
 }

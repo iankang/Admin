@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CountyRepository:MongoRepository<CountyEntity,String> {
+
+    fun findByCode(code:Int):CountyEntity
+
+    fun existsByCode(code: Int):Boolean
 }

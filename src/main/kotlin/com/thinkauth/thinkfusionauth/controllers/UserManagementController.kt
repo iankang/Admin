@@ -9,6 +9,8 @@ import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
 import com.thinkauth.thinkfusionauth.models.requests.ProfileInfoRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
+import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
+import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.services.ConversationService
 import com.thinkauth.thinkfusionauth.services.DialectService
 import com.thinkauth.thinkfusionauth.services.UserManagementService
@@ -41,6 +43,8 @@ class UserManagementController(
     private val dialectService: DialectService,
     private val userManagementService: UserManagementService,
     private val conversationService: ConversationService,
+    private val countyServiceImple: CountyServiceImple,
+    private val constituencyImpl: ConstituencyImpl
 ) {
     private val logger:Logger = LoggerFactory.getLogger(UserManagementController::class.java)
     @Operation(summary = "get a user by email", description = "Gets a user by email", tags = ["UserManagement"])
@@ -195,10 +199,19 @@ class UserManagementController(
 
            if(userRequest.countyId != null){
                curentUser.user.data["countyId"] = userRequest.countyId
+               if(countyServiceImple.existsByCode(userRequest.countyId!!)){
+                   val county = countyServiceImple.getCountyByCode(userRequest.countyId!!)
+                   curentUser.user.data["countyName"] = county.name
+               }
            }
 
            if(userRequest.constituencyId != null){
                curentUser.user.data["constituencyId"] = userRequest.constituencyId
+
+               if(constituencyImpl.itemExistsById(userRequest.constituencyId!!)){
+                   val constituency = constituencyImpl.getItemById(userRequest.constituencyId!!)
+                   curentUser.user.data["constituencyName"] = constituency.constituencyName
+               }
            }
 
             val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)

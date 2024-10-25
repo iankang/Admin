@@ -62,4 +62,12 @@ class CountyServiceImple(
     fun getAll(): MutableList<CountyEntity> {
         return countyRepository.findAll()
     }
+
+    fun existsByCode(code:Int):Boolean{
+        return countyRepository.existsByCode(code)
+    }
+
+    fun getCountyByCode(code: Int): CountyEntity {
+        return countyRepository.findByCode(code)
+    }
 }

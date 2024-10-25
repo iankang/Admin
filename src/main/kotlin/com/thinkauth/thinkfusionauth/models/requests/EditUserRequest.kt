@@ -20,5 +20,5 @@ data class EditUserRequest(
     var dialectId:String? = null,
     var nationalId:Long? = null,
     var countyId:Int? = null,
-    var constituencyId:Int? = null
+    var constituencyId:String? = null
 )
