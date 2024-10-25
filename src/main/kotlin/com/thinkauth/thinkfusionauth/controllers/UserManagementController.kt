@@ -213,6 +213,9 @@ class UserManagementController(
                    curentUser.user.data["constituencyName"] = constituency.constituencyName
                }
            }
+           if(userRequest.employment != null){
+               curentUser.user.data["employment"] = userRequest.employment
+           }
 
             val userEditedResponse = fusionAuthClient.updateUser(userId,curentUser)
             return if(userEditedResponse.wasSuccessful()) {
