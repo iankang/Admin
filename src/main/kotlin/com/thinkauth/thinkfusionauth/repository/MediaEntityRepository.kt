@@ -18,6 +18,8 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllByCreatedByUser(userEmail:String):List<MediaEntity>
 
+    fun findAllByOwnerEmail(userEmail: String):List<MediaEntity>
+
     fun countAllByUsernameAndMediaName(userEmail:String,mediaName:String):Long
 
     fun countAllByUsernameAndMediaNameAndLanguageId(userEmail:String,mediaName:String,languageId:String):Long

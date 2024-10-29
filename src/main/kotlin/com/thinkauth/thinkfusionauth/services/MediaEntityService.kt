@@ -67,7 +67,7 @@ class MediaEntityService(
     }
 
     fun fetchAllMediaEntityByUser(email:String): List<MediaEntity> {
-        return mediaEntityRepository.findAllByCreatedByUser(email)
+        return mediaEntityRepository.findAllByOwnerEmail(email)
     }
 
     fun fetchAllMediaEntityByBusinessId(businessId:String): List<MediaEntity> {
