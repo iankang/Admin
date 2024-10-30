@@ -70,5 +70,7 @@ class ConstituencyImpl(
         return constituencyRepository.findAllByConstituencyName(constituencyName)
     }
 
-
+    fun getAllConstituencies(): MutableList<ConstituencyEntity> {
+        return constituencyRepository.findAll()
+    }
 }

@@ -122,6 +122,10 @@ class UserManagementService(
         return countyServiceImple.getAll()
     }
 
+    fun fetchAllConstituencies():MutableList<ConstituencyEntity>{
+        return constituencyImpl.getAllConstituencies()
+    }
+
     fun fetchConstituenciesByCountyId(
         countyId:Int
     ): List<ConstituencyEntity> {

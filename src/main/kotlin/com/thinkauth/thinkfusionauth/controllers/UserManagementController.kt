@@ -314,4 +314,14 @@ class UserManagementController(
             HttpStatus.OK
         )
     }
+
+    @Operation(summary = "get all constituencies", description = "Gets all constituencies", tags = ["UserManagement"])
+    @GetMapping("/fetchAllConstituencies" )
+    fun fetchAllConstituencies(
+    ): ResponseEntity<List<ConstituencyEntity>> {
+        return ResponseEntity(
+            userManagementService.fetchAllConstituencies(),
+            HttpStatus.OK
+        )
+    }
 }
