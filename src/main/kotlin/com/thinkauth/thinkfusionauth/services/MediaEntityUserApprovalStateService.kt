@@ -3,6 +3,7 @@ package com.thinkauth.thinkfusionauth.services
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
+import com.thinkauth.thinkfusionauth.models.responses.ApproverCount
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.impl.MediaEntityUserApprovalStateImpl
 import org.slf4j.Logger
@@ -207,6 +208,26 @@ class MediaEntityUserApprovalStateService(
     ): List<MediaEntityUserApprovalState> {
         return mediaEntityUserApprovalStateImpl.getAllByPaymentDateGreaterThanPaymentStart(
             paymentDateStart.atStartOfDay()
+        )
+    }
+
+    fun getCountByApproverEmail(
+        approverEmail: String
+    ): ApproverCount {
+        var mediaEntityCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmail(approverEmail)
+        var acceptedCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.ACCEPTED)
+        var rejectedCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.REJECTED)
+        var pendingCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.PENDING)
+        var paidCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndPaymentState(approverEmail,PaymentState.PAID)
+        var unpaidCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndPaymentState(approverEmail,PaymentState.UNPAID)
+
+        return ApproverCount(
+            mediaEntitiesCount = mediaEntityCount,
+            acceptedCount = acceptedCount,
+            rejectedCount = rejectedCount,
+            paidCount = paidCount,
+            unpaidCount = unpaidCount,
+            pendingCount = pendingCount
         )
     }
 }

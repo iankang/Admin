@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
+import com.thinkauth.thinkfusionauth.models.responses.ApproverCount
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.MediaEntityUserApprovalStateService
 import io.swagger.v3.oas.annotations.Operation
@@ -202,6 +203,22 @@ class MediaEntityUserApprovalStateController(
     ): ResponseEntity<List<MediaEntityUserApprovalState>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllByPaymentDateStart(paymentDateStart), HttpStatus.OK
+        )
+    }
+    @Operation(
+        summary = "approver metrics",
+        description = "Gets approver metrics",
+        tags = ["MediaEntitiesApprovalState"]
+    )
+    @GetMapping("/approverMetrics")
+    fun getApproverMetrics(
+        @RequestParam(
+            "approverEmail",
+            required = true
+        )  approverEmail: String
+    ): ResponseEntity<ApproverCount> {
+        return ResponseEntity(
+            mediaEntityUserApprovalStateService.getCountByApproverEmail(approverEmail), HttpStatus.OK
         )
     }
 

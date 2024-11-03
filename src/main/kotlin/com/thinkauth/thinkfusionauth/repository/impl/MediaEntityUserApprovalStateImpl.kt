@@ -166,4 +166,24 @@ class MediaEntityUserApprovalStateImpl(
     ): List<MediaEntityUserApprovalState> {
         return mediaEntityUserApprovalStateRepository.findAllByPaymentDateStart(paymentDateStart)
     }
+
+    fun getCountByApproverEmail(
+        approverEmail: String
+    ): Long {
+        return mediaEntityUserApprovalStateRepository.countAllByApproverEmail(approverEmail)
+    }
+
+    fun getCountByApproverEmailAndMediaAcceptanceState(
+        approverEmail: String,
+        mediaAcceptanceState: MediaAcceptanceState
+    ): Long {
+        return mediaEntityUserApprovalStateRepository.countAllByApproverEmailAndMediaState(approverEmail,mediaAcceptanceState)
+    }
+
+    fun getCountByApproverEmailAndPaymentState(
+        approverEmail: String,
+        paymentState: PaymentState
+    ): Long {
+        return mediaEntityUserApprovalStateRepository.countAllByApproverEmailAndPaymentState(approverEmail,paymentState)
+    }
 }
