@@ -19,6 +19,8 @@ interface MediaEntityUserApprovalStateRepository:MongoRepository<MediaEntityUser
 
     fun findAllByApproverEmailAndPaymentState(approverEmail: String,paymentState: PaymentState,pageable: Pageable):Page<MediaEntityUserApprovalState>
 
+    fun findAllByApproverEmailAndMediaState(approverEmail: String, mediaState: MediaAcceptanceState, pageable: Pageable):Page<MediaEntityUserApprovalState>
+
     fun findByMediaEntityIdAndApproverEmail(mediaEntityId: String, approverEmail: String):MediaEntityUserApprovalState
 
     fun countAllByApproverEmailAndPaymentState(approverEmail: String,paymentState: PaymentState):Long

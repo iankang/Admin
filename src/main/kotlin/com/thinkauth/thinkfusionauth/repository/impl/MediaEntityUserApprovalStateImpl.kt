@@ -115,28 +115,42 @@ class MediaEntityUserApprovalStateImpl(
         paymentState: PaymentState,
         page: Int,
         size: Int
-    ): Page<MediaEntityUserApprovalState> {
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
-        return mediaEntityUserApprovalStateRepository.findAllByApproverEmailAndPaymentState(approverEmail,paymentState,paging)
+        val approvalState =mediaEntityUserApprovalStateRepository.findAllByApproverEmailAndPaymentState(approverEmail,paymentState,paging)
+        return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
+
     }
 
+    fun getAllApprovalsByApproverEmailAndAcceptanceState(
+        approverEmail:String,
+        mediaAcceptanceState: MediaAcceptanceState,
+        page: Int,
+        size: Int
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val approvalState = mediaEntityUserApprovalStateRepository.findAllByApproverEmailAndMediaState(approverEmail,mediaAcceptanceState,paging)
+        return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
+    }
     fun getByReviewDateAndPaymentState(
         reviewDate:LocalDateTime,
         paymentState: PaymentState,
         page: Int,
         size: Int
-    ): Page<MediaEntityUserApprovalState> {
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
-        return mediaEntityUserApprovalStateRepository.findAllByReviewDateAndPaymentStateOrderByReviewDateDesc( reviewDate, paymentState, paging)
+        val approvalState = mediaEntityUserApprovalStateRepository.findAllByReviewDateAndPaymentStateOrderByReviewDateDesc( reviewDate, paymentState, paging)
+        return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
     }
 
     fun getByReviewDate(
         reviewDate: LocalDateTime,
         page: Int,
         size: Int
-    ): Page<MediaEntityUserApprovalState> {
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
-        return mediaEntityUserApprovalStateRepository.findAllByReviewDate(reviewDate,paging)
+        val approvalState = mediaEntityUserApprovalStateRepository.findAllByReviewDate(reviewDate,paging)
+        return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
     }
 
     fun getByReviewDateStartAndReviewDateEnd(

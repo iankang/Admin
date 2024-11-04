@@ -162,21 +162,28 @@ class MediaEntityUserApprovalStateService(
 
     fun getAllByApproverEmailAndPaymentState(
         approverEmail: String, paymentState: PaymentState, page: Int, size: Int
-    ): Page<MediaEntityUserApprovalState> {
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         return mediaEntityUserApprovalStateImpl.getAllApprovalsByApproverEmailAndPaymentState(
             approverEmail, paymentState, page, size
+        )
+    }
+    fun getAllByApproverEmailAndMediaAcceptanceState(
+        approverEmail: String, mediaAcceptanceState: MediaAcceptanceState, page: Int, size: Int
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
+        return mediaEntityUserApprovalStateImpl.getAllApprovalsByApproverEmailAndAcceptanceState(
+            approverEmail, mediaAcceptanceState, page, size
         )
     }
 
     fun getAllByReviewDateAndPaymentState(
         reviewDate: LocalDateTime, paymentState: PaymentState, page: Int, size: Int
-    ): Page<MediaEntityUserApprovalState> {
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         return mediaEntityUserApprovalStateImpl.getByReviewDateAndPaymentState(reviewDate, paymentState, page, size)
     }
 
     fun getAllByReviewDate(
         reviewDate: LocalDateTime, page: Int, size: Int
-    ): Page<MediaEntityUserApprovalState> {
+    ): PagedResponse<MutableList<MediaEntityUserApprovalState>> {
         return mediaEntityUserApprovalStateImpl.getByReviewDate(reviewDate, page, size)
     }
 
@@ -214,12 +221,12 @@ class MediaEntityUserApprovalStateService(
     fun getCountByApproverEmail(
         approverEmail: String
     ): ApproverCount {
-        var mediaEntityCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmail(approverEmail)
-        var acceptedCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.ACCEPTED)
-        var rejectedCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.REJECTED)
-        var pendingCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.PENDING)
-        var paidCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndPaymentState(approverEmail,PaymentState.PAID)
-        var unpaidCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndPaymentState(approverEmail,PaymentState.UNPAID)
+        val mediaEntityCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmail(approverEmail)
+        val acceptedCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.ACCEPTED)
+        val rejectedCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.REJECTED)
+        val pendingCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndMediaAcceptanceState(approverEmail,MediaAcceptanceState.PENDING)
+        val paidCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndPaymentState(approverEmail,PaymentState.PAID)
+        val unpaidCount = mediaEntityUserApprovalStateImpl.getCountByApproverEmailAndPaymentState(approverEmail,PaymentState.UNPAID)
 
         return ApproverCount(
             mediaEntitiesCount = mediaEntityCount,
@@ -230,4 +237,5 @@ class MediaEntityUserApprovalStateService(
             pendingCount = pendingCount
         )
     }
+
 }

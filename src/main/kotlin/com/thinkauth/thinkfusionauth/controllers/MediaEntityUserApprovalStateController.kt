@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
 import com.thinkauth.thinkfusionauth.models.responses.ApproverCount
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
@@ -83,10 +84,28 @@ class MediaEntityUserApprovalStateController(
         @RequestParam("paymentState", required = true) paymentState: PaymentState,
         @RequestParam("page", required = true) page: Int,
         @RequestParam("size", required = true) size: Int
-    ): ResponseEntity<Page<MediaEntityUserApprovalState>> {
+    ): ResponseEntity<PagedResponse<MutableList<MediaEntityUserApprovalState>>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllByApproverEmailAndPaymentState(
                 approverEmail, paymentState, page, size
+            ), HttpStatus.OK
+        )
+    }
+    @Operation(
+        summary = "get approvals by approver email and acceptance state ",
+        description = "Gets approvals by email and acceptance state",
+        tags = ["MediaEntitiesApprovalState"]
+    )
+    @GetMapping("/approverEmailAndMediaAcceptanceState")
+    fun getByApproverAndMediaAcceptanceState(
+        @RequestParam("approverEmail", required = true) approverEmail: String,
+        @RequestParam("mediaAcceptanceState", required = true) mediaAcceptanceState: MediaAcceptanceState,
+        @RequestParam("page", required = true) page: Int? = 0,
+        @RequestParam("size", required = true) size: Int? = 100
+    ): ResponseEntity<PagedResponse<MutableList<MediaEntityUserApprovalState>>> {
+        return ResponseEntity(
+            mediaEntityUserApprovalStateService.getAllByApproverEmailAndMediaAcceptanceState(
+                approverEmail, mediaAcceptanceState, page ?: 0, size ?: 100
             ), HttpStatus.OK
         )
     }
@@ -100,12 +119,12 @@ class MediaEntityUserApprovalStateController(
     fun getAllByReviewDateAndPaymentState(
         @RequestParam("reviewDate", required = true) reviewDate: LocalDate,
         @RequestParam("paymentState", required = true) paymentState: PaymentState,
-        @RequestParam("page", required = true) page: Int,
-        @RequestParam("size", required = true) size: Int
-    ): ResponseEntity<Page<MediaEntityUserApprovalState>> {
+        @RequestParam("page", required = true) page: Int? = 0,
+        @RequestParam("size", required = true) size: Int? = 100
+    ): ResponseEntity<PagedResponse<MutableList<MediaEntityUserApprovalState>>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllByReviewDateAndPaymentState(
-                reviewDate.atStartOfDay(), paymentState, page, size
+                reviewDate.atStartOfDay(), paymentState,page ?: 0, size ?: 100
             ), HttpStatus.OK
         )
     }
@@ -123,7 +142,7 @@ class MediaEntityUserApprovalStateController(
         ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) reviewDate: LocalDate,
         @RequestParam("page", required = true) page: Int,
         @RequestParam("size", required = true) size: Int
-    ): ResponseEntity<Page<MediaEntityUserApprovalState>> {
+    ): ResponseEntity<PagedResponse<MutableList<MediaEntityUserApprovalState>>> {
         return ResponseEntity(
             mediaEntityUserApprovalStateService.getAllByReviewDate(reviewDate.atStartOfDay(), page, size), HttpStatus.OK
         )
