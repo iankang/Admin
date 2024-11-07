@@ -8,7 +8,6 @@ import com.thinkauth.thinkfusionauth.entities.Language
 import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.enums.SentenceDocumentState
 import com.thinkauth.thinkfusionauth.events.OnSentenceDocumentMediaUploadItemEvent
-import com.thinkauth.thinkfusionauth.events.OnUserRegisteredEvent
 import com.thinkauth.thinkfusionauth.exceptions.BadRequestException
 import com.thinkauth.thinkfusionauth.models.requests.DialectRequest
 import com.thinkauth.thinkfusionauth.models.requests.LanguageRequest
@@ -55,9 +54,7 @@ class CsvService(
     }
 
     private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<SentenceDocumentCSV> =
-        CsvToBeanBuilder<SentenceDocumentCSV>(fileReader)
-            .withType(SentenceDocumentCSV::class.java)
-            .withSkipLines(1)
+        CsvToBeanBuilder<SentenceDocumentCSV>(fileReader).withType(SentenceDocumentCSV::class.java).withSkipLines(1)
             .withIgnoreLeadingWhiteSpace(true).build()
 
     private fun closeFileReader(fileReader: BufferedReader?) {
@@ -88,25 +85,30 @@ class CsvService(
 
             val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
             logger.info("sentence upload entity: {}", sentenceDoc)
-            val dialects =
-                csvItems.map { LangAndDialect(language = it.language, dialect = it.dialect) }.distinct()
+            val dialects = csvItems.map { LangAndDialect(language = it.language, dialect = it.dialect) }.distinct()
             logger.info("dialectsMap: {}", dialects)
             val languageEntityMap: MutableMap<String, Language> = mutableMapOf()
             val dialectEntityMap: MutableMap<String, Dialect> = mutableMapOf()
             dialects.forEach { item ->
                 if (!languageService.existsByLanguageName(item.language!!)) {
                     logger.info("language does not exist: {}", item.language)
-                    languageEntityMap[item.language!!] = languageService.addLanguage(languageRequest = LanguageRequest(item.language!!))
+                    languageEntityMap[item.language!!] =
+                        languageService.addLanguage(languageRequest = LanguageRequest(item.language!!))
 
                 } else {
                     logger.info("language exists: {}", item.language)
-                    languageEntityMap[item.language!!] = (languageService.findLanguageByLanguageName(item.language!!).first())!!
+                    languageEntityMap[item.language!!] =
+                        (languageService.findLanguageByLanguageName(item.language!!).first())!!
                 }
                 if (!dialectService.existsByDialectName(item.dialect!!)) {
                     logger.info("dialect does not exist: {}", item.dialect!!)
                     val languageStuff = languageService.findLanguageByLanguageName(item.language!!).first()
-                    dialectEntityMap[item.dialect!!] =
-                        dialectService.addDialect(DialectRequest(dialectName = item.dialect, languageId = languageStuff?.id))
+                    dialectEntityMap[item.dialect!!] = dialectService.addDialect(
+                        DialectRequest(
+                            dialectName = item.dialect,
+                            languageId = languageStuff?.id
+                        )
+                    )
 
                 } else {
                     logger.info("dialect exists: {}", item.language)
@@ -151,4 +153,6 @@ class CsvService(
             sentenceDocumentImpl.createItem(sentenceDoc)
         }
     }
+
+
 }

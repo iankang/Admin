@@ -284,10 +284,12 @@ class AudioCollectionController(
 //    }
 
     @Operation(
-        summary = "Deletes All Audio Collections", description = "deletes all audio collections", tags = ["Audio"]
+        summary = "Deletes All Audio Collections by languageId", description = "deletes all audio collections by languageId", tags = ["Sentences"]
     )
-    @DeleteMapping("/deleteAll")
-    fun deleteAllAudioCollection(){
-        return audioCollectionService.deleteAllAudioCollection()
+    @DeleteMapping("/deleteByLanguageId")
+    fun deleteByLanguageId(
+        @RequestParam("languageId") languageId:String
+    ){
+        return audioCollectionService.deleteAllSentencesByLanguageId(languageId)
     }
 }

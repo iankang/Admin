@@ -23,6 +23,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 import java.io.InputStream
+import kotlin.math.log
 
 @Component
 class DataLoader(
@@ -73,6 +74,7 @@ class DataLoader(
                             constituencyName = constituency.name
                         )
                         logger.info("adding: {}",constituent)
+
                         constitutes.add(constituent)
                     }
                 }
@@ -214,6 +216,28 @@ class DataLoader(
         }
     }
 
+    fun somaliUpdate(){
+        val startPage = 0
+        val increment = 1
+        val somaliSentences = audioCollectionService.getAllSentencesByLanguageId("66eab0b9b47b7539e1262cfe",0 ,10)
+        logger.info("somaliCount: {}",somaliSentences.item.size)
+        val requiredSomaliLanguage = audioCollectionService.getLanguage("66eab0b9b47b7539e1262d00")
+        logger.info("requiredSomaliLanguage: {}", requiredSomaliLanguage.toString())
+        for (page in startPage..somaliSentences.totalPages step increment){
+            logger.info("running for page: {}", page)
+            val fetchedSomali = audioCollectionService.getAllSentencesByLanguageId("66eab0b9b47b7539e1262cfe",page ,10)
+            val mappedValues = fetchedSomali.item.map {
+                if (requiredSomaliLanguage != null) {
+                    it.language = requiredSomaliLanguage
+                }
+                it
+            }
+            audioCollectionService.saveAllSentences(mappedValues)
+            logger.info("page {} of {}",page,fetchedSomali.totalPages)
+        }
+
+    }
+
 
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
@@ -225,10 +249,12 @@ class DataLoader(
         backdateAllConversations()
         addCounties()
         addConstituencies()
-//        addDescriptionsForBots(
-//        logger.info("running after 5 seconds delay")
+        addDescriptionsForBots()
+        logger.info("running after 5 seconds delay")
 //        backdateAllUserInfo()
 //        backdateAllMediaEntities()
 //        userInfoGreaterThanOne()
+
+//        somaliUpdate()
     }
 }

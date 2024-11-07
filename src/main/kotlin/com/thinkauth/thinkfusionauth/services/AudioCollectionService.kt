@@ -4,35 +4,27 @@ package com.thinkauth.thinkfusionauth.services
 import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.Language
-import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
-import com.thinkauth.thinkfusionauth.repository.AudioCollectionRepository
+import com.thinkauth.thinkfusionauth.repository.SentenceEntityRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import com.thinkauth.thinkfusionauth.utils.FileProcessingHelper
-import io.minio.GetObjectResponse
 import org.apache.commons.io.IOUtils
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.core.io.InputStreamResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.data.rest.core.mapping.ResourceType
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
-import java.io.InputStream
-import java.net.URLConnection
 import javax.servlet.http.HttpServletResponse
-import kotlin.io.path.Path
 
 
 @Service
 class AudioCollectionService(
-    private val audioRepository: AudioCollectionRepository,
+    private val sentenceRepository: SentenceEntityRepository,
     private val languageService: LanguageService,
     private val businessService: BusinessService,
     @Value("\${minio.bucket}")
@@ -53,14 +45,14 @@ class AudioCollectionService(
             englishTranslation = audioCollectionRequest.englishTranslation,
             business = biz
         )
-        return audioRepository.save(collection)
+        return sentenceRepository.save(collection)
     }
 
     @TrackExecutionTime
     fun bulkAddSentences(
         sentences:List<SentenceEntitie>
     ): MutableList<SentenceEntitie> {
-        return audioRepository.saveAll(sentences)
+        return sentenceRepository.saveAll(sentences)
     }
 
     @TrackExecutionTime
@@ -69,7 +61,7 @@ class AudioCollectionService(
     ): PagedResponse<MutableList<SentenceEntitie>> {
         var SentenceEntitieList = mutableListOf<SentenceEntitie>()
         val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
-        val SentenceEntitiePage: Page<SentenceEntitie> = audioRepository.findAll(paging)
+        val SentenceEntitiePage: Page<SentenceEntitie> = sentenceRepository.findAll(paging)
         SentenceEntitieList = SentenceEntitiePage.content
         return PagedResponse<MutableList<SentenceEntitie>>(
             SentenceEntitieList,
@@ -81,20 +73,20 @@ class AudioCollectionService(
 
     @TrackExecutionTime
     fun audioCollectionExists(audioCollectionId: String): Boolean {
-        return audioRepository.existsById(audioCollectionId)
+        return sentenceRepository.existsById(audioCollectionId)
     }
     @TrackExecutionTime
     fun audioCollectionExistsBySentence(audioCollectionRequest: AudioCollectionRequest): Boolean {
-        return audioRepository.existsBySentence(audioCollectionRequest.sentence)
+        return sentenceRepository.existsBySentence(audioCollectionRequest.sentence)
     }
     @TrackExecutionTime
     fun sentenceExistsBySentence(sentence:String): Boolean {
-        return audioRepository.existsBySentence(sentence)
+        return sentenceRepository.existsBySentence(sentence)
     }
 
     @TrackExecutionTime
     fun getAudioCollectionById(audioCollectionId: String): SentenceEntitie {
-        return audioRepository.findById(audioCollectionId).get()
+        return sentenceRepository.findById(audioCollectionId).get()
     }
 
 //    fun getMinioObject(
@@ -121,7 +113,7 @@ class AudioCollectionService(
     fun getAudioCollectionByLanguageId(languageId: String): Page<SentenceEntitie> {
         val paging = PageRequest.of(0, 100000, Sort.by("lastModifiedDate").descending())
 
-        return audioRepository.findAllByLanguageId(languageId, paging)
+        return sentenceRepository.findAllByLanguageId(languageId, paging)
     }
 
     @TrackExecutionTime
@@ -136,12 +128,12 @@ class AudioCollectionService(
 
     @TrackExecutionTime
     fun deleteAllAudioCollection() {
-        audioRepository.deleteAll()
+        sentenceRepository.deleteAll()
     }
 
     @TrackExecutionTime
     fun getCountOfAllAudioCollectionByLanguageId(languageId: String): Long? {
-        return audioRepository.countAudioCollectionsByLanguageId(languageId)
+        return sentenceRepository.countAudioCollectionsByLanguageId(languageId)
     }
     @TrackExecutionTime
     fun getAllSentencesByLanguageId(
@@ -152,7 +144,7 @@ class AudioCollectionService(
 
         var SentenceEntitieList = mutableListOf<SentenceEntitie>()
         val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
-        val SentenceEntitiePage: Page<SentenceEntitie> = audioRepository.findAllByLanguageId(languageId, paging)
+        val SentenceEntitiePage: Page<SentenceEntitie> = sentenceRepository.findAllByLanguageId(languageId, paging)
         SentenceEntitieList = SentenceEntitiePage.content
         return PagedResponse<MutableList<SentenceEntitie>>(
             SentenceEntitieList,
@@ -164,17 +156,17 @@ class AudioCollectionService(
 
     @TrackExecutionTime
     fun audioSentencesCount(): Long {
-        return audioRepository.count()
+        return sentenceRepository.count()
     }
 
     @TrackExecutionTime
     fun deleteAllSentences() {
-        return audioRepository.deleteAll()
+        return sentenceRepository.deleteAll()
     }
 
     @TrackExecutionTime
     fun getAllSentencesByBusinessId(businessId:String): List<SentenceEntitie> {
-        return audioRepository.findAllByBusinessId(businessId)
+        return sentenceRepository.findAllByBusinessId(businessId)
     }
 
     @TrackExecutionTime
@@ -183,7 +175,7 @@ class AudioCollectionService(
                                        size:Int
     ): PagedResponse<MutableList<SentenceEntitie>> {
         val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
-        val sentences = audioRepository.findSentencesNotIn(sentenceId, paging)
+        val sentences = sentenceRepository.findSentencesNotIn(sentenceId, paging)
         return PagedResponse<MutableList<SentenceEntitie>>(
             sentences.content,
             sentences.number,
@@ -199,12 +191,29 @@ class AudioCollectionService(
                                 size:Int
     ): PagedResponse<MutableList<SentenceEntitie>> {
         val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
-        val sentences = audioRepository.findSentencesNotInAndLanguageId(sentenceId,languageId, paging)
+        val sentences = sentenceRepository.findSentencesNotInAndLanguageId(sentenceId,languageId, paging)
         return PagedResponse<MutableList<SentenceEntitie>>(
             sentences.content,
             sentences.number,
             sentences.totalElements,
             sentences.totalPages
         )
+    }
+
+    @TrackExecutionTime
+    fun saveSentence(sentenceEntitie: SentenceEntitie){
+        sentenceRepository.save(sentenceEntitie)
+    }
+
+    @TrackExecutionTime
+    fun saveAllSentences(sentenceEntities:List<SentenceEntitie>){
+        sentenceRepository.saveAll(sentenceEntities)
+    }
+
+    @TrackExecutionTime
+    fun deleteAllSentencesByLanguageId(
+        languageId: String
+    ){
+        sentenceRepository.deleteAllByLanguageId(languageId)
     }
 }

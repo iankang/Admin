@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AudioCollectionRepository : MongoRepository<SentenceEntitie, String> {
+interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
     fun existsBySentence(sentence: String): Boolean
 
     fun findAllByLanguageId(languageId: String, pageable: Pageable): Page<SentenceEntitie>
@@ -22,5 +22,7 @@ interface AudioCollectionRepository : MongoRepository<SentenceEntitie, String> {
 
     @Query("{ 'id': { '\$nin': ?0 }, 'language.id': ?1 }")
     fun findSentencesNotInAndLanguageId(sentenceIds: List<String>,languageId: String, pageable: Pageable): Page<SentenceEntitie>
+
+    fun deleteAllByLanguageId(languageId: String)
 
 }

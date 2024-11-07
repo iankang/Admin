@@ -3,7 +3,7 @@ package com.thinkauth.thinkfusionauth.services
 import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.SentenceUploadEntity
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
-import com.thinkauth.thinkfusionauth.repository.AudioCollectionRepository
+import com.thinkauth.thinkfusionauth.repository.SentenceEntityRepository
 import com.thinkauth.thinkfusionauth.repository.SentenceUploadRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import com.thinkauth.thinkfusionauth.utils.FileProcessingHelper
@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 class SentenceUploadService(
     private val sentenceUploadRepository: SentenceUploadRepository,
-    private val sentenceManagement: AudioCollectionRepository,
+    private val sentenceManagement: SentenceEntityRepository,
     private val fileProcessingHelper: FileProcessingHelper,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val userManagementService: UserManagementService,
