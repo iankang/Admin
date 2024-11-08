@@ -81,7 +81,6 @@ class MediaEntityService(
     fun acceptMediaEntity(mediaId: String): MediaEntity {
         val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.ACCEPTED
-
         return saveMediaEntity(mediaEntity)
     }
     fun rejectMediaEntity(mediaId: String): MediaEntity {
@@ -230,8 +229,8 @@ class MediaEntityService(
                 mediaPathId = path,
                 sentenceId = sentenceId,
                 actualSentence = sentence.sentence,
-                languageId = sentence.language.id,
-                languageName = sentence.language.languageName,
+                languageId = sentence.language?.id,
+                languageName = sentence.language?.languageName,
                 businessId = businessId,
                 genderState = user.genderState
             )
@@ -244,6 +243,8 @@ class MediaEntityService(
             } else{
                 userIgnoreService.addSentenceUserIgnore(userId = user.username!!,sentenceId)
             }
+
+            audioCollectionService.setSentenceNeedsUpload(sentenceId, false)
         }catch (e:Exception){
             logger.error("OnMediaUploadListener: ${e.toString()}")
         }

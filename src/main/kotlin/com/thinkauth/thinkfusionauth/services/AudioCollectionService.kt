@@ -216,4 +216,11 @@ class AudioCollectionService(
     ){
         sentenceRepository.deleteAllByLanguageId(languageId)
     }
+
+    @TrackExecutionTime
+    fun setSentenceNeedsUpload(sentenceId:String, state:Boolean){
+        val sentence = getAudioCollectionById(sentenceId )
+        sentence.needUploads = state
+        saveSentence(sentence)
+    }
 }

@@ -14,7 +14,7 @@ class SentenceEntitie(
     var topic: String? = null,
     var source: String? = null,
     @Indexed
-    @DocumentReference var language: Language,
+    @DocumentReference var language: Language? = null,
     @DocumentReference var dialect: Dialect? = null,
     @DocumentReference var business: Business? = null
 ) : AuditMetadata(){

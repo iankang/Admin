@@ -31,6 +31,8 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllByMediaName(mediaName:String):List<MediaEntity>
 
+    fun findAllByMediaState(mediaAcceptanceState: MediaAcceptanceState):List<MediaEntity>
+
     fun countAllByMediaName(mediaName:String):Long
 
     fun countAllByMediaStateAndMediaName(mediaAcceptanceState: MediaAcceptanceState, mediaName:String):Long

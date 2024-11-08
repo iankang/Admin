@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.*
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
 import com.thinkauth.thinkfusionauth.models.responses.Constituency
 import com.thinkauth.thinkfusionauth.models.responses.CountyResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
+import com.thinkauth.thinkfusionauth.repository.SentenceEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
@@ -30,6 +32,7 @@ class DataLoader(
     private val languageService: LanguageService,
     private val scrapingService: ScrapingService,
     private val audioCollectionService: AudioCollectionService,
+    private val sentenceEntityRepository: SentenceEntityRepository,
     private val minioService: MinioService,
     private val faker:Faker,
     private val businessService: BusinessService,
@@ -158,7 +161,7 @@ class DataLoader(
         mediaEntities.forEach {
 
             val sentence = audioCollectionService.getAudioCollectionById(it.sentenceId!!)
-            it.languageId = sentence.language.id
+            it.languageId = sentence.language?.id
             it.username = it.owner.username ?: ""
             logger.info("modifying the media: "+ it)
             mediaEntityService.save(it)
@@ -238,23 +241,54 @@ class DataLoader(
 
     }
 
+    fun removeSwahili(){
+        logger.info("removing swahili")
+        audioCollectionService.deleteAllSentencesByLanguageId("66eab0b9b47b7539e1262f36")
+    }
+
+    fun mediaEntityStatusChanger(){
+       val mediaEntities = mediaEntityService.findAllByMediaState(MediaAcceptanceState.ACCEPTED)
+        mediaEntities.forEach {
+            if(audioCollectionService.audioCollectionExists(it.sentenceId ?: "")) {
+                val sent = audioCollectionService.getAudioCollectionById(it.sentenceId ?: "")
+                sent.needUploads = false
+                audioCollectionService.saveSentence(sent)
+                logger.info("sentence: {}", sent.toString())
+
+            }
+        }
+    }
+
+    fun sentenceRemoval(){
+        val sentences = audioCollectionService.getAllSentences(0, 200).item.filter { it.language == null }
+        sentences.forEach {
+            sentenceEntityRepository.deleteById(it.id!!)
+            logger.info("deleting: {}", it.sentence)
+        }
+
+    }
 
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
         loadingLanguageData()
         checkIfBucketIsAvailable()
-        addSwahiliSentences()
+//        removeSwahili()
+//        addSwahiliSentences()
         industryItems()
-        backdateAllConversations()
+//        backdateAllConversations()
         addCounties()
         addConstituencies()
         addDescriptionsForBots()
+//        mediaEntityStatusChanger()
+
         logger.info("running after 5 seconds delay")
 //        backdateAllUserInfo()
 //        backdateAllMediaEntities()
 //        userInfoGreaterThanOne()
 
 //        somaliUpdate()
+//        removeSwahili()
+//        sentenceRemoval()
     }
 }
