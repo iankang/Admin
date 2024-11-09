@@ -12,6 +12,7 @@ data class MediaEntity(
     var mediaPathId: String,
     var sentenceId: String?,
     var actualSentence:String?,
+    var translatedText:String?,
     var languageId:String?,
     var languageName:String?,
     var businessId: String?,

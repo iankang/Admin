@@ -223,4 +223,9 @@ class AudioCollectionService(
         sentence.needUploads = state
         saveSentence(sentence)
     }
+
+    @TrackExecutionTime
+    fun getSentenceById(id:String): SentenceEntitie {
+        return sentenceRepository.findById(id).get()
+    }
 }

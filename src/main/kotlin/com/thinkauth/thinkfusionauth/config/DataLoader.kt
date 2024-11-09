@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import java.io.InputStream
 import kotlin.math.log
@@ -268,6 +269,16 @@ class DataLoader(
 
     }
 
+    fun mediaEntityBackdateSentenceUploaded(){
+        val audios = mediaEntityService.findAll(Sort.by(Sort.Order.desc("createdDate")))
+        logger.info("total number of media entities: ${audios.size}")
+        audios.forEach {
+            if(audioCollectionService.audioCollectionExists(it.sentenceId ?: "")){
+                audioCollectionService.setSentenceNeedsUpload(it.sentenceId ?: "",false)
+            }
+        }
+    }
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
@@ -290,5 +301,6 @@ class DataLoader(
 //        somaliUpdate()
 //        removeSwahili()
 //        sentenceRemoval()
+//        mediaEntityBackdateSentenceUploaded()
     }
 }

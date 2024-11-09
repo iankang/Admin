@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserUploadState
@@ -89,12 +90,6 @@ class MediaEntityService(
         return saveMediaEntity(mediaEntity)
     }
 
-//    fun fetchMediaEntitiesByAcceptedState(
-//        acceptedState:Boolean = false
-//    ): List<MediaEntity> {
-//        return mediaEntityRepository.findAllByAccepted(acceptedState)
-//    }
-
     fun countAllVoiceCollectionsByLanguageId(languageId: String): Long {
         return mediaEntityRepository.countAllByLanguageId(languageId)
     }
@@ -168,6 +163,7 @@ class MediaEntityService(
             content.totalPages
         )
     }
+    @TrackExecutionTime
     fun findAllVoiceCollectionsByLoggedInUserLanguageId(
         languageId: String,
         page:Int,
@@ -229,6 +225,7 @@ class MediaEntityService(
                 mediaPathId = path,
                 sentenceId = sentenceId,
                 actualSentence = sentence.sentence,
+                translatedText = sentence.englishTranslation,
                 languageId = sentence.language?.id,
                 languageName = sentence.language?.languageName,
                 businessId = businessId,
@@ -248,5 +245,10 @@ class MediaEntityService(
         }catch (e:Exception){
             logger.error("OnMediaUploadListener: ${e.toString()}")
         }
+    }
+
+    @TrackExecutionTime
+    fun mediaEntityForSentenceExists(sentenceId: String): Boolean {
+        return mediaEntityRepository.existsBySentenceId(sentenceId)
     }
 }

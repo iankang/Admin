@@ -78,15 +78,6 @@ class MediaEntityController(
         return ResponseEntity(mediaEntityService.fetchAllMediaEntityByBusinessId(businessId),HttpStatus.OK)
     }
 
-//    @Operation(
-//        summary = "Get media entities by acceptedState", description = "gets media entities by AcceptedStates", tags = ["MediaEntities"]
-//    )
-//    @GetMapping("/mediaEntityByAcceptedState")
-//    fun getByAcceptedState(
-//        @RequestParam("acceptedState") acceptedState:Boolean
-//    ): ResponseEntity<List<MediaEntity>>{
-//        return ResponseEntity(mediaEntityService.fetchMediaEntitiesByAcceptedState(acceptedState),HttpStatus.OK)
-//    }
     @Operation(
         summary = "Assign Media entity as accepted", description = "assign media entity as accepted", tags = ["MediaEntities"]
     )
@@ -104,5 +95,15 @@ class MediaEntityController(
         @RequestParam("mediaEntityId") sentenceId:String
     ): ResponseEntity<MediaEntity>{
         return ResponseEntity(mediaEntityService.rejectMediaEntity(sentenceId),HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Check if a media entity exists for a sentenceId ", description = "Checks if a media entity exists for a sentenceId", tags = ["MediaEntities"]
+    )
+    @GetMapping("/mediaEntityExistsForSentence")
+    fun mediaEntityExistsForSentence(
+        @RequestParam("sentenceId") sentenceId: String
+    ): ResponseEntity<Boolean> {
+        return ResponseEntity(mediaEntityService.mediaEntityForSentenceExists(sentenceId),HttpStatus.OK)
     }
 }

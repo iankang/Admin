@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.repository
 
+import com.github.javafaker.Bool
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import org.springframework.data.domain.Page
@@ -13,6 +14,8 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
     fun findAllByBusinessId(businessId:String):List<MediaEntity>
 
     fun findAllBySentenceId(sentenceId:String):List<MediaEntity>
+
+    fun existsBySentenceId(sentenceId: String):Boolean
 
     fun findAllByLanguageId(languageId: String,pageable: Pageable):Page<MediaEntity>
 
