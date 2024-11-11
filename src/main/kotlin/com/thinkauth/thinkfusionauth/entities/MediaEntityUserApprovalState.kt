@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 @Document
 data class MediaEntityUserApprovalState(
     var owner:UserEntity,
+    var approverFullName:String?,
     var approverEmail:String?,
     var approverUsername:String?,
     var uploaderId:String?,

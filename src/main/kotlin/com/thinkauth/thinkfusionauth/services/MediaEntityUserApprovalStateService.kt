@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.log
 
 @Service
 class MediaEntityUserApprovalStateService(
@@ -35,6 +36,7 @@ class MediaEntityUserApprovalStateService(
             val approvalState = MediaEntityUserApprovalState(
                 owner = loggedInUser,
                 approverEmail = loggedInUser.email,
+                approverFullName = loggedInUser.firstName+" "+ loggedInUser.lastName,
                 approverUsername = loggedInUser.username,
                 uploaderId = uploadedMedia.owner.id,
                 phoneNumber = loggedInUser.mobilePhone,
@@ -96,6 +98,7 @@ class MediaEntityUserApprovalStateService(
                 owner = loggedInUser,
                 approverEmail = loggedInUser.email,
                 approverUsername = loggedInUser.username,
+                approverFullName = loggedInUser.firstName+" "+ loggedInUser.lastName,
                 uploaderId = uploadedMedia.owner.id,
                 phoneNumber = loggedInUser.mobilePhone,
                 nationalId = loggedInUser.nationalId,
