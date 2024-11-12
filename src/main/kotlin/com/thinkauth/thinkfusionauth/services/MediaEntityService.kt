@@ -149,6 +149,22 @@ class MediaEntityService(
         return userRecordingsLanguageList
     }
 
+    fun findMediaEntitiesByStatus(
+        mediaAcceptanceState: MediaAcceptanceState
+    ): List<MediaEntity> {
+        val mediaEntities = mediaEntityRepository.findAllByMediaState(mediaAcceptanceState)
+        return mediaEntities
+    }
+
+    fun findMediaEntitiesByMediaAcceptanceStateAndLanguageId(
+        mediaAcceptanceState: MediaAcceptanceState,
+        languageId: String
+    ): List<MediaEntity> {
+        return mediaEntityRepository.findAllByMediaStateAndLanguageId(
+            mediaAcceptanceState, languageId
+        )
+    }
+
     fun findAllVoiceCollectionsByLoggedInUser(
         page:Int,
         size:Int

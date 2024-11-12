@@ -239,7 +239,21 @@ class DataLoader(
             audioCollectionService.saveAllSentences(mappedValues)
             logger.info("page {} of {}",page,fetchedSomali.totalPages)
         }
+    }
 
+    fun somaliUploadUpdate(){
+        val startPage = 0
+        val increment = 1
+        val somaliEntities = mediaEntityService.findAllByLanguageId("66eab0b9b47b7539e1262cfe")
+        logger.info("somaliEntities: ${somaliEntities.size}")
+        val requiredSomaliLanguage = audioCollectionService.getLanguage("66eab0b9b47b7539e1262d00")
+        logger.info("requiredSomali: ${requiredSomaliLanguage}")
+        val somalisToAdd = somaliEntities.map {
+            it.languageId = "66eab0b9b47b7539e1262d00"
+            it
+        }
+        logger.info("somalis: ${somalisToAdd}")
+       mediaEntityService.saveAll(somalisToAdd)
     }
 
     fun removeSwahili(){
@@ -302,5 +316,6 @@ class DataLoader(
 //        removeSwahili()
 //        sentenceRemoval()
 //        mediaEntityBackdateSentenceUploaded()
+//        somaliUploadUpdate()
     }
 }

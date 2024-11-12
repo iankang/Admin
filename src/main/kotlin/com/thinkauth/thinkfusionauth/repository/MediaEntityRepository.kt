@@ -19,6 +19,8 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllByLanguageId(languageId: String,pageable: Pageable):Page<MediaEntity>
 
+    fun findAllByLanguageId(languageId: String):List<MediaEntity>
+
     fun findAllByCreatedByUser(userEmail:String):List<MediaEntity>
 
     fun findAllByOwnerEmail(userEmail: String):List<MediaEntity>
@@ -35,6 +37,8 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
     fun findAllByMediaName(mediaName:String):List<MediaEntity>
 
     fun findAllByMediaState(mediaAcceptanceState: MediaAcceptanceState):List<MediaEntity>
+
+    fun findAllByMediaStateAndLanguageId(mediaAcceptanceState: MediaAcceptanceState,languageId:String):List<MediaEntity>
 
     fun countAllByMediaName(mediaName:String):Long
 

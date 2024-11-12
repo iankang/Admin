@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.MediaEntityService
 import io.swagger.v3.oas.annotations.Operation
@@ -106,4 +107,26 @@ class MediaEntityController(
     ): ResponseEntity<Boolean> {
         return ResponseEntity(mediaEntityService.mediaEntityForSentenceExists(sentenceId),HttpStatus.OK)
     }
+
+    @Operation(
+        summary = "Get media by acceptance state ", description = "Get media by acceptance State ", tags = ["MediaEntities"]
+    )
+    @GetMapping("/mediaEntityByAcceptanceState")
+    fun mediaEntityByAcceptanceState(
+        @RequestParam("mediaState") mediaAcceptanceState: MediaAcceptanceState
+    ): ResponseEntity<List<MediaEntity>> {
+        return ResponseEntity(mediaEntityService.findMediaEntitiesByStatus(mediaAcceptanceState),HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Get media by acceptance state ", description = "Get media by acceptance State ", tags = ["MediaEntities"]
+    )
+    @GetMapping("/mediaEntityByAcceptanceStateAndLanguageId")
+    fun mediaEntityByAcceptanceStateAndLanguageId(
+        @RequestParam("mediaState") mediaAcceptanceState: MediaAcceptanceState,
+        @RequestParam("languageId") languageId: String
+    ): ResponseEntity<List<MediaEntity>> {
+        return ResponseEntity(mediaEntityService.findMediaEntitiesByMediaAcceptanceStateAndLanguageId(mediaAcceptanceState, languageId),HttpStatus.OK)
+    }
+
 }
