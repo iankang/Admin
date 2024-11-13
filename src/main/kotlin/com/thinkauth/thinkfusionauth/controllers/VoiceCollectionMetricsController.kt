@@ -30,12 +30,30 @@ class VoiceCollectionMetricsController(
             return ResponseEntity(mediaEntityService.countAllVoiceCollections(), HttpStatus.OK)
     }
     @Operation(
+        summary = "Get count of voice collections by languageId", description = "gets all voice collections by languageId", tags = ["Metrics"]
+    )
+    @GetMapping("/countAllVoiceCollectionsByLanguageId")
+    fun getAllVoiceCollectionsByLanguageId(
+        languageId: String
+    ): ResponseEntity<Long> {
+            return ResponseEntity(mediaEntityService.countAllVoiceCollectionsByLanguageId(languageId), HttpStatus.OK)
+    }
+    @Operation(
         summary = "Get count of  voice collections by acceptance state", description = "gets count of all voice collections by acceptance state", tags = ["Metrics"]
     )
     @GetMapping("/countAllVoiceCollectionByAcceptanceState")
-    fun getAllVoiceCollectionsByAcceptanceState(
+    fun getAllVoiceCollectionsByAcceptanceStateAndLanguageId(
     ): ResponseEntity<MutableMap<MediaAcceptanceState, Long>> {
         return ResponseEntity(mediaEntityService.countAllVoiceCollectionsByAcceptanceState(), HttpStatus.OK)
+    }
+    @Operation(
+        summary = "Get count of  voice collections by acceptance state and languageId", description = "gets count of all voice collections by acceptance state and languageId", tags = ["Metrics"]
+    )
+    @GetMapping("/countAllVoiceCollectionByAcceptanceStateAndLanguageId")
+    fun getAllVoiceCollectionsByAcceptanceStateAndLanguageId(
+        languageId: String
+    ): ResponseEntity<MutableMap<MediaAcceptanceState, Long>> {
+        return ResponseEntity(mediaEntityService.countVoiceCollectionsByAcceptanceStateAndLanguageId(languageId), HttpStatus.OK)
     }
 
     @Operation(

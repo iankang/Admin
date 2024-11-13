@@ -112,6 +112,17 @@ class MediaEntityService(
         return voiceStates
     }
 
+    fun countVoiceCollectionsByAcceptanceStateAndLanguageId(
+        languageId: String
+    ): MutableMap<MediaAcceptanceState, Long> {
+        var voiceStates = mutableMapOf<MediaAcceptanceState,Long>()
+        val states = MediaAcceptanceState.values()
+        states.forEach { mediaAcceptanceState ->
+            voiceStates[mediaAcceptanceState] = mediaEntityRepository.countByMediaStateAndLanguageId(mediaAcceptanceState,languageId)
+        }
+        return voiceStates
+    }
+
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse> {
         val languageList = mutableListOf<LanguageRecordingsResponse>()
         val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { it.languageId }.distinct()

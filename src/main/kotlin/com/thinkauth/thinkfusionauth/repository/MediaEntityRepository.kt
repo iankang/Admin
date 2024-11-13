@@ -44,7 +44,11 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun countAllByMediaStateAndMediaName(mediaAcceptanceState: MediaAcceptanceState, mediaName:String):Long
 
+    fun countByMediaStateAndLanguageId(mediaAcceptanceState: MediaAcceptanceState,languageId:String):Long
+
     fun countAllByLanguageIdAndMediaName(languageId:String,mediaName:String):Long
 
     fun countAllByLanguageId(languageId:String):Long
+
+
 }
