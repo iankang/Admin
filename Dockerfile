@@ -13,4 +13,4 @@ ADD auth.think.ke.keystore.p12 /etc/letsencrypt/live/auth.think.ke/auth.think.ke
 EXPOSE 9081
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=production
-ENTRYPOINT ["java", "-jar", "/opt/app.jar"]
+ENTRYPOINT ["java", "-Xms2g", "-Xmx4g","-jar", "/opt/app.jar"]
