@@ -124,9 +124,11 @@ class MediaEntityController(
     @GetMapping("/mediaEntityByAcceptanceStateAndLanguageId")
     fun mediaEntityByAcceptanceStateAndLanguageId(
         @RequestParam("mediaState") mediaAcceptanceState: MediaAcceptanceState,
-        @RequestParam("languageId") languageId: String
-    ): ResponseEntity<List<MediaEntity>> {
-        return ResponseEntity(mediaEntityService.findMediaEntitiesByMediaAcceptanceStateAndLanguageId(mediaAcceptanceState, languageId),HttpStatus.OK)
+        @RequestParam("languageId") languageId: String,
+        @RequestParam("page", defaultValue = "0") page:Int = 0,
+        @RequestParam("size", defaultValue = "10") size:Int = 10
+    ): ResponseEntity<PagedResponse<MutableList<MediaEntity>>> {
+        return ResponseEntity(mediaEntityService.findMediaEntitiesByMediaAcceptanceStateAndLanguageId(mediaAcceptanceState, languageId,page, size),HttpStatus.OK)
     }
 
 }

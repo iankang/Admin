@@ -13,6 +13,7 @@ import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.Async
@@ -158,10 +159,19 @@ class MediaEntityService(
 
     fun findMediaEntitiesByMediaAcceptanceStateAndLanguageId(
         mediaAcceptanceState: MediaAcceptanceState,
-        languageId: String
-    ): List<MediaEntity> {
-        return mediaEntityRepository.findAllByMediaStateAndLanguageId(
-            mediaAcceptanceState, languageId
+        languageId: String,
+        page:Int,
+        size:Int
+    ): PagedResponse<MutableList<MediaEntity>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.asc("lastModifiedDate")))
+        val mediaEntities = mediaEntityRepository.findAllByMediaStateAndLanguageId(
+            mediaAcceptanceState, languageId, paging
+        )
+        return PagedResponse(
+            mediaEntities.content,
+            mediaEntities.number,
+            mediaEntities.totalElements,
+            mediaEntities.totalPages
         )
     }
 
