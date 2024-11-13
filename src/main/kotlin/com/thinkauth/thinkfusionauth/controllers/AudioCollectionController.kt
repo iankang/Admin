@@ -114,11 +114,9 @@ class AudioCollectionController(
         @RequestParam("page", defaultValue = "0") page: Int = 0,
         @RequestParam("size", defaultValue = "10") size: Int = 10
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
-        val userId = userManagementService.loggedInUser()!!
-        val toIgnore = sentenceUserIgnoreService.getAllUserIgnoredSentences(userId)
-        LOGGER.info("sentenceIds to ignore: ${toIgnore}")
+
         return ResponseEntity(
-            audioCollectionService.getAllSentencesNotInSentenceId(toIgnore, page, size),
+            audioCollectionService.getAllSentencesNotInSentenceId( page, size),
             HttpStatus.OK
         )
     }

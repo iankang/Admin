@@ -170,12 +170,11 @@ class AudioCollectionService(
     }
 
     @TrackExecutionTime
-    fun getAllSentencesNotInSentenceId(sentenceId:List<String>,
-                                       page:Int,
+    fun getAllSentencesNotInSentenceId(page:Int,
                                        size:Int
     ): PagedResponse<MutableList<SentenceEntitie>> {
         val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
-        val sentences = sentenceRepository.findSentencesNotIn(sentenceId, paging)
+        val sentences = sentenceRepository.findSentencesNotIn(paging)
         return PagedResponse<MutableList<SentenceEntitie>>(
             sentences.content,
             sentences.number,

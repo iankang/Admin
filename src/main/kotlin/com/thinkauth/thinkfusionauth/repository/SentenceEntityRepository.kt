@@ -17,8 +17,8 @@ interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
 
     fun findAllByBusinessId(businessId:String):List<SentenceEntitie>
 
-    @Query("{ 'id': { '\$nin': ?0 } , 'needUploads': true }")
-    fun findSentencesNotIn(sentenceIds: List<String>, pageable: Pageable): Page<SentenceEntitie>
+    @Query("{  'needUploads': true }")
+    fun findSentencesNotIn(pageable: Pageable): Page<SentenceEntitie>
 
     @Query("{ 'id': { '\$nin': ?0 }, 'language.id': ?1 , 'needUploads': true}")
     fun findSentencesNotInAndLanguageId(sentenceIds: List<String>,languageId: String, pageable: Pageable): Page<SentenceEntitie>
