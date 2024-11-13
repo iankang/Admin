@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.repository.impl
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
@@ -16,10 +17,12 @@ import java.time.LocalDateTime
 class MediaEntityUserApprovalStateImpl(
     private val mediaEntityUserApprovalStateRepository: MediaEntityUserApprovalStateRepository
 ):DataOperations<MediaEntityUserApprovalState> {
+    @TrackExecutionTime
     override fun itemExistsById(id: String): Boolean {
         return mediaEntityUserApprovalStateRepository.existsById(id)
     }
 
+    @TrackExecutionTime
     override fun findEverythingPaged(page: Int, size: Int): PagedResponse<List<MediaEntityUserApprovalState>> {
         val paged = PageRequest.of(page, size)
         val section = mediaEntityUserApprovalStateRepository.findAll(paged)
@@ -31,18 +34,22 @@ class MediaEntityUserApprovalStateImpl(
         )
     }
 
+    @TrackExecutionTime
     override fun getItemById(id: String): MediaEntityUserApprovalState {
         return mediaEntityUserApprovalStateRepository.findById(id).get()
     }
 
+    @TrackExecutionTime
     override fun deleteItemById(id: String) {
         mediaEntityUserApprovalStateRepository.deleteById(id)
     }
 
+    @TrackExecutionTime
     override fun deleteAllItems() {
         mediaEntityUserApprovalStateRepository.deleteAll()
     }
 
+    @TrackExecutionTime
     override fun updateItem(id: String, item: MediaEntityUserApprovalState): MediaEntityUserApprovalState? {
         val mediaEntityUserApprovalState = getItemById(id)
         mediaEntityUserApprovalState.mediaEntityId = item.mediaEntityId
@@ -65,10 +72,12 @@ class MediaEntityUserApprovalStateImpl(
         return createItem(mediaEntityUserApprovalState)
     }
 
+    @TrackExecutionTime
     override fun createItem(item: MediaEntityUserApprovalState): MediaEntityUserApprovalState {
         return mediaEntityUserApprovalStateRepository.save(item)
     }
 
+    @TrackExecutionTime
     fun countByMediaEntityIdAndMediaState(
         mediaEntityId:String,
         mediaAcceptanceState: MediaAcceptanceState
@@ -76,6 +85,7 @@ class MediaEntityUserApprovalStateImpl(
         return mediaEntityUserApprovalStateRepository.countByMediaEntityIdAndMediaState(mediaEntityId,mediaAcceptanceState)
     }
 
+    @TrackExecutionTime
     fun getAllApprovalsOfSpecificMedia(
         mediaEntityId: String,
         page: Int, size: Int
@@ -90,6 +100,7 @@ class MediaEntityUserApprovalStateImpl(
         )
     }
 
+    @TrackExecutionTime
     fun checkIfApprovalAlreadyAdded(
         approverEmail:String,
         mediaEntityId:String
@@ -97,6 +108,7 @@ class MediaEntityUserApprovalStateImpl(
         return mediaEntityUserApprovalStateRepository.existsByApproverEmailAndMediaEntityId(approverEmail, mediaEntityId)
     }
 
+    @TrackExecutionTime
     fun getMediaEntityForAnApprover(
         mediaEntityId: String,
         approverEmail: String
@@ -110,6 +122,7 @@ class MediaEntityUserApprovalStateImpl(
         return mediaEntityUserApprovalStateRepository.countByMediaEntityId(mediaEntityId)
     }
 
+    @TrackExecutionTime
     fun getAllApprovalsByApproverEmailAndPaymentState(
         approverEmail:String,
         paymentState: PaymentState,
@@ -122,6 +135,7 @@ class MediaEntityUserApprovalStateImpl(
 
     }
 
+    @TrackExecutionTime
     fun getAllApprovalsByApproverEmailAndAcceptanceState(
         approverEmail:String,
         mediaAcceptanceState: MediaAcceptanceState,
@@ -132,6 +146,7 @@ class MediaEntityUserApprovalStateImpl(
         val approvalState = mediaEntityUserApprovalStateRepository.findAllByApproverEmailAndMediaState(approverEmail,mediaAcceptanceState,paging)
         return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
     }
+    @TrackExecutionTime
     fun getByReviewDateAndPaymentState(
         reviewDate:LocalDateTime,
         paymentState: PaymentState,
@@ -143,6 +158,7 @@ class MediaEntityUserApprovalStateImpl(
         return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
     }
 
+    @TrackExecutionTime
     fun getByReviewDate(
         reviewDate: LocalDateTime,
         page: Int,
@@ -153,6 +169,7 @@ class MediaEntityUserApprovalStateImpl(
         return PagedResponse<MutableList<MediaEntityUserApprovalState>>(approvalState.content,approvalState.number, approvalState.totalElements, approvalState.totalPages)
     }
 
+    @TrackExecutionTime
     fun getByReviewDateStartAndReviewDateEnd(
         reviewDateStart: LocalDateTime,
         reviewDateEnd: LocalDateTime
@@ -160,12 +177,14 @@ class MediaEntityUserApprovalStateImpl(
         return mediaEntityUserApprovalStateRepository.findAllByReviewDateStartAndReviewDateEnd(reviewDateStart, reviewDateEnd)
     }
 
+    @TrackExecutionTime
     fun getByReviewDateStart(
         reviewDateStart: LocalDateTime,
     ): List<MediaEntityUserApprovalState> {
         return mediaEntityUserApprovalStateRepository.findAllByReviewDateStart(reviewDateStart)
     }
 
+    @TrackExecutionTime
     fun getByPaymentDateStartAndPaymentDateEnd(
         paymentDateStart: LocalDateTime,
         paymentDateEnd: LocalDateTime
@@ -175,18 +194,21 @@ class MediaEntityUserApprovalStateImpl(
         )
     }
 
+    @TrackExecutionTime
     fun getAllByPaymentDateGreaterThanPaymentStart(
         paymentDateStart: LocalDateTime
     ): List<MediaEntityUserApprovalState> {
         return mediaEntityUserApprovalStateRepository.findAllByPaymentDateStart(paymentDateStart)
     }
 
+    @TrackExecutionTime
     fun getCountByApproverEmail(
         approverEmail: String
     ): Long {
         return mediaEntityUserApprovalStateRepository.countAllByApproverEmail(approverEmail)
     }
 
+    @TrackExecutionTime
     fun getCountByApproverEmailAndMediaAcceptanceState(
         approverEmail: String,
         mediaAcceptanceState: MediaAcceptanceState
@@ -194,6 +216,7 @@ class MediaEntityUserApprovalStateImpl(
         return mediaEntityUserApprovalStateRepository.countAllByApproverEmailAndMediaState(approverEmail,mediaAcceptanceState)
     }
 
+    @TrackExecutionTime
     fun getCountByApproverEmailAndPaymentState(
         approverEmail: String,
         paymentState: PaymentState
