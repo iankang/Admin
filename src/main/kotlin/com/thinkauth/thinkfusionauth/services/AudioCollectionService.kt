@@ -184,13 +184,12 @@ class AudioCollectionService(
     }
     @TrackExecutionTime
     fun getAllSentencesNotInSentenceIdFilterByLanguageId(
-                                sentenceId:List<String>,
                                 languageId: String,
                                 page:Int,
                                 size:Int
     ): PagedResponse<MutableList<SentenceEntitie>> {
         val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
-        val sentences = sentenceRepository.findSentencesNotInAndLanguageId(sentenceId,languageId, paging)
+        val sentences = sentenceRepository.findSentencesNotInAndLanguageId(languageId, paging)
         return PagedResponse<MutableList<SentenceEntitie>>(
             sentences.content,
             sentences.number,
