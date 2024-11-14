@@ -293,6 +293,10 @@ class DataLoader(
         }
     }
 
+    fun uploaderBiodata(){
+
+    }
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
