@@ -196,15 +196,15 @@ class DataLoader(
         }
     }
 
-    fun backdateAllUserInfo(){
-        logger.info("trying to run")
-        val userSet = mutableSetOf<UserEntity>()
-        val allUsers = userManagementService.fetchAllUsers().toSet()
-        userSet.addAll(allUsers)
-        userManagementService.deleteAllUsers()
-        userManagementService.addAllUsers(allUsers.toList())
-        logger.info("allusers: ")
-    }
+//    fun backdateAllUserInfo(){
+//        logger.info("trying to run")
+//        val userSet = mutableSetOf<UserEntity>()
+//        val allUsers = userManagementService.fetchAllUsers().toSet()
+//        userSet.addAll(allUsers)
+//        userManagementService.deleteAllUsers()
+//        userManagementService.addAllUsers(allUsers.toList())
+//        logger.info("allusers: ")
+//    }
 
     fun userInfoGreaterThanOne(){
         logger.info("users must be unique")
@@ -294,9 +294,26 @@ class DataLoader(
         }
     }
 
-    fun uploaderBiodata(){
-        val uploadSize = uploadStateService.getAllUploadState().size
-        logger.info("uploaderBio: {}", uploadSize)
+//    fun uploaderBiodata(){
+//
+//        userManagementService.fetchAllUsers().forEach {
+////            logger.info("user: {}",it.email)
+////            val user = userManagementService.addUserFromFusionAuthByEmail(it.email!!)
+//            logger.info("result: {}", it)
+//        }
+//
+//    }
+
+    fun encoder(){
+        val text = "Aing? n? matham?ririo njera-in? iria ir? nja ya Kashmir."
+
+        // Encode the string to UTF-8 byte array
+        val utf8Bytes = text.toByteArray(Charsets.UTF_8)
+
+        // Convert the UTF-8 byte array back to a string (to verify encoding)
+        val encodedText = String(utf8Bytes, Charsets.UTF_8)
+
+      logger.info("encoded: {}",encodedText)
     }
 
     override fun run(vararg args: String?) {
@@ -323,6 +340,7 @@ class DataLoader(
 //        sentenceRemoval()
 //        mediaEntityBackdateSentenceUploaded()
 //        somaliUploadUpdate()
-
+//            uploaderBiodata()
+//        encoder()
     }
 }

@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.ConstituencyEntity
 import com.thinkauth.thinkfusionauth.entities.CountyEntity
 import com.thinkauth.thinkfusionauth.entities.UserEntity
@@ -38,6 +39,7 @@ class UserManagementService(
     }
 
 
+    @TrackExecutionTime
     fun fetchUserByEmail(email: String): User? {
         val userResponse = fusionAuthClient.retrieveUserByLoginId(email)
         return if (userResponse.wasSuccessful()) {
@@ -47,7 +49,8 @@ class UserManagementService(
         }
     }
 
-    fun fetchUserEntityByEmailFromFusionAuth(email: String): UserEntity? {
+    @TrackExecutionTime
+    fun convertUserEntityByEmailFromFusionAuth(email: String): UserEntity? {
         val user = fetchUserByEmail(email)
         if (user != null) {
             return user.toUserEntity()
@@ -55,18 +58,21 @@ class UserManagementService(
         return null
     }
 
+    @TrackExecutionTime
     fun addUserFromFusionAuthByEmail(email: String) {
-        val userENt = fetchUserEntityByEmailFromFusionAuth(email)
+        val userENt = convertUserEntityByEmailFromFusionAuth(email)
 
         if (userENt != null ) {
             val userExists = userRepository.existsByEmail(email)
             if(!userExists) {
                 addUserEntity(userENt)
+            } else {
+                updateUserEntity(userRepository.findByEmail(email),userENt)
             }
         }
     }
 
-
+    @TrackExecutionTime
     fun addUserEntity(userEntity: UserEntity): UserEntity {
         return if(!userRepository.existsByEmail(userEntity.email ?: "")) {
              userRepository.save(userEntity)
@@ -75,20 +81,43 @@ class UserManagementService(
         }
     }
 
+    @TrackExecutionTime
+    fun updateUserEntity(
+        originalUserEntity: UserEntity,
+        destinationUserEntity:UserEntity
+    ): UserEntity {
+        logger.info("updating user entity")
+        originalUserEntity.firstName = destinationUserEntity.firstName
+        originalUserEntity.middleName = destinationUserEntity.middleName
+        originalUserEntity.lastName = destinationUserEntity.lastName
+        originalUserEntity.username = destinationUserEntity.username
+        originalUserEntity.birthDate = destinationUserEntity.birthDate
+        originalUserEntity.email = destinationUserEntity.email
+        originalUserEntity.imageUrl = destinationUserEntity.imageUrl
+        originalUserEntity.mobilePhone = destinationUserEntity.mobilePhone
+        originalUserEntity.languageId = destinationUserEntity.languageId
+        originalUserEntity.genderState = destinationUserEntity.genderState
+        originalUserEntity.ageGroup = destinationUserEntity.ageGroup
+        originalUserEntity.nationalId = destinationUserEntity.nationalId
+        originalUserEntity.countyId = destinationUserEntity.countyId
+        originalUserEntity.constituency = destinationUserEntity.constituency
 
+        return userRepository.save(originalUserEntity)
 
+    }
+    @TrackExecutionTime
     fun fetchUserEntityByEmail(email: String): UserEntity {
         return userRepository.findByEmail(email)
     }
-
+    @TrackExecutionTime
     fun fetchAllUsersWithEmail(email: String): List<UserEntity> {
         return userRepository.findAllByEmail(email)
     }
-
+    @TrackExecutionTime
     fun fetchAllUsers(): MutableList<UserEntity> {
         return userRepository.findAll()
     }
-
+    @TrackExecutionTime
     fun countUserInstancesEmail(email: String):Long{
         return userRepository.countByEmail(email)
     }
@@ -108,6 +137,7 @@ class UserManagementService(
     fun addAllUsers(allUsers:List<UserEntity>): MutableList<UserEntity> {
        return  userRepository.saveAll(allUsers)
     }
+    @TrackExecutionTime
     fun fetchLoggedInUserEntity(): UserEntity {
         val email = loggedInUser()
         logger.info("fetchLoggedInUserEntity")
@@ -117,27 +147,28 @@ class UserManagementService(
         }
         return fetchUserEntityByEmail(email)
     }
-
+    @TrackExecutionTime
     fun fetchAllCounties(): MutableList<CountyEntity> {
         return countyServiceImple.getAll()
     }
-
+    @TrackExecutionTime
     fun fetchAllConstituencies():MutableList<ConstituencyEntity>{
         return constituencyImpl.getAllConstituencies()
     }
 
+    @TrackExecutionTime
     fun fetchConstituenciesByCountyId(
         countyId:Int
     ): List<ConstituencyEntity> {
         return constituencyImpl.getByCountyId(countyId)
     }
-
+    @TrackExecutionTime
     fun fetchConstituenciesByCountyName(
         countyName:String
     ): List<ConstituencyEntity> {
         return constituencyImpl.getByCountyName(countyName)
     }
-
+    @TrackExecutionTime
     fun fetchByConstituencyName(
         constituencyName:String
     ): List<ConstituencyEntity> {

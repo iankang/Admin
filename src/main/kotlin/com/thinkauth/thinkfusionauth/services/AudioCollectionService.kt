@@ -95,19 +95,33 @@ class AudioCollectionService(
 //        return storageService.stream(bucketName, objectName)
 //    }
     fun getMinioObject(objectName:String, response: HttpServletResponse){
-        val inputStream = storageService.stream(bucketName, objectName)
 
-        // Set the content type and attachment header.
+        try {
+            // Retrieve the input stream from MinIO (assuming this streams data in chunks from MinIO)
+            val inputStream = storageService.stream(bucketName, objectName)
 
-        // Set the content type and attachment header.
-        response.addHeader("Content-disposition", "attachment;filename=${objectName}")
-        response.contentType = fileProcessingHelper.getExtensionFromResource(BucketName.VOICE_COLLECTION)
+            // Set the content type and attachment header
+            response.addHeader("Content-Disposition", "attachment; filename=\"$objectName\"")
+            response.contentType = fileProcessingHelper.getExtensionFromResource(BucketName.VOICE_COLLECTION)
 
-        // Copy the stream to the response's output stream.
+            // Define a buffer size (e.g., 8 KB)
+            val buffer = ByteArray(8192)
+            var bytesRead: Int
 
-        // Copy the stream to the response's output stream.
-        IOUtils.copy(inputStream, response.outputStream)
-        response.flushBuffer()
+            // Write the input stream directly to the output stream in chunks
+            response.outputStream.use { outputStream ->
+                inputStream.use { input ->
+                    while (input?.read(buffer).also { bytesRead = it!! } != -1) {
+                        outputStream.write(buffer, 0, bytesRead)
+                    }
+                }
+            }
+
+            // Flush the response to ensure all data is sent
+            response.flushBuffer()
+        }catch (e:Exception){
+            LOGGER.error("getMinioObject: {}",e.message)
+        }
     }
     @TrackExecutionTime
     fun getAudioCollectionByLanguageId(languageId: String): Page<SentenceEntitie> {

@@ -55,6 +55,7 @@ class SentencesController(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
+        LOGGER.debug("getAllSentences page: {} size: {}",page,size)
         return ResponseEntity(audioCollectionService.getAllSentences(page, size),HttpStatus.OK)
     }
 
@@ -67,6 +68,7 @@ class SentencesController(
         @RequestParam("page", defaultValue = "0") page:Int = 0,
         @RequestParam("size", defaultValue = "10") size:Int = 10
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
+        LOGGER.debug("getSentencesByLanguageId page: {} size: {}",page,size)
         return ResponseEntity(audioCollectionService.getAllSentencesByLanguageId(languageId, page, size), HttpStatus.OK)
     }
 
