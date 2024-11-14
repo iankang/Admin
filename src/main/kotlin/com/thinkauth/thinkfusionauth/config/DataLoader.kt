@@ -44,6 +44,7 @@ class DataLoader(
     private val userManagementService: UserManagementService,
     private val countyService: CountyServiceImple,
     private val constituencyImpl: ConstituencyImpl,
+    private val uploadStateService: MediaEntityUserUploadStateService,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -294,7 +295,8 @@ class DataLoader(
     }
 
     fun uploaderBiodata(){
-
+        val uploadSize = uploadStateService.getAllUploadState().size
+        logger.info("uploaderBio: {}", uploadSize)
     }
 
     override fun run(vararg args: String?) {
@@ -321,5 +323,6 @@ class DataLoader(
 //        sentenceRemoval()
 //        mediaEntityBackdateSentenceUploaded()
 //        somaliUploadUpdate()
+
     }
 }

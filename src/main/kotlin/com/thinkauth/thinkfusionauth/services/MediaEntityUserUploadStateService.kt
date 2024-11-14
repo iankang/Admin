@@ -128,4 +128,8 @@ class MediaEntityUserUploadStateService(
     ): List<MediaEntityUserUploadState> {
         return mediaEntityUserUploadStateImpl.getAllByPaymentDateRange(paymentDateStart, paymentDateEnd)
     }
+
+    fun getAllUploadState(): MutableList<MediaEntityUserUploadState> {
+        return mediaEntityUserUploadStateImpl.getAllMediaEntityUserUploadState()
+    }
 }

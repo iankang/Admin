@@ -5,7 +5,9 @@ import com.thinkauth.thinkfusionauth.interfaces.DataOperations
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.repository.LocalLanguageRepository
 import org.springframework.data.domain.PageRequest
+import org.springframework.stereotype.Component
 
+@Component
 class LocalLanguageImpl(
     private val localLanguageRepository: LocalLanguageRepository
 ) :DataOperations<LocalLanguage>{
