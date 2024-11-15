@@ -21,4 +21,5 @@ class SentenceDocumentEntity(
     @JsonIgnore
     var file:ByteArray? = null
     var sentenceCount:Int? = 0
+    var failureReason:String? = null
 }

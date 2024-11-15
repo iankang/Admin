@@ -43,7 +43,7 @@ class CsvService(
 
             return csvToBean.parse()
         } catch (ex: Exception) {
-            throw Exception("Error during csv import")
+            throw Exception("Error during csv import: ${ex.message}")
         } finally {
             closeFileReader(fileReader)
         }
@@ -150,6 +150,7 @@ class CsvService(
             logger.error("something went wrong: {}", e.toString())
             val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
             sentenceDoc.sentenceDocumentState = SentenceDocumentState.FAILED
+            sentenceDoc.failureReason = e.message
             sentenceDocumentImpl.createItem(sentenceDoc)
         }
     }
