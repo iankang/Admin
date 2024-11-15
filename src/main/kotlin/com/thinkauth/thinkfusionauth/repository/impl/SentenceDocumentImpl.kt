@@ -14,6 +14,7 @@ import com.thinkauth.thinkfusionauth.services.LanguageService
 import org.apache.commons.io.IOUtils
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.gridfs.GridFsOperations
@@ -38,7 +39,8 @@ class SentenceDocumentImpl(
     }
 
     override fun findEverythingPaged(page: Int, size: Int): PagedResponse<List<SentenceDocumentEntity>> {
-        val paged = PageRequest.of(page, size)
+
+        val paged = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdDate")))
         val section = sentenceDocumentRepository.findAll(paged)
         return PagedResponse(
             section.content, section.number, section.totalElements, section.totalPages
@@ -115,9 +117,9 @@ class SentenceDocumentImpl(
             loadFile.fileSize = metadata["fileSize"]?.toString() ?: "0"
 
             // Streaming file content instead of loading the entire file into memory
-            operations.getResource(gridFSFile).inputStream.use { inputStream ->
-                loadFile.file = inputStream.readBytes()  // Read as bytes if necessary, but can be optimized further for large files
-            }
+//            operations.getResource(gridFSFile).inputStream.use { inputStream ->
+//                loadFile.file = inputStream.readBytes()  // Read as bytes if necessary, but can be optimized further for large files
+//            }
         } ?: throw IOException("File metadata is missing")
 
         return loadFile

@@ -18,8 +18,6 @@ class SentenceDocumentEntity(
     var fileName:String? = null
     var fileType:String? = null
     var fileSize:String? = null
-    @JsonIgnore
-    var file:ByteArray? = null
     var sentenceCount:Int? = 0
     var failureReason:String? = null
 }

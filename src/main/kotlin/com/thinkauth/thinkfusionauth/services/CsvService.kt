@@ -33,7 +33,7 @@ class CsvService(
 
     private val logger: Logger = LoggerFactory.getLogger(CsvService::class.java)
 
-    fun uploadCsvFile(file: MultipartFile): List<SentenceDocumentCSV> {
+    fun uploadCsvFile(file: MultipartFile, fileId: String): List<SentenceDocumentCSV> {
         throwIfFileEmpty(file)
         var fileReader: BufferedReader? = null
 
@@ -43,9 +43,13 @@ class CsvService(
 
             return csvToBean.parse()
         } catch (ex: Exception) {
-            throw Exception("Error during csv import: ${ex.message}")
+            val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
+            sentenceDoc.failureReason = ex.toString()
+            sentenceDocumentImpl.createItem(sentenceDoc)
+            throw Exception("CsvService Error during csv import: ${ex.toString()}")
         } finally {
             closeFileReader(fileReader)
+
         }
     }
 
@@ -61,7 +65,7 @@ class CsvService(
         try {
             fileReader!!.close()
         } catch (ex: IOException) {
-            throw Exception("Error during csv import")
+            throw Exception("CsvService Error during csv import")
         }
     }
 
@@ -71,9 +75,9 @@ class CsvService(
         val business = event.business
         val fileId = event.fileId
 
-        val csvItems = uploadCsvFile(multipartFile)
+        val csvItems = uploadCsvFile(multipartFile, fileId)
         if (csvItems.isNotEmpty()) {
-            logger.info("adding sentences to db")
+            logger.info("CsvService adding sentences to db")
             uploadTheSentences(csvItems, business, fileId)
         }
     }
@@ -84,24 +88,24 @@ class CsvService(
         try {
 
             val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
-            logger.info("sentence upload entity: {}", sentenceDoc)
+            logger.info("CsvService sentence upload entity: {}", sentenceDoc)
             val dialects = csvItems.map { LangAndDialect(language = it.language, dialect = it.dialect) }.distinct()
-            logger.info("dialectsMap: {}", dialects)
+            logger.info("CsvService dialectsMap: {}", dialects)
             val languageEntityMap: MutableMap<String, Language> = mutableMapOf()
             val dialectEntityMap: MutableMap<String, Dialect> = mutableMapOf()
             dialects.forEach { item ->
                 if (!languageService.existsByLanguageName(item.language!!)) {
-                    logger.info("language does not exist: {}", item.language)
+                    logger.info("CsvService language does not exist: {}", item.language)
                     languageEntityMap[item.language!!] =
                         languageService.addLanguage(languageRequest = LanguageRequest(item.language!!))
 
                 } else {
-                    logger.info("language exists: {}", item.language)
+                    logger.info("CsvService language exists: {}", item.language)
                     languageEntityMap[item.language!!] =
                         (languageService.findLanguageByLanguageName(item.language!!).first())!!
                 }
                 if (!dialectService.existsByDialectName(item.dialect!!)) {
-                    logger.info("dialect does not exist: {}", item.dialect!!)
+                    logger.info("CsvService dialect does not exist: {}", item.dialect!!)
                     val languageStuff = languageService.findLanguageByLanguageName(item.language!!).first()
                     dialectEntityMap[item.dialect!!] = dialectService.addDialect(
                         DialectRequest(
@@ -111,16 +115,16 @@ class CsvService(
                     )
 
                 } else {
-                    logger.info("dialect exists: {}", item.language)
+                    logger.info("CsvService dialect exists: {}", item.language)
                     dialectEntityMap[item.dialect!!] = dialectService.getDialectByDialectName(item.dialect!!)?.first()!!
                 }
-                logger.info("languages: {}, dialects: {}", languageEntityMap, dialectEntityMap)
+                logger.info("CsvService languages: {}, dialects: {}", languageEntityMap, dialectEntityMap)
             }
 //     d
             val sentences = mutableListOf<SentenceEntitie>()
             csvItems.map {
                 if (!audioCollectionService.sentenceExistsBySentence(it.localLanguage ?: "")) {
-                    logger.info("sentence doesn't exist: {}", it)
+                    logger.info("CsvService sentence doesn't exist: {}", it)
                     sentences.add(
                         SentenceEntitie(
                             sentence = it.localLanguage,
@@ -136,18 +140,18 @@ class CsvService(
             }
 
             if (sentences.isNotEmpty()) {
-                logger.info("Adding {} sentences", sentences.size)
+                logger.info("CsvService Adding {} sentences", sentences.size)
                 audioCollectionService.bulkAddSentences(sentences)
                 sentenceDoc.sentenceCount = sentences.size
                 sentenceDoc.sentenceDocumentState = SentenceDocumentState.PROCESSED
 
             } else {
-                logger.info("sentences is empty")
+                logger.info("CsvService sentences is empty")
                 sentenceDoc.sentenceDocumentState = SentenceDocumentState.PROCESSED
             }
             sentenceDocumentImpl.createItem(sentenceDoc)
         } catch (e: Exception) {
-            logger.error("something went wrong: {}", e.toString())
+            logger.error("CsvService something went wrong: {}", e.toString())
             val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
             sentenceDoc.sentenceDocumentState = SentenceDocumentState.FAILED
             sentenceDoc.failureReason = e.message
