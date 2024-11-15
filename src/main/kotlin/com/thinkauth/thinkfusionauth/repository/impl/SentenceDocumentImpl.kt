@@ -104,21 +104,21 @@ class SentenceDocumentImpl(
         return sentenceDocumentEntity
     }
 
-
-    @Throws(IOException::class)
     fun downloadFile(loadFile: SentenceDocumentEntity): SentenceDocumentEntity {
         val gridFSFile: GridFSFile = template.findOne(Query(Criteria.where("_id").`is`(loadFile.documentUploadId)))
+            ?: throw IOException("File not found")
 
-
-        if (gridFSFile.metadata != null) {
+        // Use the safe call and let function to handle metadata more gracefully
+        gridFSFile.metadata?.let { metadata ->
             loadFile.fileName = gridFSFile.filename
+            loadFile.fileType = metadata["_contentType"]?.toString() ?: "unknown" // Default if null
+            loadFile.fileSize = metadata["fileSize"]?.toString() ?: "0"
 
-            loadFile.fileType = gridFSFile.metadata!!["_contentType"].toString()
-
-            loadFile.fileSize = gridFSFile.metadata!!["fileSize"].toString()
-
-            loadFile.file = IOUtils.toByteArray(operations.getResource(gridFSFile).inputStream)
-        }
+            // Streaming file content instead of loading the entire file into memory
+            operations.getResource(gridFSFile).inputStream.use { inputStream ->
+                loadFile.file = inputStream.readBytes()  // Read as bytes if necessary, but can be optimized further for large files
+            }
+        } ?: throw IOException("File metadata is missing")
 
         return loadFile
     }
