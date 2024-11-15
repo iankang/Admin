@@ -4,7 +4,7 @@ spring:
 
 ---
 server:
-  connection-timeout: 540000
+  connection-timeout: 1080000
   tomcat:
     max-swallow-size: -1
   http:
@@ -77,7 +77,7 @@ app:
   bot-url: https://llm.think.ke:5000/chat
 ---
 server:
-  connection-timeout: 540000
+  connection-timeout: 1080000
   tomcat:
     max-swallow-size: -1
   http:
