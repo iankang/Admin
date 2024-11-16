@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import java.io.InputStream
+import java.time.LocalDateTime
 import kotlin.math.log
 
 @Component
@@ -316,6 +317,8 @@ class DataLoader(
       logger.info("encoded: {}",encodedText)
     }
 
+
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
@@ -342,5 +345,6 @@ class DataLoader(
 //        somaliUploadUpdate()
 //            uploaderBiodata()
 //        encoder()
+
     }
 }

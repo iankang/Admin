@@ -47,7 +47,12 @@ class AsyncConfiguration:AsyncConfigurer {
         val executor = ThreadPoolTaskExecutor()
         executor.corePoolSize = 3
         executor.maxPoolSize = 3
-        executor.queueCapacity = 25
+        executor.queueCapacity = 200
+        executor.setRejectedExecutionHandler { r: Runnable?, executor1: ThreadPoolExecutor? ->
+            logger.warn(
+                "Task rejected, thread pool is full and queue is also full"
+            )
+        }
         return executor
     }
 

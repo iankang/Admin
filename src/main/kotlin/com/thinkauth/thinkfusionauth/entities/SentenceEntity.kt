@@ -21,5 +21,6 @@ class SentenceEntitie(
     var needUploads:Boolean = true
     var acceptedCount:Int? = 0
     var rejectedCount:Int? = 0
+    var fileSource:String? = null
 }
 

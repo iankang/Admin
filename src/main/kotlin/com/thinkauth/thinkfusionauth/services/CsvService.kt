@@ -38,7 +38,7 @@ class CsvService(
         var fileReader: BufferedReader? = null
 
         try {
-            fileReader = BufferedReader(InputStreamReader(file.inputStream))
+            fileReader = BufferedReader(InputStreamReader(file.inputStream,"UTF-8"))
             val csvToBean = createCSVToBean(fileReader)
 
             return csvToBean.parse()
@@ -58,7 +58,9 @@ class CsvService(
     }
 
     private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<SentenceDocumentCSV> =
-        CsvToBeanBuilder<SentenceDocumentCSV>(fileReader).withType(SentenceDocumentCSV::class.java).withSkipLines(1)
+        CsvToBeanBuilder<SentenceDocumentCSV>(fileReader)
+            .withSkipLines(1)
+            .withType(SentenceDocumentCSV::class.java)
             .withIgnoreLeadingWhiteSpace(true).build()
 
     private fun closeFileReader(fileReader: BufferedReader?) {
@@ -88,8 +90,10 @@ class CsvService(
         try {
 
             val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
-            logger.info("CsvService sentence upload entity: {}", sentenceDoc)
-            val dialects = csvItems.map { LangAndDialect(language = it.language, dialect = it.dialect) }.distinct()
+            logger.info("csvItemsSize: ${csvItems.size}")
+            val dialects = csvItems.map {
+                    LangAndDialect(language = it.language, dialect = it.dialect)
+                }.distinct()
             logger.info("CsvService dialectsMap: {}", dialects)
             val languageEntityMap: MutableMap<String, Language> = mutableMapOf()
             val dialectEntityMap: MutableMap<String, Dialect> = mutableMapOf()
@@ -125,17 +129,18 @@ class CsvService(
             csvItems.map {
                 if (!audioCollectionService.sentenceExistsBySentence(it.localLanguage ?: "")) {
                     logger.info("CsvService sentence doesn't exist: {}", it)
-                    sentences.add(
-                        SentenceEntitie(
-                            sentence = it.localLanguage,
-                            language = languageEntityMap[it.language]!!,
-                            dialect = dialectEntityMap[it.dialect],
-                            englishTranslation = it.textTranslation,
-                            topic = it.topic,
-                            source = it.source,
-                            business = business
-                        )
+
+                    val sent = SentenceEntitie(
+                        sentence = it.localLanguage,
+                        language = languageEntityMap[it.language]!!,
+                        dialect = dialectEntityMap[it.dialect],
+                        englishTranslation = it.textTranslation,
+                        topic = it.topic,
+                        source = it.source,
+                        business = business
                     )
+                    sent.fileSource = fileId
+                    sentences.add(sent)
                 }
             }
 
