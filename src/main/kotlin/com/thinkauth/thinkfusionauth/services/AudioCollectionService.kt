@@ -125,8 +125,8 @@ class AudioCollectionService(
         }
     }
     @TrackExecutionTime
-    fun getAudioCollectionByLanguageId(languageId: String): Page<SentenceEntitie> {
-        val paging = PageRequest.of(0, 100000, Sort.by("lastModifiedDate").descending())
+    fun getAudioCollectionByLanguageId(languageId: String, page:Int, size:Int): Page<SentenceEntitie> {
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
 
         return sentenceRepository.findAllByLanguageId(languageId, paging)
     }

@@ -318,6 +318,13 @@ class DataLoader(
     }
 
 
+//    fun kikuyu(){
+//        val sents = sentenceEntityRepository.findAllByLanguageId("66ebc5d7b52e2b22ba67317e", pageable = )
+//        val filtere = sents.filter { sentenceEntitie: SentenceEntitie ->
+//            sentenceEntitie.createdDate>LocalDateTime.now().minusDays(1)
+//        }
+//        logger.info("yesterday: ${filtere.size}")
+//    }
 
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
@@ -345,6 +352,6 @@ class DataLoader(
 //        somaliUploadUpdate()
 //            uploaderBiodata()
 //        encoder()
-
+//        kikuyu()
     }
 }

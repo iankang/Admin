@@ -61,6 +61,7 @@ class CsvService(
         CsvToBeanBuilder<SentenceDocumentCSV>(fileReader)
             .withSkipLines(1)
             .withType(SentenceDocumentCSV::class.java)
+            .withIgnoreEmptyLine(true)
             .withIgnoreLeadingWhiteSpace(true).build()
 
     private fun closeFileReader(fileReader: BufferedReader?) {

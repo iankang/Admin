@@ -208,7 +208,20 @@ class AudioCollectionController(
         @PathVariable("languageId") languageId: String
     ): Page<SentenceEntitie> {
 
-        return audioCollectionService.getAudioCollectionByLanguageId(languageId)
+        return audioCollectionService.getAudioCollectionByLanguageId(languageId,0, 1000)
+    }
+
+    @Operation(
+        summary = "Get all sentences by languageId", description = "gets all audios by languageId", tags = ["Audio"]
+    )
+    @GetMapping("/audioCollectionByLanguageIdPaged/{languageId}")
+    fun getAllAudioByLanguageIdPaged(
+        @PathVariable("languageId") languageId: String,
+        @RequestParam(name = "page", defaultValue = "0") page:Int= 0,
+    @RequestParam(name = "size", defaultValue = "100") size:Int = 0
+    ): Page<SentenceEntitie> {
+
+        return audioCollectionService.getAudioCollectionByLanguageId(languageId,page, size)
     }
 
     @Operation(

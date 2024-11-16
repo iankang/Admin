@@ -14,6 +14,7 @@ interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
     fun existsBySentence(sentence: String): Boolean
 
     fun findAllByLanguageId(languageId: String, pageable: Pageable): Page<SentenceEntitie>
+    fun findAllByLanguageId(languageId: String): List<SentenceEntitie>
 
     fun countAudioCollectionsByLanguageId(languageId: String): Long?
 
