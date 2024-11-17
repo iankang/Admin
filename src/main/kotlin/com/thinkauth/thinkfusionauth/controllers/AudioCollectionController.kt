@@ -15,12 +15,14 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDate
 import javax.servlet.http.HttpServletResponse
 
 
@@ -116,28 +118,27 @@ class AudioCollectionController(
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
 
         return ResponseEntity(
-            audioCollectionService.getAllSentencesNotInSentenceId( page, size),
-            HttpStatus.OK
+            audioCollectionService.getAllSentencesNotInSentenceId(page, size), HttpStatus.OK
         )
     }
 
+
     @Operation(
-        summary = "Get all sentences filtered by ignore and languageId",
-        description = "gets all sentences filtered by ignore and languageId",
+        summary = "Get all sentences filtered by needsUpload",
+        description = "gets all sentences filtered by needsUpload",
         tags = ["Audio"]
     )
-    @GetMapping("/sentencesFilteredByLanguageId")
+    @GetMapping("/sentencesNeedUploads")
     fun getSentencesFilteredByLanguageIdPaged(
         @RequestParam("languageId") languageId: String,
+        @RequestParam("needsUpload") needsUpload: Boolean,
         @RequestParam("page", defaultValue = "0") page: Int = 0,
         @RequestParam("size", defaultValue = "10") size: Int = 10
     ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
 
         return ResponseEntity(
-            audioCollectionService.getAllSentencesNotInSentenceIdFilterByLanguageId(
-                languageId,
-                page,
-                size
+            audioCollectionService.getAllSentencesThatNeedUploads(
+                page, size, needUploads = needsUpload, languageId = languageId
             ), HttpStatus.OK
         )
     }
@@ -208,7 +209,7 @@ class AudioCollectionController(
         @PathVariable("languageId") languageId: String
     ): Page<SentenceEntitie> {
 
-        return audioCollectionService.getAudioCollectionByLanguageId(languageId,0, 1000)
+        return audioCollectionService.getAudioCollectionByLanguageId(languageId, 0, 1000)
     }
 
     @Operation(
@@ -217,11 +218,11 @@ class AudioCollectionController(
     @GetMapping("/audioCollectionByLanguageIdPaged/{languageId}")
     fun getAllAudioByLanguageIdPaged(
         @PathVariable("languageId") languageId: String,
-        @RequestParam(name = "page", defaultValue = "0") page:Int= 0,
-    @RequestParam(name = "size", defaultValue = "100") size:Int = 0
+        @RequestParam(name = "page", defaultValue = "0") page: Int = 0,
+        @RequestParam(name = "size", defaultValue = "100") size: Int = 0
     ): Page<SentenceEntitie> {
 
-        return audioCollectionService.getAudioCollectionByLanguageId(languageId,page, size)
+        return audioCollectionService.getAudioCollectionByLanguageId(languageId, page, size)
     }
 
     @Operation(
@@ -236,9 +237,7 @@ class AudioCollectionController(
     }
 
     @Operation(
-        summary = "fetch sentence by Id",
-        description = "fetches a sentence by id",
-        tags = ["Audio"]
+        summary = "fetch sentence by Id", description = "fetches a sentence by id", tags = ["Audio"]
     )
     @GetMapping("/sentenceById")
     fun getSentenceById(
@@ -247,6 +246,57 @@ class AudioCollectionController(
         return ResponseEntity(audioCollectionService.getSentenceById(sentenceId), HttpStatus.OK)
     }
 
+//    @Operation(
+//        summary = "Fetches Sentences created within a certain time period",
+//        description = "Fetches Sentences created within a certain time period by languageId",
+//        tags = ["Sentences"]
+//    )
+//    @GetMapping("/getSentencesByCreatedDateRangeAndLanguageId")
+//    fun getAllGreaterThanUploadDate(
+//        languageId: String, @RequestParam(
+//            "createdDateStart", required = true
+//        ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) createdDateStart: LocalDate, @RequestParam(
+//            "createdDateEnd", required = true
+//        ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) createdDateEnd: LocalDate,
+//        @RequestParam(name = "page", defaultValue = "0") page: Int = 0,
+//        @RequestParam(name = "size", defaultValue = "100") size: Int = 100
+//    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
+//        return ResponseEntity(
+//            audioCollectionService.getSentencesByCreatedDateRangeAndLanguageId(
+//                createdDateStart = createdDateStart.atStartOfDay(),
+//                createdDateEnd = createdDateEnd.atStartOfDay(),
+//                languageId = languageId,
+//                page = page,
+//                size = size
+//            ), HttpStatus.OK
+//        )
+//    }
+    @Operation(
+        summary = "Fetches Sentences created within a certain time period",
+        description = "Fetches Sentences created within a certain time period by languageId",
+        tags = ["Sentences"]
+    )
+    @GetMapping("/getSentencesByCreatedDateRangeAndLanguageId")
+    fun getAllGreaterThanUploadDateJPA(
+        languageId: String, @RequestParam(
+            "createdDateStart", required = true
+        ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) createdDateStart: LocalDate,
+        @RequestParam(
+            "createdDateEnd", required = true
+        ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) createdDateEnd: LocalDate,
+        @RequestParam(name = "page", defaultValue = "0") page: Int = 0,
+        @RequestParam(name = "size", defaultValue = "100") size: Int = 100
+    ): ResponseEntity<PagedResponse<MutableList<SentenceEntitie>>> {
+        return ResponseEntity(
+            audioCollectionService.getSentenceByCreatedRangeAndLanguageId(
+                createdDateStart = createdDateStart.atStartOfDay(),
+                createdDateEnd = createdDateEnd.atStartOfDay(),
+                languageId = languageId,
+                page = page,
+                size = size
+            ), HttpStatus.OK
+        )
+    }
 
     @Operation(
         summary = "Deletes All Audio Collections by languageId",
@@ -258,5 +308,23 @@ class AudioCollectionController(
         @RequestParam("languageId") languageId: String
     ) {
         return audioCollectionService.deleteAllSentencesByLanguageId(languageId)
+    }
+
+    @Operation(
+        summary = "Deletes All Audio Collections by languageId and createdAt Date Range",
+        description = "deletes all audio collections by languageId and createdAt Date Range",
+        tags = ["Sentences"]
+    )
+    @DeleteMapping("/deleteByLanguageIdAndDateRange")
+    fun deleteByLanguageIdAndCreatedAtRange(
+        @RequestParam("languageId") languageId: String,
+        @RequestParam(
+            "createdDateStart", required = true
+        ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) createdDateStart: LocalDate,
+        @RequestParam(
+            "createdDateEnd", required = true
+        ) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) createdDateEnd: LocalDate,
+    ): Long {
+        return audioCollectionService.deleteSentencesByCreatedRangeAndLanguageId(languageId = languageId, createdDateStart = createdDateStart.atStartOfDay(), createdDateEnd = createdDateEnd.atStartOfDay())
     }
 }

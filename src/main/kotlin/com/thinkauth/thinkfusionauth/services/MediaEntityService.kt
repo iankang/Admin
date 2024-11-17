@@ -31,11 +31,12 @@ class MediaEntityService(
 
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MediaEntityService::class.java)
+    @TrackExecutionTime
     fun saveMediaEntity(mediaEntity: MediaEntity): MediaEntity {
         return mediaEntityRepository.save(mediaEntity)
     }
 
-
+    @TrackExecutionTime
     fun fetchAllMediaEntityPaged(
         page:Int = 0,
         size:Int= 10
@@ -49,7 +50,7 @@ class MediaEntityService(
             content.totalPages
         )
     }
-
+    @TrackExecutionTime
     fun fetchAllMediaEntityPagedByLanguageId(
         languageId:String,
         page:Int = 0,
@@ -64,36 +65,43 @@ class MediaEntityService(
             content.totalPages
         )
     }
+    @TrackExecutionTime
     fun fetchMediaEntityById(id:String): MediaEntity {
         return mediaEntityRepository.findById(id).get()
     }
 
+    @TrackExecutionTime
     fun fetchAllMediaEntityByUser(email:String): List<MediaEntity> {
         return mediaEntityRepository.findAllByOwnerEmail(email)
     }
 
+    @TrackExecutionTime
     fun fetchAllMediaEntityByBusinessId(businessId:String): List<MediaEntity> {
         return mediaEntityRepository.findAllByBusinessId(businessId)
     }
 
+    @TrackExecutionTime
     fun fetchAllMediaEntityBySentenceId(sentenceId:String): List<MediaEntity> {
         return mediaEntityRepository.findAllBySentenceId(sentenceId)
     }
 
+    @TrackExecutionTime
     fun acceptMediaEntity(mediaId: String): MediaEntity {
         val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.ACCEPTED
         return saveMediaEntity(mediaEntity)
     }
+    @TrackExecutionTime
     fun rejectMediaEntity(mediaId: String): MediaEntity {
         val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.REJECTED
         return saveMediaEntity(mediaEntity)
     }
-
+    @TrackExecutionTime
     fun countAllVoiceCollectionsByLanguageId(languageId: String): Long {
         return mediaEntityRepository.countAllByLanguageId(languageId)
     }
+    @TrackExecutionTime
     fun countAllVoiceCollections(
     ):MutableMap<String,Long>{
         val voiceMap = mutableMapOf<String,Long>()
@@ -101,7 +109,7 @@ class MediaEntityService(
         voiceMap["VoiceCollection"] = countMediaName
         return voiceMap
     }
-
+    @TrackExecutionTime
     fun countAllVoiceCollectionsByAcceptanceState(
     ): MutableMap<MediaAcceptanceState, Long> {
         var voiceStates = mutableMapOf<MediaAcceptanceState,Long>()
@@ -112,6 +120,7 @@ class MediaEntityService(
         return voiceStates
     }
 
+    @TrackExecutionTime
     fun countVoiceCollectionsByAcceptanceStateAndLanguageId(
         languageId: String
     ): MutableMap<MediaAcceptanceState, Long> {
@@ -123,6 +132,7 @@ class MediaEntityService(
         return voiceStates
     }
 
+    @TrackExecutionTime
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse> {
         val languageList = mutableListOf<LanguageRecordingsResponse>()
         val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { it.languageId }.distinct()
@@ -140,7 +150,7 @@ class MediaEntityService(
         }
         return languageList
     }
-
+    @TrackExecutionTime
     fun countAllVoiceCollectionsByLoggedInUser(): MutableMap<String, Long> {
         val user = userManagementService.fetchLoggedInUserEntity()
         val recordCount = mediaEntityRepository.countAllByUsernameAndMediaName(user.username?:"","VOICE_COLLECTION")
@@ -148,6 +158,7 @@ class MediaEntityService(
         userVoiceRecordingsMap["voiceRecordingCount"] =recordCount
         return userVoiceRecordingsMap
     }
+    @TrackExecutionTime
     fun countAllVoiceCollectionsByLoggedInUserAndLanguage(): MutableList<UserLanguageRecordingsResponse> {
         val userRecordingsLanguageList = mutableListOf<UserLanguageRecordingsResponse>()
         val user = userManagementService.fetchLoggedInUserEntity()
@@ -160,14 +171,14 @@ class MediaEntityService(
 
         return userRecordingsLanguageList
     }
-
+    @TrackExecutionTime
     fun findMediaEntitiesByStatus(
         mediaAcceptanceState: MediaAcceptanceState
     ): List<MediaEntity> {
         val mediaEntities = mediaEntityRepository.findAllByMediaState(mediaAcceptanceState)
         return mediaEntities
     }
-
+    @TrackExecutionTime
     fun findMediaEntitiesByMediaAcceptanceStateAndLanguageId(
         mediaAcceptanceState: MediaAcceptanceState,
         languageId: String,
@@ -185,7 +196,7 @@ class MediaEntityService(
             mediaEntities.totalPages
         )
     }
-
+    @TrackExecutionTime
     fun findAllVoiceCollectionsByLoggedInUser(
         page:Int,
         size:Int
@@ -217,6 +228,7 @@ class MediaEntityService(
         )
     }
     @Async
+    @TrackExecutionTime
     fun uploadMedia(event: OnMediaUploadItemEvent) {
         try {
 
@@ -225,30 +237,6 @@ class MediaEntityService(
             val sentenceId = event.sentenceId
             val businessId = event.businessId
             val user = event.user
-
-//        if (authentication !is AnonymousAuthenticationToken) {
-//            val userPrincipal = authentication.principal as String
-//            println("User principal name =" + userPrincipal.username)
-//            println("Is user enabled =" + userPrincipal.isEnabled)
-//        }
-//        var bucko:String = when(resource){
-//            BucketName.BUSINESS_PROFILE_PIC ->{
-//                "$bucketName/"+ BucketName.BUSINESS_PROFILE_PIC+"/"+path.name
-//            }
-//
-//            BucketName.STT_UPLOAD ->{
-//                "$bucketName/"+ BucketName.STT_UPLOAD+"/"+path.name
-//            }
-//
-//            BucketName.VOICE_COLLECTION ->{
-//                "$bucketName/"+ BucketName.VOICE_COLLECTION+"/"+path.name
-//            }
-//
-//            BucketName.USER_ACCOUNT_PROFILE->{
-//                "$bucketName/"+ BucketName.USER_ACCOUNT_PROFILE+"/"+path.name
-//            }
-//        }
-//        var bucko = mediaFullPath(resource, multipartFile.name).absolutePathString()
 
             logger.info("logged in user: ${user}")
             logger.info("path: $path")

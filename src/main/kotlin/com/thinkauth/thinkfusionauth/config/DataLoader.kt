@@ -319,11 +319,11 @@ class DataLoader(
 
 
 //    fun kikuyu(){
-//        val sents = sentenceEntityRepository.findAllByLanguageId("66ebc5d7b52e2b22ba67317e", pageable = )
+//        val sents = audioCollectionService.getAudioCollectionByLanguageId("66ebc5d7b52e2b22ba67317e", 0 , 50)
 //        val filtere = sents.filter { sentenceEntitie: SentenceEntitie ->
 //            sentenceEntitie.createdDate>LocalDateTime.now().minusDays(1)
 //        }
-//        logger.info("yesterday: ${filtere.size}")
+//        logger.info("yesterday: ${filtere}")
 //    }
 
     override fun run(vararg args: String?) {

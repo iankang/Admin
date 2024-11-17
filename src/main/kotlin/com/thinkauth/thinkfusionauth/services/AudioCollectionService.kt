@@ -197,6 +197,23 @@ class AudioCollectionService(
             sentences.totalPages
         )
     }
+
+    @TrackExecutionTime
+    fun getAllSentencesThatNeedUploads(
+        page:Int,
+        size:Int,
+        needUploads:Boolean,
+        languageId: String
+    ): PagedResponse<MutableList<SentenceEntitie>> {
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
+        val sentences = sentenceRepository.findAllSentencesByNeedUploadsAndLanguageId(needUploads, languageId,paging)
+        return PagedResponse<MutableList<SentenceEntitie>>(
+            sentences.content,
+            sentences.number,
+            sentences.totalElements,
+            sentences.totalPages
+        )
+    }
     @TrackExecutionTime
     fun getAllSentencesNotInSentenceIdFilterByLanguageId(
                                 languageId: String,
@@ -244,4 +261,48 @@ class AudioCollectionService(
         return sentenceRepository.findById(id).get()
     }
 
+    @TrackExecutionTime
+    fun getSentencesByCreatedDateRangeAndLanguageId(
+        languageId: String,
+        createdDateStart:LocalDateTime,
+        createdDateEnd:LocalDateTime,
+        page: Int,
+        size: Int
+    ): PagedResponse<MutableList<SentenceEntitie>> {
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
+        val sentences =sentenceRepository.findAllSentencesByCreatedDateRangeAndLanguageId(languageId, createdDateStart, createdDateEnd, paging)
+        return PagedResponse<MutableList<SentenceEntitie>>(
+            sentences.content,
+            sentences.number,
+            sentences.totalElements,
+            sentences.totalPages
+        )
+    }
+
+    @TrackExecutionTime
+    fun getSentenceByCreatedRangeAndLanguageId(
+        languageId: String,
+        createdDateStart:LocalDateTime,
+        createdDateEnd:LocalDateTime,
+        page: Int,
+        size: Int
+    ): PagedResponse<MutableList<SentenceEntitie>> {
+        val paging = PageRequest.of(page, size, Sort.by("lastModifiedDate").descending())
+        val sentences = sentenceRepository.findAllByLanguageIdAndCreatedDateBetween(languageId, createdDateStart, createdDateEnd,paging)
+        return PagedResponse<MutableList<SentenceEntitie>>(
+            sentences.content,
+            sentences.number,
+            sentences.totalElements,
+            sentences.totalPages
+        )
+    }
+
+    @TrackExecutionTime
+    fun deleteSentencesByCreatedRangeAndLanguageId(
+        languageId: String,
+        createdDateStart:LocalDateTime,
+        createdDateEnd:LocalDateTime,
+    ): Long {
+        return sentenceRepository.deleteAllByLanguageIdAndCreatedDateBetween(languageId, createdDateStart, createdDateEnd)
+    }
 }

@@ -14,7 +14,6 @@ interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
     fun existsBySentence(sentence: String): Boolean
 
     fun findAllByLanguageId(languageId: String, pageable: Pageable): Page<SentenceEntitie>
-    fun findAllByLanguageId(languageId: String): List<SentenceEntitie>
 
     fun countAudioCollectionsByLanguageId(languageId: String): Long?
 
@@ -23,9 +22,18 @@ interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
     @Query("{  'needUploads': true }")
     fun findSentencesNotIn(pageable: Pageable): Page<SentenceEntitie>
 
+    fun findAllSentencesByNeedUploadsAndLanguageId(needsUpload:Boolean,languageId: String,pageable: Pageable):Page<SentenceEntitie>
+
     @Query("{'language.id': ?0 , 'needUploads': true}")
     fun findSentencesNotInAndLanguageId(languageId: String, pageable: Pageable): Page<SentenceEntitie>
 
     fun deleteAllByLanguageId(languageId: String)
+
+    @Query("{'language.id': ?0 , 'createdDate' : { \$gte: ?1, \$lte: ?2 } }")
+    fun findAllSentencesByCreatedDateRangeAndLanguageId(languageId: String,createdDateStart:LocalDateTime, createdDateEnd:LocalDateTime,pageable: Pageable):Page<SentenceEntitie>
+
+    fun findAllByLanguageIdAndCreatedDateBetween(languageId: String,createdDateStart:LocalDateTime, createdDateEnd:LocalDateTime,pageable: Pageable):Page<SentenceEntitie>
+
+    fun deleteAllByLanguageIdAndCreatedDateBetween(languageId: String,createdDateStart:LocalDateTime, createdDateEnd:LocalDateTime):Long
 
 }
