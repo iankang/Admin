@@ -78,7 +78,7 @@ app:
   bot-url: https://llm.think.ke:5000/chat
 management:
   endpoints:
-    enabled-by-default: false
+    enabled-by-default: true
   endpoint:
     info:
       enabled: true
@@ -160,7 +160,7 @@ app:
   bot-url: https://llm.think.ke:5000/chat
 management:
   endpoints:
-    enabled-by-default: false
+    enabled-by-default: true
   endpoint:
     info:
       enabled: true

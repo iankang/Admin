@@ -46,7 +46,7 @@ class AudioCollectionController(
     )
     fun addAudioCollection(
         @RequestParam sentenceId: String, @RequestPart("file") file: MultipartFile
-    ): ResponseEntity<SentenceUploadEntity> {
+    ): ResponseEntity<SentenceUploadEntity?> {
 //        val audioCollectionRequest = AudioCollectionRequest(sentence,language)
         if (audioCollectionService.audioCollectionExists(sentenceId)) {
 
@@ -64,7 +64,7 @@ class AudioCollectionController(
 //    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
     fun addAudioToCollection(
         @PathVariable("sentenceId") audioCollectionId: String, @RequestPart("file") file: MultipartFile
-    ): ResponseEntity<SentenceUploadEntity> {
+    ): ResponseEntity<SentenceUploadEntity?> {
         if (audioCollectionService.audioCollectionExists(audioCollectionId)) {
             LOGGER.info("sentence exists")
             val audioCollection = audioCollectionService.getAudioCollectionById(audioCollectionId)
