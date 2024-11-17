@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.SentenceUploadEntity
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
@@ -26,6 +27,7 @@ class SentenceUploadService(
 
 ) {
 
+    @TrackExecutionTime
     fun addSentenceUpload(sentenceId:String, file: MultipartFile): SentenceUploadEntity {
         val sentence = sentenceManagement.findById(sentenceId).get();
         val path = fileProcessingHelper.mediaFullPath(BucketName.VOICE_COLLECTION,file.originalFilename!!)
@@ -52,6 +54,7 @@ class SentenceUploadService(
         return finalCollection
     }
 
+    @TrackExecutionTime
     fun addAudioEvent(
         file: MultipartFile, SentenceEntitie: SentenceEntitie
     ): SentenceUploadEntity {

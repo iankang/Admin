@@ -61,6 +61,13 @@ class FileProcessingHelper {
                         newFileName
                     )
                 }
+
+                BucketName.PROMPT_COLLECTION -> {
+
+                    BucketName.PROMPT_COLLECTION.name + File.separator + StringUtils.cleanPath(
+                        newFileName
+                    )
+                }
             }
             LOGGER.info("copy location: " + copyLocation)
             return copyLocation
@@ -107,6 +114,10 @@ class FileProcessingHelper {
 
             BucketName.LANGUAGE_DOC -> {
                 "csv"
+            }
+
+            BucketName.PROMPT_COLLECTION -> {
+                "mp3"
             }
         }
     }

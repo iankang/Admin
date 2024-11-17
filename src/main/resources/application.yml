@@ -76,6 +76,12 @@ app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
   swahili-url: "https://www.swahilipod101.com/swahili-word-lists/?page="
   bot-url: https://llm.think.ke:5000/chat
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true
 ---
 server:
   connection-timeout: 1080000
@@ -152,3 +158,9 @@ app:
   language-url: "https://en.wiktionary.org/wiki/Appendix:ISO_639-3_codes/Africa"
   swahili-url: "https://www.swahilipod101.com/swahili-word-lists/?page="
   bot-url: https://llm.think.ke:5000/chat
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true

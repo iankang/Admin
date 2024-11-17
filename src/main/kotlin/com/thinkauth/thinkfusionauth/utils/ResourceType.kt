@@ -7,6 +7,7 @@ enum class BucketName {
     BOT_PROFILE_PIC,
     USER_ACCOUNT_PROFILE,
     STT_UPLOAD,
+    PROMPT_COLLECTION
 }
 
 //enum class ResourceType {
