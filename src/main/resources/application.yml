@@ -4,6 +4,8 @@ spring:
 
 ---
 server:
+  compression:
+    enabled: true
   tomcat:
     max-swallow-size: -1
     connection-timeout: 1080000
@@ -84,6 +86,8 @@ management:
       enabled: true
 ---
 server:
+  compression:
+    enabled: true
   tomcat:
     max-swallow-size: -1
     connection-timeout: 1080000
