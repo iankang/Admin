@@ -95,6 +95,7 @@ class AudioCollectionService(
 //    ): GetObjectResponse? {
 //        return storageService.stream(bucketName, objectName)
 //    }
+    @TrackExecutionTime
     fun getMinioObject(objectName:String, response: HttpServletResponse){
 
         try {
