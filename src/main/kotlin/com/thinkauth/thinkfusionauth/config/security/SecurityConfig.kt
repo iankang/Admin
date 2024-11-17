@@ -46,6 +46,7 @@ class SecurityConfig(
            ?.antMatchers("/api/language/languages/**")?.permitAll()
            ?.antMatchers("/swagger-ui/**")?.permitAll()
            ?.antMatchers("/v3/api-docs/**")?.permitAll()
+           ?.antMatchers("/actuator/**")?.permitAll()
            ?.anyRequest()
            ?.fullyAuthenticated()
            ?.and()
