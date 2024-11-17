@@ -120,7 +120,9 @@ class AudioCollectionService(
             }
 
             // Flush the response to ensure all data is sent
-            response.flushBuffer()
+            if(response.outputStream != null) {
+                response.flushBuffer()
+            }
         }catch (e:Exception){
             LOGGER.error("getMinioObject: {}",e.message)
         }
