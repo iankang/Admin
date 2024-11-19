@@ -8,6 +8,7 @@ interface UserRepository: MongoRepository<UserEntity, String> {
 
     fun findByEmail(email:String):UserEntity
     fun findAllByEmail(email:String):List<UserEntity>
+    fun findByMobilePhone(mobilePhone:String):List<UserEntity>?
 
     fun existsByEmail(email: String):Boolean
 

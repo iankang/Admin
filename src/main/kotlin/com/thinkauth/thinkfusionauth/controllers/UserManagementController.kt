@@ -324,4 +324,16 @@ class UserManagementController(
             HttpStatus.OK
         )
     }
+
+    @Operation(summary = "get user by phone", description = "Gets by phone", tags = ["UserManagement"])
+    @GetMapping("/fetchUserByPhone" )
+    fun getUserDetailsByMobile(
+        mobile:String
+    ): ResponseEntity<List<UserEntity?>> {
+
+        return ResponseEntity(
+            userManagementService.getUserByMobile(mobile),
+            HttpStatus.OK
+        )
+    }
 }

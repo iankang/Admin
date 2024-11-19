@@ -109,6 +109,12 @@ class UserManagementService(
     fun fetchUserEntityByEmail(email: String): UserEntity {
         return userRepository.findByEmail(email)
     }
+
+    @TrackExecutionTime
+    fun getUserByMobile(mobile:String): List<UserEntity>? {
+        logger.info("mobile: ${mobile}")
+        return userRepository.findByMobilePhone(mobile)
+    }
     @TrackExecutionTime
     fun fetchAllUsersWithEmail(email: String): List<UserEntity> {
         return userRepository.findAllByEmail(email)

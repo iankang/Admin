@@ -326,6 +326,9 @@ class DataLoader(
 //        logger.info("yesterday: ${filtere}")
 //    }
 
+    fun uploadStatusChangeUsers(){
+        
+    }
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
