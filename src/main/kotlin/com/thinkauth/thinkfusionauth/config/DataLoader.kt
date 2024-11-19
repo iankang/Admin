@@ -263,18 +263,18 @@ class DataLoader(
         audioCollectionService.deleteAllSentencesByLanguageId("66eab0b9b47b7539e1262f36")
     }
 
-    fun mediaEntityStatusChanger(){
-       val mediaEntities = mediaEntityService.findAllByMediaState(MediaAcceptanceState.ACCEPTED)
-        mediaEntities.forEach {
-            if(audioCollectionService.audioCollectionExists(it.sentenceId ?: "")) {
-                val sent = audioCollectionService.getAudioCollectionById(it.sentenceId ?: "")
-                sent.needUploads = false
-                audioCollectionService.saveSentence(sent)
-                logger.info("sentence: {}", sent.toString())
-
-            }
-        }
-    }
+//    fun mediaEntityStatusChanger(){
+//       val mediaEntities = mediaEntityService.findAllByMediaState(MediaAcceptanceState.ACCEPTED)
+//        mediaEntities.forEach {
+//            if(audioCollectionService.audioCollectionExists(it.sentenceId ?: "")) {
+//                val sent = audioCollectionService.getAudioCollectionById(it.sentenceId ?: "")
+//                sent.needUploads = false
+//                audioCollectionService.saveSentence(sent)
+//                logger.info("sentence: {}", sent.toString())
+//
+//            }
+//        }
+//    }
 
     fun sentenceRemoval(){
         val sentences = audioCollectionService.getAllSentences(0, 200).item.filter { it.language == null }

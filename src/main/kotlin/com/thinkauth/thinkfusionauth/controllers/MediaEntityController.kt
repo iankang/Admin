@@ -113,9 +113,11 @@ class MediaEntityController(
     )
     @GetMapping("/mediaEntityByAcceptanceState")
     fun mediaEntityByAcceptanceState(
-        @RequestParam("mediaState") mediaAcceptanceState: MediaAcceptanceState
-    ): ResponseEntity<List<MediaEntity>> {
-        return ResponseEntity(mediaEntityService.findMediaEntitiesByStatus(mediaAcceptanceState),HttpStatus.OK)
+        @RequestParam("mediaState") mediaAcceptanceState: MediaAcceptanceState,
+        @RequestParam("page", defaultValue = "0") page:Int = 0,
+        @RequestParam("size", defaultValue = "10") size:Int = 10
+    ): ResponseEntity<PagedResponse<MutableList<MediaEntity>>> {
+        return ResponseEntity(mediaEntityService.findMediaEntitiesByStatus(mediaAcceptanceState, page, size),HttpStatus.OK)
     }
 
     @Operation(
@@ -131,4 +133,13 @@ class MediaEntityController(
         return ResponseEntity(mediaEntityService.findMediaEntitiesByMediaAcceptanceStateAndLanguageId(mediaAcceptanceState, languageId,page, size),HttpStatus.OK)
     }
 
+    @Operation(
+        summary = "Get media duration ", description = "Get media duration ", tags = ["MediaEntities"]
+    )
+    @GetMapping("/mediaEntityDuration")
+    fun mediaEntityGetDuration(
+        @RequestParam("mediaName") mediaName:String
+    ): ResponseEntity<Unit> {
+        return ResponseEntity(mediaEntityService.mediaEntityGetDuration(mediaName), HttpStatus.OK)
+    }
 }

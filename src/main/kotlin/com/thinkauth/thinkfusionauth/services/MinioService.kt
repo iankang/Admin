@@ -218,4 +218,16 @@ class MinioService(
         )
         return InputStreamResource(inputStream)
     }
+    fun getMinioObjectInputStream(
+        bucketName: String,
+        objectName: String
+    ): InputStream {
+        val inputStream: InputStream = minioClient.getObject(
+            GetObjectArgs.builder()
+                .bucket(bucketName)
+                .`object`(objectName)
+                .build()
+        )
+        return inputStream
+    }
 }

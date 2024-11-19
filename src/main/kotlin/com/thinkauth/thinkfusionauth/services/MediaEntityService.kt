@@ -1,23 +1,31 @@
 package com.thinkauth.thinkfusionauth.services
 
 import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
-import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
-import com.thinkauth.thinkfusionauth.entities.MediaEntityUserUploadState
+import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
-import com.thinkauth.thinkfusionauth.events.listener.OnMediaUploadItemListener
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
+import com.thinkauth.thinkfusionauth.utils.BucketName
+import org.jaudiotagger.audio.AudioFileIO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import kotlin.io.path.extension
+import kotlin.io.path.name
+
 
 @Service
 class MediaEntityService(
@@ -27,7 +35,10 @@ class MediaEntityService(
     private val languageService: LanguageService,
     private val audioManagementService: AudioCollectionService,
     private val userIgnoreService: SentenceUserIgnoreService,
-    private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService
+    private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService,
+    private val storageService: StorageService,
+    @Value("\${minio.bucket} ")
+    private val thinkResources: String,
 
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MediaEntityService::class.java)
@@ -177,10 +188,18 @@ class MediaEntityService(
     }
     @TrackExecutionTime
     fun findMediaEntitiesByStatus(
-        mediaAcceptanceState: MediaAcceptanceState
-    ): List<MediaEntity> {
-        val mediaEntities = mediaEntityRepository.findAllByMediaState(mediaAcceptanceState)
-        return mediaEntities
+        mediaAcceptanceState: MediaAcceptanceState,
+        page:Int,
+        size:Int
+    ): PagedResponse<MutableList<MediaEntity>> {
+        val paging = PageRequest.of(page,size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val mediaEntities = mediaEntityRepository.findAllByMediaState(mediaAcceptanceState, paging)
+        return PagedResponse(
+            mediaEntities.content,
+            mediaEntities.number,
+            mediaEntities.totalElements,
+            mediaEntities.totalPages
+        )
     }
     @TrackExecutionTime
     fun findMediaEntitiesByMediaAcceptanceStateAndLanguageId(
@@ -279,5 +298,37 @@ class MediaEntityService(
     @TrackExecutionTime
     fun mediaEntityForSentenceExists(sentenceId: String): Boolean {
         return mediaEntityRepository.existsBySentenceId(sentenceId)
+    }
+
+    @TrackExecutionTime
+    fun mediaEntityGetDuration(objectName:String){
+        try {
+            val filePath: Path = Paths
+                .get(
+                    thinkResources + File.separator+ BucketName.VOICE_COLLECTION.name + File.separator + StringUtils.cleanPath(
+                       objectName
+                    )
+                )
+
+            val inputStream = storageService.getObjectInputStream("thinking", objectName = BucketName.VOICE_COLLECTION.name+File.separator+filePath.fileName.name)
+            // Temporarily save the audio file locally
+            val tempFile: Path = Files.createTempFile("audio", ".mp3")
+            if (inputStream != null) {
+                Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING)
+            }
+
+
+            // Use jaudiotagger to read the audio duration
+            val audioFile = AudioFileIO.readAs(tempFile.toFile(),"mp3")
+            val audioHeader = audioFile.audioHeader
+//        totalDurationInSeconds += audioHeader.trackLength
+
+            logger.info("totalDuration: ${audioHeader.trackLength}")
+            logger.info("totalAudioInfo: ${audioHeader.toString()}")
+            // Clean up the temporary file
+            Files.delete(tempFile)
+        }catch (e:Exception){
+            logger.error("error: ${e}")
+        }
     }
 }

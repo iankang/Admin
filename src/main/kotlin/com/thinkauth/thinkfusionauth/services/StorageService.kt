@@ -106,6 +106,15 @@ class StorageService(
         return null
     }
 
+    fun getObjectInputStream(bucketName: String, objectName: String): InputStream? {
+        try {
+            return minioService.getMinioObjectInputStream(bucketName, objectName)
+        } catch (e: Exception) {
+            logger.error("getObject: ${e.toString()}")
+        }
+        return null
+    }
+
     override fun fetchStats(bucketName: String, objectName: String): StatObjectResponse? {
         try {
             return minioService.getStats(bucketName, objectName)

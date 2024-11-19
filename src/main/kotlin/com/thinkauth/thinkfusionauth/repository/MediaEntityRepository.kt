@@ -36,7 +36,7 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllByMediaName(mediaName:String):List<MediaEntity>
 
-    fun findAllByMediaState(mediaAcceptanceState: MediaAcceptanceState):List<MediaEntity>
+    fun findAllByMediaState(mediaAcceptanceState: MediaAcceptanceState, pageable: Pageable):Page<MediaEntity>
 
     fun findAllByMediaStateAndLanguageId(mediaAcceptanceState: MediaAcceptanceState,languageId:String,pageable: Pageable):Page<MediaEntity>
 
