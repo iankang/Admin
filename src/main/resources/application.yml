@@ -34,8 +34,8 @@ spring:
     mongodb:
       #      uri: mongodb://testUser:test@62.12.115.155:27017/thinkDB?tls=false
       #      uri: mongodb://ian:point90@52.14.197.167:27017/ThinkDBTest?tls=false?authSource=
-#      database: ThinkDBPilot
-      database: ThinkDBTest
+      database: ThinkDBPilot
+#      database: ThinkDBTest
       authentication-database: admin
       host: 18.218.12.248
       username: ian

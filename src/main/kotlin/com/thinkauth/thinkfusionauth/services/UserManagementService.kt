@@ -65,8 +65,10 @@ class UserManagementService(
         if (userENt != null ) {
             val userExists = userRepository.existsByEmail(email)
             if(!userExists) {
+                logger.info("user does not exist: $email")
                 addUserEntity(userENt)
             } else {
+                logger.info("updating user: $email")
                 updateUserEntity(userRepository.findByEmail(email),userENt)
             }
         }

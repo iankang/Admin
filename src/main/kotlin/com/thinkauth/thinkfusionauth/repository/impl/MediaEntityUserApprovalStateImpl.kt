@@ -223,4 +223,9 @@ class MediaEntityUserApprovalStateImpl(
     ): Long {
         return mediaEntityUserApprovalStateRepository.countAllByApproverEmailAndPaymentState(approverEmail,paymentState)
     }
+
+    @TrackExecutionTime
+    fun getAllApprovers(): MutableList<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateRepository.findAll()
+    }
 }

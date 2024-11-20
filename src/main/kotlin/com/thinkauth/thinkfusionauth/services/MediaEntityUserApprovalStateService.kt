@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.services
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
@@ -239,6 +240,20 @@ class MediaEntityUserApprovalStateService(
             unpaidCount = unpaidCount,
             pendingCount = pendingCount
         )
+    }
+
+    fun getAllApprovals(): MutableList<MediaEntityUserApprovalState> {
+        return mediaEntityUserApprovalStateImpl.getAllApprovers()
+    }
+
+    @TrackExecutionTime
+    fun updateUserApproval(item:MediaEntityUserApprovalState): MediaEntityUserApprovalState {
+        return mediaEntityUserApprovalStateImpl.createItem(item)
+    }
+
+    @TrackExecutionTime
+    fun getApprovalById(id:String): MediaEntityUserApprovalState {
+        return mediaEntityUserApprovalStateImpl.getItemById(id)
     }
 
 }

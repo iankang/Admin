@@ -23,7 +23,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import kotlin.io.path.extension
+import javax.sound.sampled.AudioFileFormat
+import javax.sound.sampled.AudioSystem
 import kotlin.io.path.name
 
 
@@ -301,7 +302,7 @@ class MediaEntityService(
     }
 
     @TrackExecutionTime
-    fun mediaEntityGetDuration(objectName:String){
+    fun mediaEntityGetDuration(objectName:String): Float? {
         try {
             val filePath: Path = Paths
                 .get(
@@ -312,23 +313,23 @@ class MediaEntityService(
 
             val inputStream = storageService.getObjectInputStream("thinking", objectName = BucketName.VOICE_COLLECTION.name+File.separator+filePath.fileName.name)
             // Temporarily save the audio file locally
-            val tempFile: Path = Files.createTempFile("audio", ".mp3")
+            val tempFile: Path = Files.createTempFile("audio", ".wav")
             if (inputStream != null) {
                 Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING)
             }
 
+            val fileFormat: AudioFileFormat = AudioSystem.getAudioFileFormat(tempFile.toFile())
+            logger.info("file: ${fileFormat} ")
 
-            // Use jaudiotagger to read the audio duration
-            val audioFile = AudioFileIO.readAs(tempFile.toFile(),"mp3")
-            val audioHeader = audioFile.audioHeader
-//        totalDurationInSeconds += audioHeader.trackLength
-
-            logger.info("totalDuration: ${audioHeader.trackLength}")
-            logger.info("totalAudioInfo: ${audioHeader.toString()}")
-            // Clean up the temporary file
+            val denom = fileFormat.format.frameSize.times(fileFormat.format.frameRate)
+            val duration = fileFormat.byteLength.div(denom)
+            logger.info("duration: $duration")
             Files.delete(tempFile)
+            return duration
         }catch (e:Exception){
             logger.error("error: ${e}")
         }
+        return null
     }
+
 }

@@ -139,7 +139,7 @@ class MediaEntityController(
     @GetMapping("/mediaEntityDuration")
     fun mediaEntityGetDuration(
         @RequestParam("mediaName") mediaName:String
-    ): ResponseEntity<Unit> {
+    ): ResponseEntity<Float> {
         return ResponseEntity(mediaEntityService.mediaEntityGetDuration(mediaName), HttpStatus.OK)
     }
 }

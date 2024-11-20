@@ -2,10 +2,8 @@ package com.thinkauth.thinkfusionauth.config
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.javafaker.Faker
 import com.thinkauth.thinkfusionauth.entities.*
-import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
@@ -22,12 +20,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
-import org.springframework.context.annotation.Bean
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import java.io.InputStream
-import java.time.LocalDateTime
-import kotlin.math.log
 
 @Component
 class DataLoader(
@@ -46,6 +41,7 @@ class DataLoader(
     private val countyService: CountyServiceImple,
     private val constituencyImpl: ConstituencyImpl,
     private val uploadStateService: MediaEntityUserUploadStateService,
+    private val approvalStateService: MediaEntityUserApprovalStateService,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -327,7 +323,31 @@ class DataLoader(
 //    }
 
     fun uploadStatusChangeUsers(){
-        
+//        val users = userManagementService.fetchAllUsers()
+//        users.forEach {
+//            if(it.email != null){
+//
+////                userManagementService.addUserFromFusionAuthByEmail(it.email!!)
+//                val user =userManagementService.fetchUserByEmail(it.email!!)
+//                logger.info("nationalId: ${user?.data?.get("nationalId")}")
+//            }
+//        }
+        val mediaEntityApprovals = approvalStateService.getAllApprovals().filter { it.nationalId == null || it.nationalId == "null" }
+        logger.info("count: ${mediaEntityApprovals.size}")
+        mediaEntityApprovals.forEach { mediaEntityUserApprovalState: MediaEntityUserApprovalState ->
+//            logger.info("user: ${mediaEntityUserApprovalState.owner}")
+
+            val currUser =userManagementService.fetchUserByEmail(mediaEntityUserApprovalState.approverEmail!!)
+
+            val approval = approvalStateService.getApprovalById(mediaEntityUserApprovalState.id!!)
+
+            approval.nationalId = currUser?.data?.getOrDefault("nationalId",null).toString()
+            approval.phoneNumber = currUser?.mobilePhone ?: ""
+            approvalStateService.updateUserApproval(approval)
+
+            logger.info("approval: $approval")
+        }
+
     }
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
@@ -356,5 +376,6 @@ class DataLoader(
 //            uploaderBiodata()
 //        encoder()
 //        kikuyu()
+//        uploadStatusChangeUsers()
     }
 }
