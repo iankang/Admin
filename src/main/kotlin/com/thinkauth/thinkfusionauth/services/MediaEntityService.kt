@@ -9,7 +9,6 @@ import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
-import org.jaudiotagger.audio.AudioFileIO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
