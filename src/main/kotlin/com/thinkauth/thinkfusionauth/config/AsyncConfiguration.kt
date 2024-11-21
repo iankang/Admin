@@ -27,8 +27,8 @@ class AsyncConfiguration:AsyncConfigurer {
     @Bean
     fun asyncExecutor(): Executor {
         val executor = ThreadPoolTaskExecutor()
-        executor.corePoolSize = 3
-        executor.maxPoolSize = 3
+        executor.corePoolSize = 10
+        executor.maxPoolSize = 5
         executor.queueCapacity = 500
         executor.setThreadNamePrefix("AsynchThread-")
         executor.setRejectedExecutionHandler { r: Runnable?, executor1: ThreadPoolExecutor? ->
@@ -39,51 +39,51 @@ class AsyncConfiguration:AsyncConfigurer {
         executor.initialize()
         return executor
     }
+//
+//    @Override
+//    @Bean (name = ["taskExecutor"])
+//    fun getAsyncExec():AsyncTaskExecutor{
+//        logger.debug("Creating Async Task Executor")
+//        val executor = ThreadPoolTaskExecutor()
+//        executor.corePoolSize = 3
+//        executor.maxPoolSize = 3
+//        executor.queueCapacity = 200
+//        executor.setRejectedExecutionHandler { r: Runnable?, executor1: ThreadPoolExecutor? ->
+//            logger.warn(
+//                "Task rejected, thread pool is full and queue is also full"
+//            )
+//        }
+//        return executor
+//    }
 
-    @Override
-    @Bean (name = ["taskExecutor"])
-    fun getAsyncExec():AsyncTaskExecutor{
-        logger.debug("Creating Async Task Executor")
-        val executor = ThreadPoolTaskExecutor()
-        executor.corePoolSize = 3
-        executor.maxPoolSize = 3
-        executor.queueCapacity = 200
-        executor.setRejectedExecutionHandler { r: Runnable?, executor1: ThreadPoolExecutor? ->
-            logger.warn(
-                "Task rejected, thread pool is full and queue is also full"
-            )
-        }
-        return executor
-    }
-
-    override fun getAsyncUncaughtExceptionHandler(): AsyncUncaughtExceptionHandler? {
-        return SimpleAsyncUncaughtExceptionHandler()
-    }
-
-    /** Configure async support for Spring MVC.  */
-    @Bean
-    fun webMvcConfigurerConfigurer(
-        taskExecutor: AsyncTaskExecutor?,
-        callableProcessingInterceptor: CallableProcessingInterceptor?
-    ): WebMvcConfigurer {
-        return object : WebMvcConfigurer {
-            override fun configureAsyncSupport(configurer: AsyncSupportConfigurer) {
-                configurer.setDefaultTimeout(360000).setTaskExecutor(taskExecutor!!)
-                configurer.registerCallableInterceptors(callableProcessingInterceptor)
-                super.configureAsyncSupport(configurer)
-            }
-        }
-    }
-
-    @Bean
-    fun callableProcessingInterceptor(): CallableProcessingInterceptor {
-        return object : TimeoutCallableProcessingInterceptor() {
-            @Throws(Exception::class)
-            override fun <T> handleTimeout(request: NativeWebRequest?, task: Callable<T>?): Any {
-                logger.error("timeout!")
-                return super.handleTimeout(request, task)
-            }
-        }
-    }
+//    override fun getAsyncUncaughtExceptionHandler(): AsyncUncaughtExceptionHandler? {
+//        return SimpleAsyncUncaughtExceptionHandler()
+//    }
+//
+//    /** Configure async support for Spring MVC.  */
+//    @Bean
+//    fun webMvcConfigurerConfigurer(
+//        taskExecutor: AsyncTaskExecutor?,
+//        callableProcessingInterceptor: CallableProcessingInterceptor?
+//    ): WebMvcConfigurer {
+//        return object : WebMvcConfigurer {
+//            override fun configureAsyncSupport(configurer: AsyncSupportConfigurer) {
+//                configurer.setDefaultTimeout(360000).setTaskExecutor(taskExecutor!!)
+//                configurer.registerCallableInterceptors(callableProcessingInterceptor)
+//                super.configureAsyncSupport(configurer)
+//            }
+//        }
+//    }
+//
+//    @Bean
+//    fun callableProcessingInterceptor(): CallableProcessingInterceptor {
+//        return object : TimeoutCallableProcessingInterceptor() {
+//            @Throws(Exception::class)
+//            override fun <T> handleTimeout(request: NativeWebRequest?, task: Callable<T>?): Any {
+//                logger.error("timeout!")
+//                return super.handleTimeout(request, task)
+//            }
+//        }
+//    }
 
 }
