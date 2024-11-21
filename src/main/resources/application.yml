@@ -99,7 +99,7 @@ server:
     key-store: /etc/letsencrypt/live/dev.think.ke/dev.think.ke.keystore.p12
     key-store-password: kangethe
     key-store-type: PKCS12
-    key-alias: auth.think.ke
+    key-alias: dev.think.ke
 spring:
   http:
     encoding:
