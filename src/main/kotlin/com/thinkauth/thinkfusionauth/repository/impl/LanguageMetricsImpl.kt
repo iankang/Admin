@@ -65,6 +65,11 @@ class LanguageMetricsImpl(
     }
 
     @TrackExecutionTime
+    fun getLanguageMetricsCount(): Long {
+        return languageMetricsRepository.count()
+    }
+
+    @TrackExecutionTime
     fun getByLanguageId(languageId:String): LanguageMetricsEntity {
         return languageMetricsRepository.findByLanguageId(languageId)
     }

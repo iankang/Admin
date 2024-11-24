@@ -151,8 +151,14 @@ class MediaEntityService(
         return voiceStates
     }
     @TrackExecutionTime
-    fun countAllByLanguagesTable():MutableList<LanguageMetricsEntity>{
-        return languageMetricsImpl.getAllItems()
+    fun countAllByLanguagesTable():MutableList<LanguageMetricsEntity>?{
+        if(languageMetricsImpl.getLanguageMetricsCount() > 0L) {
+            return languageMetricsImpl.getAllItems()
+        } else {
+            countAllByLanguages()
+            countAllByLanguagesTable()
+        }
+        return null
     }
     @TrackExecutionTime
     @Scheduled(cron =  "0 0/5 * * * *")
@@ -182,7 +188,7 @@ class MediaEntityService(
 
                 if (languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
                     logger.info("exists and deleting")
-                    languageMetricsImpl.deleteItemById(languageResp.languageId!!)
+                    languageMetricsImpl.removeExistingMetric(languageResp.languageId!!)
                 }
                 languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
             }
