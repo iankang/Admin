@@ -59,6 +59,12 @@ class UserManagementController(
             ResponseEntity(FusionApiResponse(userResponse.status,null,userResponse.errorResponse), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    @Operation(summary = "get a user entity by email", description = "Gets a user entity by email", tags = ["UserManagement"])
+    @GetMapping("/fetchUserEntityByEmail")
+    fun getLocalUserByEmail(email: String?): ResponseEntity<UserEntity> {
+        return ResponseEntity(userManagementService.fetchLocalUserByEmail(email!!),HttpStatus.OK)
+    }
     @Operation(summary = "get a user by username", description = "Gets a user by username", tags = ["UserManagement"])
     @GetMapping("/fetchUserByUsername")
     fun getUserByUsername(

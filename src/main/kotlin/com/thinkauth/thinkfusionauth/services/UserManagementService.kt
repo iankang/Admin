@@ -50,6 +50,11 @@ class UserManagementService(
     }
 
     @TrackExecutionTime
+    fun fetchLocalUserByEmail(email:String):UserEntity?{
+        return userRepository.findByEmail(email)
+    }
+
+    @TrackExecutionTime
     fun convertUserEntityByEmailFromFusionAuth(email: String): UserEntity? {
         val user = fetchUserByEmail(email)
         if (user != null) {
