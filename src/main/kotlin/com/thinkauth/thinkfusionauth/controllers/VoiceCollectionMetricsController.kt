@@ -1,16 +1,14 @@
 package com.thinkauth.thinkfusionauth.controllers
 
-import com.thinkauth.thinkfusionauth.entities.LanguageHoursEntity
-import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
+import com.thinkauth.thinkfusionauth.entities.*
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
-import com.thinkauth.thinkfusionauth.entities.MediaEntity
-import com.thinkauth.thinkfusionauth.entities.TotalHoursEntity
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.services.LanguageHoursService
 import com.thinkauth.thinkfusionauth.services.MediaEntityService
 import com.thinkauth.thinkfusionauth.services.TotalHourService
+import com.thinkauth.thinkfusionauth.services.TotalHourUserService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
@@ -24,7 +22,8 @@ import org.springframework.web.bind.annotation.*
 class VoiceCollectionMetricsController(
     private val mediaEntityService: MediaEntityService,
     private val languageHoursService: LanguageHoursService,
-    private val totalHourService: TotalHourService
+    private val totalHourService: TotalHourService,
+    private val totalHourUserService: TotalHourUserService
 ) {
 
 
@@ -121,6 +120,36 @@ class VoiceCollectionMetricsController(
     fun getTotalHours(): ResponseEntity<MutableList<TotalHoursEntity>> {
         return ResponseEntity(totalHourService.getTotalHourEntity(), HttpStatus.OK)
     }
+
+    @Operation(
+        summary = "Get all hours by users", description = "gets all  hours by users ", tags = ["Metrics"]
+    )
+    @GetMapping("/totalHoursUsers")
+    fun getTotalHoursUsers(): ResponseEntity<MutableList<LanguageHourUserEntity>> {
+        return ResponseEntity(totalHourUserService.getAllTotalHourUsers(), HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "initiate user info", description = "initiate user info ", tags = ["Metrics"]
+    )
+    @PostMapping("/initiateUserAggregation")
+    fun initiateUserHours(
+        @RequestParam(name = "email") email:String
+    ): ResponseEntity<LanguageHourUserEntity> {
+        return ResponseEntity(totalHourUserService.setTotalHourUser(email),HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Get user hours by email", description = "gets user hours by email ", tags = ["Metrics"]
+    )
+    @GetMapping("/totalHoursUsersByEmail")
+    fun getUserHoursByEmail(
+        @RequestParam(name = "email") email:String
+    ): ResponseEntity<LanguageHourUserEntity> {
+        return ResponseEntity(totalHourUserService.getTotalHourUserByEmail(email),HttpStatus.OK)
+    }
+
+
 //
 //    @Operation(
 //        summary = "Get a media entities", description = "gets a media entity", tags = ["MediaEntities"]
