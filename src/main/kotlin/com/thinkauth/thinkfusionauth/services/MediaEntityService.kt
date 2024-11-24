@@ -156,29 +156,44 @@ class MediaEntityService(
     }
     @TrackExecutionTime
     @Scheduled(cron =  "0 0/5 * * * *")
-    fun countAllByLanguages(): MutableList<LanguageRecordingsResponse> {
-        val languagesList = mutableListOf<LanguageRecordingsResponse>()
-        val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { LanguageRecordingsResponse(languageName = it.languageName, languageId = it.languageId, sentenceCount = 0L, recordingCount = 0L) }.distinct()
+    fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
+        try {
+            val languagesList = mutableListOf<LanguageRecordingsResponse>()
+            val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map {
+                LanguageRecordingsResponse(
+                    languageName = it.languageName,
+                    languageId = it.languageId,
+                    sentenceCount = 0L,
+                    recordingCount = 0L
+                )
+            }.distinct()
 
-        //RELEVANT Languages should be added here as well.
+            //RELEVANT Languages should be added here as well.
 
-      languagesIds.forEach { languageResp:LanguageRecordingsResponse? ->
+            languagesIds.forEach { languageResp: LanguageRecordingsResponse? ->
 
-            languageResp?.sentenceCount = audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
-            languageResp.recordingCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(languageResp?.languageId!!,"VOICE_COLLECTION")?: 0L
+                languageResp?.sentenceCount =
+                    audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
+                languageResp.recordingCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(
+                    languageResp?.languageId!!,
+                    "VOICE_COLLECTION"
+                ) ?: 0L
 //            val language = languageService.getLanguageByLanguageId(languageId)
                 languagesList.add(
                     languageResp
                 )
-          if(languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
-              languageMetricsImpl.updateItem(languageMetricsImpl.getByLanguageId(languageResp.languageId ?: ""))
-          } else {
-              languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
-          }
+                if (languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
+                    languageMetricsImpl.updateItem(languageMetricsImpl.getByLanguageId(languageResp.languageId ?: ""))
+                } else {
+                    languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
+                }
+            }
+
+            return languagesList
+        }catch (e:Exception){
+            logger.error("countAllByLanguages: ${e.toString()}")
         }
-
-        return languagesList
-
+        return null
     }
     @TrackExecutionTime
     fun countAllVoiceCollectionsByLoggedInUser(): MutableMap<String, Long> {
