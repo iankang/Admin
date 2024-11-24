@@ -122,12 +122,12 @@ class LanguageController(
 
       return scrapingService.fetchSwahiliWords()
     }
-    @Operation(
-        summary = "Delete all languages", description = "deletes all languages", tags = ["Language"]
-    )
-    @DeleteMapping("/deleteAllLanguages")
-    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
-    fun deleteAllLanguages(){
-        languageService.deleteAllLanguages()
-    }
+//    @Operation(
+//        summary = "Delete all languages", description = "deletes all languages", tags = ["Language"]
+//    )
+//    @DeleteMapping("/deleteAllLanguages")
+//    @PreAuthorize("hasAuthority('editor') or hasAuthority('admin')")
+//    fun deleteAllLanguages(){
+//        languageService.deleteAllLanguages()
+//    }
 }

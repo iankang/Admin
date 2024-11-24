@@ -2,6 +2,7 @@ package com.thinkauth.thinkfusionauth.services
 
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import io.minio.*
+import io.minio.http.Method
 import io.minio.messages.Bucket
 import io.minio.messages.Item
 import org.slf4j.LoggerFactory
@@ -22,6 +23,23 @@ class MinioService(
         return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())
     }
 
+    fun getPresignedUrl(
+        bucketName: String,
+        objectName: String
+    ): String? {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                GetPresignedObjectUrlArgs.builder()
+                    .bucket(bucketName)
+                    .method(Method.GET)
+                    .`object`(objectName)
+                    .build()
+            )
+        }catch (e:Exception){
+            logger.error("error: ${e.message}")
+        }
+        return null
+    }
     fun listBuckets(): MutableList<Bucket>? {
         try {
 
@@ -173,6 +191,9 @@ class MinioService(
             sourceObjectList.add(
                 ComposeSource.builder().bucket(bucketName).`object`(BucketName.VOICE_COLLECTION.name).build()
             )
+            sourceObjectList.add(
+                ComposeSource.builder().bucket(bucketName).`object`(BucketName.PROMPT_COLLECTION.name).build()
+            )
 
         return minioClient.composeObject(
             ComposeObjectArgs.builder()
@@ -230,4 +251,6 @@ class MinioService(
         )
         return inputStream
     }
+
+
 }

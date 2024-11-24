@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.controllers
 
+import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
@@ -74,8 +75,8 @@ class VoiceCollectionMetricsController(
         summary = "Get count of  voice collections by language", description = "gets count of all voice collections by language", tags = ["Metrics"]
     )
     @GetMapping("/countAllVoiceCollectionByLanguage")
-    fun getCountOfRecordingsByLanguage(): ResponseEntity<MutableList<LanguageRecordingsResponse>> {
-        return ResponseEntity(mediaEntityService.countAllByLanguages(), HttpStatus.OK)
+    fun getCountOfRecordingsByLanguage(): ResponseEntity<MutableList<LanguageMetricsEntity>> {
+        return ResponseEntity(mediaEntityService.countAllByLanguagesTable(), HttpStatus.OK)
     }
     @Operation(
         summary = "Get all voice collections by logged in user", description = "gets all voice collections by logged in user", tags = ["Metrics"]

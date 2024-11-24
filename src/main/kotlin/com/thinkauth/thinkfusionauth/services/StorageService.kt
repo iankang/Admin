@@ -132,5 +132,14 @@ class StorageService(
         }
     }
 
-
+    fun getPresignedUrl(
+        bucketName: String,
+        objectName:String): String? {
+        try {
+            return minioService.getPresignedUrl(bucketName,objectName)
+        }catch (e:Exception){
+            logger.error("getPresignedUrl: ${e.message}")
+        }
+        return null
+    }
 }

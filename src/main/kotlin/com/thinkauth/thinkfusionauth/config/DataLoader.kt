@@ -35,6 +35,7 @@ class DataLoader(
     private val businessService: BusinessService,
     private val industryService: CompanyProfileIndustryService,
     private val mediaEntityService: MediaEntityRepository,
+    private val mediaEntityRealService: MediaEntityService,
     private val conversationService: ConversationImpl,
     private val botInfoImpl: BotInfoImpl,
     private val userManagementService: UserManagementService,
@@ -349,11 +350,17 @@ class DataLoader(
         }
 
     }
+//
+//    fun distinctLanguageId(){
+//        val answer =mediaEntityService.findDistinctLanguageIdByMediaName("VOICE_COLLECTION")
+//        logger.info("distinctLanguageIds: ${answer.toString()}")
+//    }
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
         loadingLanguageData()
         checkIfBucketIsAvailable()
+//        mediaEntityRealService.countAllByLanguages()
 //        removeSwahili()
 //        addSwahiliSentences()
         industryItems()
@@ -363,7 +370,7 @@ class DataLoader(
         addDescriptionsForBots()
 //        mediaEntityStatusChanger()
 
-        logger.info("running after 5 seconds delay")
+//        logger.info("running after 5 seconds delay")
 //        backdateAllUserInfo()
 //        backdateAllMediaEntities()
 //        userInfoGreaterThanOne()
@@ -377,5 +384,6 @@ class DataLoader(
 //        encoder()
 //        kikuyu()
 //        uploadStatusChangeUsers()
+//        distinctLanguageId()
     }
 }

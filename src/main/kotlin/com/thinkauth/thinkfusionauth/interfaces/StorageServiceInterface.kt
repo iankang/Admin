@@ -39,4 +39,6 @@ interface StorageServiceInterface {
 
     fun removeObject(bucketName: String,
                      objectName: String)
+
+
 }

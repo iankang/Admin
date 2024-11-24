@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.InputStreamResource
 import org.springframework.data.mongodb.repository.Query
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -130,5 +131,20 @@ import java.io.File
             LOGGER.error("error: ${e.message}")
         }
         return null
+    }
+
+    @GetMapping("/preSignedUrl")
+    @Operation(summary = "presigned Url", description = "Set a presigned url", tags = ["Minio"])
+    @ResponseBody
+    fun getPresignedObjectUrl(
+        @RequestParam("bucket") bucket:String,
+        @RequestParam("objectName") objectname:String,
+    ): ResponseEntity<String> {
+        return try {
+             ResponseEntity.ok(storageService.getPresignedUrl(bucket,objectname))
+        }catch (e:Exception){
+            LOGGER.error("getPresignedObjectUrl: ${e.message}")
+            ResponseEntity.ok(e.message)
+        }
     }
  }

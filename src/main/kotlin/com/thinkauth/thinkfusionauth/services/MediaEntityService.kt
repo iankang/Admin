@@ -1,6 +1,7 @@
 package com.thinkauth.thinkfusionauth.services
 
 import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
+import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
@@ -8,6 +9,7 @@ import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
+import com.thinkauth.thinkfusionauth.repository.impl.LanguageMetricsImpl
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import java.io.File
@@ -37,6 +40,7 @@ class MediaEntityService(
     private val userIgnoreService: SentenceUserIgnoreService,
     private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService,
     private val storageService: StorageService,
+    private val languageMetricsImpl: LanguageMetricsImpl,
     @Value("\${minio.bucket} ")
     private val thinkResources: String,
 
@@ -146,24 +150,30 @@ class MediaEntityService(
         }
         return voiceStates
     }
-
     @TrackExecutionTime
+    fun countAllByLanguagesTable():MutableList<LanguageMetricsEntity>{
+        return languageMetricsImpl.getAllItems()
+    }
+    @TrackExecutionTime
+    @Scheduled(cron =  "0 0/5 * * * *")
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse> {
-        val languageList = mutableListOf<LanguageRecordingsResponse>()
-        val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { it.languageId }.distinct()
-        languagesIds.forEach { languageId:String? ->
+        val languagesList = mutableListOf<LanguageRecordingsResponse>()
+        val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { LanguageRecordingsResponse(languageName = it.languageName, languageId = it.languageId, sentenceCount = 0L, recordingCount = 0L) }.distinct()
 
-            val sentenceCount = audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageId!!)
-            val recordingsCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(languageId,"VOICE_COLLECTION")
-            val language = languageService.getLanguageByLanguageId(languageId)
-            languageList.add(LanguageRecordingsResponse(
-                languageName = language.languageName,
-                languageId = language.id,
-                sentenceCount = sentenceCount ?: 0L,
-                recordingCount = recordingsCount
-            ))
+        //RELEVANT Languages should be added here as well.
+      languagesIds.forEach { languageResp:LanguageRecordingsResponse? ->
+
+            languageResp?.sentenceCount = audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
+            languageResp.recordingCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(languageResp?.languageId!!,"VOICE_COLLECTION")?: 0L
+//            val language = languageService.getLanguageByLanguageId(languageId)
+                languagesList.add(
+                    languageResp
+                )
+          languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
         }
-        return languageList
+
+        return languagesList
+
     }
     @TrackExecutionTime
     fun countAllVoiceCollectionsByLoggedInUser(): MutableMap<String, Long> {
