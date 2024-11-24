@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.repository.impl
 
+import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.interfaces.DataOperations
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
@@ -58,16 +59,23 @@ class LanguageMetricsImpl(
 
         createItem(entity)
     }
-
+    @TrackExecutionTime
     fun getAllItems(): MutableList<LanguageMetricsEntity> {
         return languageMetricsRepository.findAll()
     }
 
+    @TrackExecutionTime
     fun getByLanguageId(languageId:String): LanguageMetricsEntity {
         return languageMetricsRepository.findByLanguageId(languageId)
     }
 
+    @TrackExecutionTime
     fun existsByLanguageId(languageId:String): Boolean {
         return languageMetricsRepository.existsByLanguageId(languageId)
     }
+    @TrackExecutionTime
+    fun removeExistingMetric(languageId: String){
+        languageMetricsRepository.deleteByLanguageId(languageId)
+    }
+
 }

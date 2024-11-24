@@ -158,7 +158,7 @@ class MediaEntityService(
     @Scheduled(cron =  "0 0/5 * * * *")
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
         try {
-            val languagesList = mutableListOf<LanguageRecordingsResponse>()
+
             val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map {
                 LanguageRecordingsResponse(
                     languageName = it.languageName,
@@ -179,17 +179,14 @@ class MediaEntityService(
                     "VOICE_COLLECTION"
                 ) ?: 0L
 //            val language = languageService.getLanguageByLanguageId(languageId)
-                languagesList.add(
-                    languageResp
-                )
+
                 if (languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
-                    languageMetricsImpl.updateItem(languageMetricsImpl.getByLanguageId(languageResp.languageId ?: ""))
-                } else {
-                    languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
+                    logger.info("exists and deleting")
+                    languageMetricsImpl.deleteItemById(languageResp.languageId!!)
                 }
+                languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
             }
 
-            return languagesList
         }catch (e:Exception){
             logger.error("countAllByLanguages: ${e.toString()}")
         }
