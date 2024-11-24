@@ -3,7 +3,7 @@ package com.thinkauth.thinkfusionauth.entities
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document(collection = "language_metrics")
+@Document(collection = "language_hours")
 data class LanguageHoursEntity(
     @Indexed
     var languageName:String?,

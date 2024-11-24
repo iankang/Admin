@@ -187,7 +187,7 @@ class MediaEntityService(
 
             //RELEVANT Languages should be added here as well.
             if(relevantLanguagesImpl.countRelevantLanguages().toInt() != languagesIds.size) {
-                relevantLanguagesImpl.deleteAllItems()
+
                 val allLangs = languagesIds.map { languageRecordingsResponse: LanguageRecordingsResponse ->
                     logger.info("languages don't tally, delete first")
                     val language = languageService.getLanguageByLanguageId(languageRecordingsResponse.languageId!!)
@@ -200,6 +200,7 @@ class MediaEntityService(
                         country = language.country
                     )
                 }
+                relevantLanguagesImpl.deleteAllItems()
                 relevantLanguagesImpl.addAllRelevantLanguages(allLangs)
             }
             languagesIds.forEach { languageResp: LanguageRecordingsResponse? ->
