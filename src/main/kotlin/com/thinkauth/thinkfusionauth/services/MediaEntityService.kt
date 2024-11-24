@@ -161,6 +161,7 @@ class MediaEntityService(
         val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map { LanguageRecordingsResponse(languageName = it.languageName, languageId = it.languageId, sentenceCount = 0L, recordingCount = 0L) }.distinct()
 
         //RELEVANT Languages should be added here as well.
+
       languagesIds.forEach { languageResp:LanguageRecordingsResponse? ->
 
             languageResp?.sentenceCount = audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
@@ -169,7 +170,11 @@ class MediaEntityService(
                 languagesList.add(
                     languageResp
                 )
-          languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
+          if(languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
+              languageMetricsImpl.updateItem(languageMetricsImpl.getByLanguageId(languageResp.languageId ?: ""))
+          } else {
+              languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
+          }
         }
 
         return languagesList

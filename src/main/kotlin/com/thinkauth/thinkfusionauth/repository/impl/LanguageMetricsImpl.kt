@@ -50,7 +50,24 @@ class LanguageMetricsImpl(
        return languageMetricsRepository.save(item)
     }
 
+    fun updateItem(item: LanguageMetricsEntity){
+        val entity = languageMetricsRepository.findByLanguageId(item.languageId ?: "")
+        entity.languageName = item.languageName
+        entity.recordingCount = item.recordingCount
+        entity.sentenceCount = item.sentenceCount
+
+        createItem(entity)
+    }
+
     fun getAllItems(): MutableList<LanguageMetricsEntity> {
         return languageMetricsRepository.findAll()
+    }
+
+    fun getByLanguageId(languageId:String): LanguageMetricsEntity {
+        return languageMetricsRepository.findByLanguageId(languageId)
+    }
+
+    fun existsByLanguageId(languageId:String): Boolean {
+        return languageMetricsRepository.existsByLanguageId(languageId)
     }
 }

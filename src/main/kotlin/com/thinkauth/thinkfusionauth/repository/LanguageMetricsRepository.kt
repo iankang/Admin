@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface LanguageMetricsRepository:MongoRepository<LanguageMetricsEntity,String> {
+
+    fun findByLanguageId(languageId:String):LanguageMetricsEntity
+
+    fun existsByLanguageId(languageId: String):Boolean
 }
