@@ -3,6 +3,7 @@ package com.thinkauth.thinkfusionauth.services
 import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
+import com.thinkauth.thinkfusionauth.entities.RelevantLanguages
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
@@ -10,6 +11,7 @@ import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.LanguageMetricsImpl
+import com.thinkauth.thinkfusionauth.repository.impl.RelevantLanguagesImpl
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -41,6 +43,7 @@ class MediaEntityService(
     private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService,
     private val storageService: StorageService,
     private val languageMetricsImpl: LanguageMetricsImpl,
+    private val relevantLanguagesImpl: RelevantLanguagesImpl,
     @Value("\${minio.bucket} ")
     private val thinkResources: String,
 
@@ -79,6 +82,13 @@ class MediaEntityService(
             content.totalElements,
             content.totalPages
         )
+    }
+
+    @TrackExecutionTime
+    fun fetchAllMediaEntitiesByLanguageId(
+        languageId: String
+    ): List<MediaEntity> {
+        return mediaEntityRepository.findAllByLanguageId(languageId)
     }
     @TrackExecutionTime
     fun fetchMediaEntityById(id:String): MediaEntity {
@@ -162,6 +172,7 @@ class MediaEntityService(
     }
     @TrackExecutionTime
     @Scheduled(cron =  "0 0/5 * * * *")
+    @Async
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
         try {
 
@@ -175,7 +186,22 @@ class MediaEntityService(
             }.distinct()
 
             //RELEVANT Languages should be added here as well.
-
+            if(relevantLanguagesImpl.countRelevantLanguages().toInt() != languagesIds.size) {
+                relevantLanguagesImpl.deleteAllItems()
+                val allLangs = languagesIds.map { languageRecordingsResponse: LanguageRecordingsResponse ->
+                    logger.info("languages don't tally, delete first")
+                    val language = languageService.getLanguageByLanguageId(languageRecordingsResponse.languageId!!)
+                    logger.info("language instance: ${language}")
+                    RelevantLanguages(
+                        languageName = language.languageName,
+                        languageId = languageRecordingsResponse.languageId,
+                        classification = language.classification,
+                        code = language.code,
+                        country = language.country
+                    )
+                }
+                relevantLanguagesImpl.addAllRelevantLanguages(allLangs)
+            }
             languagesIds.forEach { languageResp: LanguageRecordingsResponse? ->
 
                 languageResp?.sentenceCount =
@@ -362,6 +388,11 @@ class MediaEntityService(
             logger.error("error: ${e}")
         }
         return null
+    }
+
+    @TrackExecutionTime
+    fun findAllMediaEntities(): MutableList<MediaEntity> {
+        return mediaEntityRepository.findAll()
     }
 
 }

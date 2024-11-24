@@ -1,12 +1,16 @@
 package com.thinkauth.thinkfusionauth.controllers
 
+import com.thinkauth.thinkfusionauth.entities.LanguageHoursEntity
 import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
+import com.thinkauth.thinkfusionauth.entities.TotalHoursEntity
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
+import com.thinkauth.thinkfusionauth.services.LanguageHoursService
 import com.thinkauth.thinkfusionauth.services.MediaEntityService
+import com.thinkauth.thinkfusionauth.services.TotalHourService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
@@ -18,7 +22,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/metrics")
 @Tag(name = "Metrics", description = "This manages voice metrics.")
 class VoiceCollectionMetricsController(
-    private val mediaEntityService: MediaEntityService
+    private val mediaEntityService: MediaEntityService,
+    private val languageHoursService: LanguageHoursService,
+    private val totalHourService: TotalHourService
 ) {
 
 
@@ -98,6 +104,22 @@ class VoiceCollectionMetricsController(
         @RequestParam(name = "size", defaultValue = "100") size:Int = 0,
     ): ResponseEntity<PagedResponse<List<MediaEntity>>> {
         return ResponseEntity(mediaEntityService.findAllVoiceCollectionsByLoggedInUserLanguageId(languageId,page,size), HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Get all voice hours by language", description = "gets all voice hours by logged in user", tags = ["Metrics"]
+    )
+    @GetMapping("/languageHours")
+    fun getAllLanguageHours(): ResponseEntity<MutableList<LanguageHoursEntity>> {
+        return ResponseEntity(languageHoursService.getAllHourDurations(),HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Get all hours", description = "gets all  hours ", tags = ["Metrics"]
+    )
+    @GetMapping("/totalHours")
+    fun getTotalHours(): ResponseEntity<MutableList<TotalHoursEntity>> {
+        return ResponseEntity(totalHourService.getTotalHourEntity(), HttpStatus.OK)
     }
 //
 //    @Operation(

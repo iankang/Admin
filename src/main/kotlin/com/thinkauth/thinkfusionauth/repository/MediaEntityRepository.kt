@@ -50,5 +50,10 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun countAllByLanguageId(languageId:String):Long
 
+    fun countAllByDuration(duration:Float?):Long
+
+    fun findAllByDuration(duration: Float?):List<MediaEntity>
+
+    fun deleteAllByLanguageId(languageId: String)
 
 }

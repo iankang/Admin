@@ -9,6 +9,8 @@ class RelevantLanguages(
     var code:String? = null,
     @Indexed
     var languageName:String?= null,
+    @Indexed
+    var languageId:String?= null,
     var country:String? = null,
     var classification:String? = null
 ):AuditMetadata() {

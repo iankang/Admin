@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface RelevantLanguagesRepository:MongoRepository<RelevantLanguages,String> {
+
+    fun findByLanguageName(languageName:String):RelevantLanguages
 }

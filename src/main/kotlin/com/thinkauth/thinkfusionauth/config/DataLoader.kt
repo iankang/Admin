@@ -41,6 +41,8 @@ class DataLoader(
     private val userManagementService: UserManagementService,
     private val countyService: CountyServiceImple,
     private val constituencyImpl: ConstituencyImpl,
+    private val languageHoursService: LanguageHoursService,
+    private val totalHourService: TotalHourService,
     private val uploadStateService: MediaEntityUserUploadStateService,
     private val approvalStateService: MediaEntityUserApprovalStateService,
     @Value("\${minio.bucket}") private val bucketName: String
@@ -355,11 +357,29 @@ class DataLoader(
 //        val answer =mediaEntityService.findDistinctLanguageIdByMediaName("VOICE_COLLECTION")
 //        logger.info("distinctLanguageIds: ${answer.toString()}")
 //    }
+
+    fun getMediaEntitiesWithoutDuration(): Long {
+        val count = mediaEntityService.countAllByDuration(null)
+        logger.info("no duration media: ${count}")
+        if(count > 0L){
+            val medias = mediaEntityService.findAllByDuration(null)
+
+            medias.forEach { mediaEntity: MediaEntity ->
+                val objectName = mediaEntity.mediaPathId.split("/").last()
+                logger.info("mediaName: ${objectName}")
+                val duration = mediaEntityRealService.mediaEntityGetDuration(objectName)
+                logger.info("duration: ${duration}")
+            }
+        }
+        return count
+    }
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
         loadingLanguageData()
         checkIfBucketIsAvailable()
+//        totalHourService.setTotalHourEntity()
+//        mediaEntityService.deleteAllByLanguageId("66eab0b9b47b7539e1262f36")
 //        mediaEntityRealService.countAllByLanguages()
 //        removeSwahili()
 //        addSwahiliSentences()
@@ -385,5 +405,8 @@ class DataLoader(
 //        kikuyu()
 //        uploadStatusChangeUsers()
 //        distinctLanguageId()
+//        getMediaEntitiesWithoutDuration()
+//        languageHoursService.setAllDurations()
+
     }
 }

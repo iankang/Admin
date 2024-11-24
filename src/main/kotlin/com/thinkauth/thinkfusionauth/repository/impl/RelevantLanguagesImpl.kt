@@ -39,6 +39,7 @@ class RelevantLanguagesImpl(
     override fun updateItem(id: String, item: RelevantLanguages): RelevantLanguages? {
        val entity = getItemById(id)
         entity.languageName = item.languageName
+        entity.languageId = item.languageId
         entity.code = item.code
         entity.country = item.country
         entity.classification = item.classification
@@ -51,5 +52,17 @@ class RelevantLanguagesImpl(
 
     fun countRelevantLanguages(): Long {
         return relevantLanguagesRepository.count()
+    }
+
+    fun getByLanguageName(languageName:String): RelevantLanguages {
+        return relevantLanguagesRepository.findByLanguageName(languageName)
+    }
+
+    fun addAllRelevantLanguages(list:List<RelevantLanguages>): MutableList<RelevantLanguages> {
+        return relevantLanguagesRepository.saveAll(list)
+    }
+
+    fun getAllRelevantLanguages(): MutableList<RelevantLanguages> {
+        return relevantLanguagesRepository.findAll()
     }
 }

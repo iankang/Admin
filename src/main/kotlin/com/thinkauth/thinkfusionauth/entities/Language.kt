@@ -12,4 +12,13 @@ class Language(
     var country:String? = null,
     var classification:String? = null
 ):AuditMetadata() {
+
+    fun toRelevantLanguageTbl():RelevantLanguages{
+        return RelevantLanguages(
+            code = code,
+            languageName = languageName,
+            country = country,
+            classification= classification
+        )
+    }
 }
