@@ -37,7 +37,7 @@ class LanguageHoursService(
             val pendingCount = mediaEnt.count { it.mediaState.name == MediaAcceptanceState.PENDING.name }
             val pendingDuration  = mediaEnt.filter { it.mediaState.name == MediaAcceptanceState.PENDING.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
 
-            val langHour=LanguageHoursEntity(
+            LanguageHoursEntity(
                 languageName = relevantLanguages.languageName,
                 languageId = relevantLanguages.languageId,
                 totalDuration = totalDuration,
@@ -49,10 +49,9 @@ class LanguageHoursService(
                 pendingCount = pendingCount,
                 pendingDuration = pendingDuration
             )
-            languageHoursImpl.deleteByLanguageId(relevantLanguages.languageId!!)
-            languageHoursImpl.createItem(langHour)
         }
-
+        languageHoursImpl.deleteAllItems()
+        languageHoursImpl.saveAll(langHours)
     }
 
     fun getAllHourDurations(): MutableList<LanguageHoursEntity> {
