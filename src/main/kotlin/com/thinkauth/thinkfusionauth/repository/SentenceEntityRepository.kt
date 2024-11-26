@@ -22,6 +22,7 @@ interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
     @Query("{  'needUploads': true }")
     fun findSentencesNotIn(pageable: Pageable): Page<SentenceEntitie>
 
+    @Query("{'needUploads': ?0, 'language.id': ?1 }")
     fun findAllSentencesByNeedUploadsAndLanguageId(needsUpload:Boolean,languageId: String,pageable: Pageable):Page<SentenceEntitie>
 
     @Query("{'language.id': ?0 , 'needUploads': true}")
