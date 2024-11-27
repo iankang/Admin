@@ -14,8 +14,7 @@ import javax.servlet.ServletContext
 
 @Service
 class MinioService(
-    private val minioClient: MinioClient,
-    private val servletContext: ServletContext
+    private val minioClient: MinioClient, private val servletContext: ServletContext
 ) {
 
     private val logger = LoggerFactory.getLogger(MinioService::class.java)
@@ -24,28 +23,24 @@ class MinioService(
     }
 
     fun getPresignedUrl(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ): String? {
         try {
             return minioClient.getPresignedObjectUrl(
-                GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucketName)
-                    .method(Method.GET)
-                    .`object`(objectName)
-                    .build()
+                GetPresignedObjectUrlArgs.builder().bucket(bucketName).method(Method.GET).`object`(objectName).build()
             )
-        }catch (e:Exception){
+        } catch (e: Exception) {
             logger.error("error: ${e.message}")
         }
         return null
     }
+
     fun listBuckets(): MutableList<Bucket>? {
         try {
 
-        return minioClient.listBuckets()
-        }catch (e:Exception){
-            logger.error("listBuckets",e.message)
+            return minioClient.listBuckets()
+        } catch (e: Exception) {
+            logger.error("listBuckets", e.message)
         }
         return null
     }
@@ -54,12 +49,10 @@ class MinioService(
         bucketName: String
     ) {
         try {
-        return minioClient.makeBucket(
-            MakeBucketArgs.builder()
-                .bucket(bucketName)
-                .build()
-        )
-        } catch (e:Exception){
+            return minioClient.makeBucket(
+                MakeBucketArgs.builder().bucket(bucketName).build()
+            )
+        } catch (e: Exception) {
             logger.error("makeBucket ${e.message}")
         }
     }
@@ -69,15 +62,11 @@ class MinioService(
     }
 
     fun streamObject(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ): GetObjectResponse? {
         try {
             return minioClient.getObject(
-                GetObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName)
-                    .build()
+                GetObjectArgs.builder().bucket(bucketName).`object`(objectName).build()
             )
         } catch (e: Exception) {
             logger.error(e.message)
@@ -86,17 +75,11 @@ class MinioService(
     }
 
     fun downloadObject(
-        bucketName: String,
-        objectName: String,
-        filename: String
+        bucketName: String, objectName: String, filename: String
     ) {
         try {
             return minioClient.downloadObject(
-                DownloadObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName)
-                    .filename(filename)
-                    .build()
+                DownloadObjectArgs.builder().bucket(bucketName).`object`(objectName).filename(filename).build()
             )
         } catch (e: Exception) {
             logger.error("downloadObject", e.message)
@@ -113,19 +96,13 @@ class MinioService(
 
 
     fun uploadFile(
-        bucketName: String,
-        objectName: String,
-        inputStream: InputStream
+        bucketName: String, objectName: String, inputStream: InputStream
     ): ObjectWriteResponse? {
         try {
 
             return minioClient.putObject(
-                PutObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName)
-                    .stream(inputStream, -1, 10485760)
-                    .contentType("application/octet-stream")
-                    .build()
+                PutObjectArgs.builder().bucket(bucketName).`object`(objectName).stream(inputStream, -1, 10485760)
+                    .contentType("application/octet-stream").build()
             )
         } catch (e: Exception) {
             logger.error("uploadVideo: ${e.message}")
@@ -134,19 +111,12 @@ class MinioService(
     }
 
     fun uploadMedia(
-        bucketName: String,
-        objectName: String,
-        filename: String,
-        contentType: String
+        bucketName: String, objectName: String, filename: String, contentType: String
     ): ObjectWriteResponse? {
         try {
             return minioClient.uploadObject(
-                UploadObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName)
-                    .filename(filename)
-                    .contentType(contentType)
-                    .build()
+                UploadObjectArgs.builder().bucket(bucketName).`object`(objectName).filename(filename)
+                    .contentType(contentType).build()
             )
         } catch (e: Exception) {
             logger.error("uploadMedia", e.message)
@@ -155,17 +125,13 @@ class MinioService(
     }
 
     fun removeObject(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ) {
         try {
 
 
             return minioClient.removeObject(
-                RemoveObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName)
-                    .build()
+                RemoveObjectArgs.builder().bucket(bucketName).`object`(objectName).build()
             )
         } catch (e: Exception) {
             logger.error("removeObject", e.message)
@@ -173,8 +139,7 @@ class MinioService(
     }
 
     fun composeObject(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ): ObjectWriteResponse? {
         try {
 
@@ -195,30 +160,23 @@ class MinioService(
                 ComposeSource.builder().bucket(bucketName).`object`(BucketName.PROMPT_COLLECTION.name).build()
             )
 
-        return minioClient.composeObject(
-            ComposeObjectArgs.builder()
-                .bucket(bucketName)
-                .`object`(objectName)
-                .sources(sourceObjectList)
-                .build())
-        } catch (e:Exception){
+            return minioClient.composeObject(
+                ComposeObjectArgs.builder().bucket(bucketName).`object`(objectName).sources(sourceObjectList).build()
+            )
+        } catch (e: Exception) {
             logger.error("composeObject: ${e.message}")
         }
         return null
     }
 
     fun getStats(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ): StatObjectResponse? {
         try {
 
 
             return minioClient.statObject(
-                StatObjectArgs.builder()
-                    .bucket(bucketName)
-                    .`object`(objectName)
-                    .build()
+                StatObjectArgs.builder().bucket(bucketName).`object`(objectName).build()
             )
         } catch (e: Exception) {
             logger.error("getStats", e.message)
@@ -228,26 +186,19 @@ class MinioService(
     }
 
     fun getMinioObject(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ): InputStreamResource {
         val inputStream: InputStream = minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(bucketName)
-                .`object`(objectName)
-                .build()
+            GetObjectArgs.builder().bucket(bucketName).`object`(objectName).build()
         )
         return InputStreamResource(inputStream)
     }
+
     fun getMinioObjectInputStream(
-        bucketName: String,
-        objectName: String
+        bucketName: String, objectName: String
     ): InputStream {
         val inputStream: InputStream = minioClient.getObject(
-            GetObjectArgs.builder()
-                .bucket(bucketName)
-                .`object`(objectName)
-                .build()
+            GetObjectArgs.builder().bucket(bucketName).`object`(objectName).build()
         )
         return inputStream
     }

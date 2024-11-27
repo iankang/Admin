@@ -17,35 +17,35 @@ class TotalHourService(
 ) {
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    @TrackExecutionTime
-    @Scheduled(cron =  "0 0/5 * * * *")
-    @Async
-    fun setTotalHourEntity(){
-        val totalEverything= mediaEntityService.findAllMediaEntities()
-        logger.info("total found: ${totalEverything.size}")
-        val totalCount = totalEverything.size
-        val totalDuration = totalEverything.sumOf { it.duration?.toDouble() ?: 0.0 }
-        val totalAccepted = totalEverything.count { it.mediaState.name == MediaAcceptanceState.ACCEPTED.name }
-        val totalAcceptedDuration = totalEverything.filter { it.mediaState.name == MediaAcceptanceState.ACCEPTED.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
-        val totalRejected = totalEverything.count { it.mediaState.name == MediaAcceptanceState.REJECTED.name }
-        val totalRejectedDuration = totalEverything.filter { it.mediaState.name == MediaAcceptanceState.REJECTED.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
-        val totalPending = totalEverything.count { it.mediaState.name == MediaAcceptanceState.PENDING.name }
-        val totalPendingDuration = totalEverything.filter { it.mediaState.name == MediaAcceptanceState.PENDING.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
-
-        val ent = TotalHoursEntity(
-            totalDuration = totalDuration,
-            totalCount = totalCount,
-            acceptedCount = totalAccepted,
-            acceptedDuration = totalAcceptedDuration,
-            rejectedCount = totalRejected,
-            rejectedDuration = totalRejectedDuration,
-            pendingCount = totalPending,
-            pendingDuration = totalPendingDuration
-        )
-        logger.info("totals: ${ent}")
-        totalHourRepository.deleteAll()
-        totalHourRepository.save(ent)
-    }
+//    @TrackExecutionTime
+//    @Scheduled(cron =  "0 0/5 * * * *")
+//    @Async
+//    fun setTotalHourEntity(){
+//        val totalEverything= mediaEntityService.findAllMediaEntities()
+//        logger.info("total found: ${totalEverything.size}")
+//        val totalCount = totalEverything.size
+//        val totalDuration = totalEverything.sumOf { it.duration?.toDouble() ?: 0.0 }
+//        val totalAccepted = totalEverything.count { it.mediaState.name == MediaAcceptanceState.ACCEPTED.name }
+//        val totalAcceptedDuration = totalEverything.filter { it.mediaState.name == MediaAcceptanceState.ACCEPTED.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
+//        val totalRejected = totalEverything.count { it.mediaState.name == MediaAcceptanceState.REJECTED.name }
+//        val totalRejectedDuration = totalEverything.filter { it.mediaState.name == MediaAcceptanceState.REJECTED.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
+//        val totalPending = totalEverything.count { it.mediaState.name == MediaAcceptanceState.PENDING.name }
+//        val totalPendingDuration = totalEverything.filter { it.mediaState.name == MediaAcceptanceState.PENDING.name  }.sumOf { it.duration?.toDouble() ?: 0.0 }
+//
+//        val ent = TotalHoursEntity(
+//            totalDuration = totalDuration,
+//            totalCount = totalCount,
+//            acceptedCount = totalAccepted,
+//            acceptedDuration = totalAcceptedDuration,
+//            rejectedCount = totalRejected,
+//            rejectedDuration = totalRejectedDuration,
+//            pendingCount = totalPending,
+//            pendingDuration = totalPendingDuration
+//        )
+//        logger.info("totals: ${ent}")
+//        totalHourRepository.deleteAll()
+//        totalHourRepository.save(ent)
+//    }
 
     fun getTotalHourEntity(): MutableList<TotalHoursEntity> {
         return totalHourRepository.findAll()
