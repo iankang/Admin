@@ -2,10 +2,13 @@ package com.thinkauth.thinkfusionauth.controllers
 
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
+import com.thinkauth.thinkfusionauth.models.responses.DurationLanguageSum
+import com.thinkauth.thinkfusionauth.models.responses.DurationSum
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.MediaEntityService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.bson.Document
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -141,5 +144,20 @@ class MediaEntityController(
         @RequestParam("mediaName") mediaName:String
     ): ResponseEntity<Float> {
         return ResponseEntity(mediaEntityService.mediaEntityGetDuration(mediaName), HttpStatus.OK)
+    }
+
+    @Operation(
+        summary = "Get media aggregated ", description = "Get media aggregated ", tags = ["MediaEntities"]
+    )
+    @GetMapping("/mediaEntityAggregate")
+    fun mediaEntityAggregated(): MutableList<DurationSum> {
+       return mediaEntityService.aggregateMediaEntities()
+    }
+    @Operation(
+        summary = "Get media Language aggregated ", description = "Get media aggregated language", tags = ["MediaEntities"]
+    )
+    @GetMapping("/mediaEntityLanguageAggregate")
+    fun mediaEntityLanguageAggregated(): MutableList<DurationLanguageSum> {
+       return mediaEntityService.aggregateLanguageHoursMediaEntities()
     }
 }

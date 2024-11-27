@@ -9,7 +9,7 @@ data class LanguageHoursEntity(
     var languageName:String?,
     @Indexed
     var languageId:String?,
-    var totalDuration:Double? = null,
+    var totalDuration:Double? = 0.0,
     var totalCount:Int? = null,
     var acceptedDuration:Double? = null,
     var acceptedCount:Int? = null,

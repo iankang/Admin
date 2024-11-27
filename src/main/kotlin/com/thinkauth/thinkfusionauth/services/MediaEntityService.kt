@@ -3,21 +3,24 @@ package com.thinkauth.thinkfusionauth.services
 import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
-import com.thinkauth.thinkfusionauth.entities.RelevantLanguages
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
-import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
-import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
-import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
+import com.thinkauth.thinkfusionauth.models.responses.*
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.LanguageMetricsImpl
 import com.thinkauth.thinkfusionauth.repository.impl.RelevantLanguagesImpl
 import com.thinkauth.thinkfusionauth.utils.BucketName
+import com.thinkauth.thinkfusionauth.utils.async.MediaEntityLanguageMetricsAggregationUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation.*
+import org.springframework.data.mongodb.core.aggregation.AggregationResults
+import org.springframework.data.mongodb.core.aggregation.GroupOperation
+import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -44,10 +47,12 @@ class MediaEntityService(
     private val storageService: StorageService,
     private val languageMetricsImpl: LanguageMetricsImpl,
     private val relevantLanguagesImpl: RelevantLanguagesImpl,
+    private val mediaEntityLanguageMetricsAggregationUtil: MediaEntityLanguageMetricsAggregationUtil,
+    private val mongoTemplate: MongoTemplate,
     @Value("\${minio.bucket} ")
     private val thinkResources: String,
 
-) {
+    ) {
     private val logger: Logger = LoggerFactory.getLogger(MediaEntityService::class.java)
     @TrackExecutionTime
     fun saveMediaEntity(mediaEntity: MediaEntity): MediaEntity {
@@ -165,65 +170,15 @@ class MediaEntityService(
         if(languageMetricsImpl.getLanguageMetricsCount() > 0L) {
             return languageMetricsImpl.getAllItems()
         } else {
-            countAllByLanguages()
+            runLanguageMetrics()
             countAllByLanguagesTable()
         }
         return null
     }
     @TrackExecutionTime
     @Scheduled(cron =  "0 0/5 * * * *")
-    @Async
-    fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
-        try {
-
-            val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map {
-                LanguageRecordingsResponse(
-                    languageName = it.languageName,
-                    languageId = it.languageId,
-                    sentenceCount = 0L,
-                    recordingCount = 0L
-                )
-            }.distinct()
-
-            //RELEVANT Languages should be added here as well.
-            if(relevantLanguagesImpl.countRelevantLanguages().toInt() != languagesIds.size) {
-
-                val allLangs = languagesIds.map { languageRecordingsResponse: LanguageRecordingsResponse ->
-                    logger.info("languages don't tally, delete first")
-                    val language = languageService.getLanguageByLanguageId(languageRecordingsResponse.languageId!!)
-                    logger.info("language instance: ${language}")
-                    RelevantLanguages(
-                        languageName = language.languageName,
-                        languageId = languageRecordingsResponse.languageId,
-                        classification = language.classification,
-                        code = language.code,
-                        country = language.country
-                    )
-                }
-                relevantLanguagesImpl.deleteAllItems()
-                relevantLanguagesImpl.addAllRelevantLanguages(allLangs)
-            }
-            languagesIds.forEach { languageResp: LanguageRecordingsResponse? ->
-
-                languageResp?.sentenceCount =
-                    audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
-                languageResp.recordingCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(
-                    languageResp?.languageId!!,
-                    "VOICE_COLLECTION"
-                ) ?: 0L
-//            val language = languageService.getLanguageByLanguageId(languageId)
-
-                if (languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
-                    logger.info("exists and deleting")
-                    languageMetricsImpl.removeExistingMetric(languageResp.languageId!!)
-                }
-                languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
-            }
-
-        }catch (e:Exception){
-            logger.error("countAllByLanguages: ${e.toString()}")
-        }
-        return null
+    fun runLanguageMetrics(){
+        mediaEntityLanguageMetricsAggregationUtil.countAllByLanguages()
     }
     @TrackExecutionTime
     fun countAllVoiceCollectionsByLoggedInUser(): MutableMap<String, Long> {
@@ -339,6 +294,12 @@ class MediaEntityService(
                 businessId = businessId,
                 genderState = user.genderState
             )
+
+            val objectName = mediaEntity.mediaPathId.split("/").last()
+            logger.info("mediaName: ${objectName}")
+            val duration = mediaEntityGetDuration(objectName)
+            logger.info("duration: ${duration}")
+            mediaEntity.duration = duration
            val mediaent = saveMediaEntity(mediaEntity)
             mediaEntityUserUploadStateService.addMediaEntityUploadState(mediaent)
 
@@ -394,6 +355,29 @@ class MediaEntityService(
     @TrackExecutionTime
     fun findAllMediaEntities(): MutableList<MediaEntity> {
         return mediaEntityRepository.findAll()
+    }
+
+    fun aggregateMediaEntities(): MutableList<DurationSum> {
+        val matchOperation = match(Criteria("archived").`is`(false))
+        val groupOperation:GroupOperation = group("mediaState")
+            .count().`as`("stateCount")
+            .sum("duration").`as`("totalDuration")
+        val aggregation = newAggregation(matchOperation,groupOperation)
+        val aggregationResults: AggregationResults<DurationSum> = mongoTemplate.aggregate(aggregation,"mediaEntity",DurationSum::class.java)
+        logger.info("raw_results: ${aggregationResults.rawResults}")
+        logger.info("mapped_results: ${aggregationResults.mappedResults}")
+        return aggregationResults.mappedResults
+    }
+    fun aggregateLanguageHoursMediaEntities(): MutableList<DurationLanguageSum> {
+        val matchOperation = match(Criteria("archived").`is`(false))
+        val groupOperation:GroupOperation = group("languageId", "languageName", "mediaState")
+            .count().`as`("recordingCount")
+            .sum("duration").`as`("totalDuration")
+        val aggregation = newAggregation(matchOperation,groupOperation)
+        val aggregationResults: AggregationResults<DurationLanguageSum> = mongoTemplate.aggregate(aggregation,"mediaEntity",DurationLanguageSum::class.java)
+        logger.info("raw_results: ${aggregationResults.rawResults}")
+        logger.info("mapped_results: ${aggregationResults.mappedResults}")
+        return aggregationResults.mappedResults
     }
 
 }

@@ -41,8 +41,8 @@ spring:
       username: ian
       password: point90
       port: 9050
-#      connections-per-host: 100
-#      min-connections-per-host: 10
+      connections-per-host: 5
+      min-connections-per-host: 2
   security:
     oauth2:
       resourceserver:
