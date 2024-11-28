@@ -11,6 +11,7 @@ import com.thinkauth.thinkfusionauth.repository.impl.LanguageMetricsImpl
 import com.thinkauth.thinkfusionauth.repository.impl.RelevantLanguagesImpl
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import com.thinkauth.thinkfusionauth.utils.async.MediaEntityLanguageMetricsAggregationUtil
+import com.thinkauth.thinkfusionauth.utils.async.UploadMediaservice
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -41,13 +42,12 @@ class MediaEntityService(
     private val userManagementService: UserManagementService,
     private val audioCollectionService: AudioCollectionService,
     private val languageService: LanguageService,
-    private val audioManagementService: AudioCollectionService,
-    private val userIgnoreService: SentenceUserIgnoreService,
-    private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService,
+
     private val storageService: StorageService,
     private val languageMetricsImpl: LanguageMetricsImpl,
     private val relevantLanguagesImpl: RelevantLanguagesImpl,
     private val mediaEntityLanguageMetricsAggregationUtil: MediaEntityLanguageMetricsAggregationUtil,
+    private val uploadMediaservice: UploadMediaservice,
     private val mongoTemplate: MongoTemplate,
     @Value("\${minio.bucket} ")
     private val thinkResources: String,
@@ -265,55 +265,10 @@ class MediaEntityService(
             content.totalPages
         )
     }
-    @Async
+
     @TrackExecutionTime
     fun uploadMedia(event: OnMediaUploadItemEvent) {
-        try {
-
-            val path = event.copyLocation
-            val resource = event.resource
-            val sentenceId = event.sentenceId
-            val businessId = event.businessId
-            val user = event.user
-
-            logger.info("logged in user: ${user}")
-            logger.info("path: $path")
-
-            val sentence = audioManagementService.getAudioCollectionById(sentenceId!!)
-            logger.info("sentence: $sentence")
-            val mediaEntity = MediaEntity(
-                mediaName = resource.name,
-                owner = user!!,
-                username = user.username ?: user.email,
-                mediaPathId = path,
-                sentenceId = sentenceId,
-                actualSentence = sentence.sentence,
-                translatedText = sentence.englishTranslation,
-                languageId = sentence.language?.id,
-                languageName = sentence.language?.languageName,
-                businessId = businessId,
-                genderState = user.genderState
-            )
-
-            val objectName = mediaEntity.mediaPathId.split("/").last()
-            logger.info("mediaName: ${objectName}")
-            val duration = mediaEntityGetDuration(objectName)
-            logger.info("duration: ${duration}")
-            mediaEntity.duration = duration
-           val mediaent = saveMediaEntity(mediaEntity)
-            mediaEntityUserUploadStateService.addMediaEntityUploadState(mediaent)
-
-            //once uploaded, the sentence should not be visible
-            if(user.email != null) {
-                userIgnoreService.addSentenceUserIgnore(userId = user.email!!, sentenceId)
-            } else{
-                userIgnoreService.addSentenceUserIgnore(userId = user.username!!,sentenceId)
-            }
-
-            audioCollectionService.setSentenceNeedsUpload(sentenceId, false)
-        }catch (e:Exception){
-            logger.error("OnMediaUploadListener: ${e.toString()}")
-        }
+        uploadMediaservice.uploadingMedia(event)
     }
 
     @TrackExecutionTime

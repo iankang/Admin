@@ -364,11 +364,13 @@ class DataLoader(
         if(count > 0L){
             val medias = mediaEntityService.findAllByDuration(null)
 
-            medias.forEach { mediaEntity: MediaEntity ->
+             medias.map { mediaEntity: MediaEntity ->
                 val objectName = mediaEntity.mediaPathId.split("/").last()
                 logger.info("mediaName: ${objectName}")
                 val duration = mediaEntityRealService.mediaEntityGetDuration(objectName)
-                logger.info("duration: ${duration}")
+                mediaEntity.duration = duration
+                 logger.info("saving : ${mediaEntity}")
+                mediaEntityService.save(mediaEntity)
             }
         }
         return count
