@@ -16,6 +16,7 @@ import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.services.*
+import io.fusionauth.domain.User
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -375,6 +376,18 @@ class DataLoader(
         }
         return count
     }
+
+    fun mediaEntityUpdate(){
+        val mediaEntities = userManagementService.fetchAllUsers()
+        val userMap = mutableMapOf<String?, User?>()
+        mediaEntities.filter { it.email != null }.forEach {
+            logger.info("userEmail: ${it.email}")
+            if(it.email != null || it.email != "") {
+                userMap[it.email] = userManagementService.fetchUserByEmail(it.email ?: "")
+            }
+        }
+        logger.info("users: ${userMap}")
+    }
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
@@ -409,6 +422,6 @@ class DataLoader(
 //        distinctLanguageId()
 //        getMediaEntitiesWithoutDuration()
 //        languageHoursService.setAllDurations()
-
+//        mediaEntityUpdate()
     }
 }
