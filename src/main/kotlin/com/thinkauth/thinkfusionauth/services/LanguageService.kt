@@ -78,4 +78,8 @@ class LanguageService(
     fun downloadLanguagesFromWikipedia(): MutableList<LanguageScrapeResponse> {
         return scrapingService.fetchLanguages()
     }
+    @TrackExecutionTime
+    fun deleteByLanguageId(languageId: String){
+        languageRepository.deleteById(languageId)
+    }
 }
