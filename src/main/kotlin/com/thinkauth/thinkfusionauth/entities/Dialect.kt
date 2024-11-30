@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 
 @Document
-class Dialect(
+data class Dialect(
     var dialectName:String? = null,
     var language: Language? = null
 ):AuditMetadata()

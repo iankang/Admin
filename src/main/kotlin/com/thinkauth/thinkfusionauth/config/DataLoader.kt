@@ -7,8 +7,7 @@ import com.thinkauth.thinkfusionauth.entities.*
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
 import com.thinkauth.thinkfusionauth.models.requests.BusinessRequest
 import com.thinkauth.thinkfusionauth.models.requests.CompanyProfileIndustryRequest
-import com.thinkauth.thinkfusionauth.models.responses.Constituency
-import com.thinkauth.thinkfusionauth.models.responses.CountyResponse
+import com.thinkauth.thinkfusionauth.models.responses.*
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.repository.SentenceEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.BotInfoImpl
@@ -21,9 +20,16 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation.*
+import org.springframework.data.mongodb.core.aggregation.AggregationResults
+import org.springframework.data.mongodb.core.aggregation.GroupOperation
+import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Component
 import java.io.InputStream
+import kotlin.math.log
 
 @Component
 class DataLoader(
@@ -46,6 +52,8 @@ class DataLoader(
     private val totalHourService: TotalHourService,
     private val uploadStateService: MediaEntityUserUploadStateService,
     private val approvalStateService: MediaEntityUserApprovalStateService,
+    private val dialectService: DialectService,
+    private val mongoTemplate: MongoTemplate,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -92,9 +100,9 @@ class DataLoader(
     fun loadingLanguageData() {
         if (languageService.getLanguagesCount() == 0L) {
             logger.debug("loading data from wikipedia....")
-            val languages = languageService.downloadLanguagesFromWikipedia()
+            val languages = languageService.downloadLanguagesFromWikipedia().filter { it.Country == "Kenya" }.toMutableList()
             logger.debug("finished loading data from wikipedia...")
-            logger.debug("adding languages to table")
+            logger.debug("adding kenyan languages to table")
             languageService.addLanguages(languages)
             logger.debug("finished adding languages to table")
         }
@@ -228,6 +236,7 @@ class DataLoader(
         val somaliSentences = audioCollectionService.getAllSentencesByLanguageId("66eab0b9b47b7539e1262cfe",0 ,10)
         logger.info("somaliCount: {}",somaliSentences.item.size)
         val requiredSomaliLanguage = audioCollectionService.getLanguage("66eab0b9b47b7539e1262d00")
+        val requiredSomaliDialect = dialectService.getDialectById("66ebaf2fca5b937d85f4b05f")
         logger.info("requiredSomaliLanguage: {}", requiredSomaliLanguage.toString())
         for (page in startPage..somaliSentences.totalPages step increment){
             logger.info("running for page: {}", page)
@@ -235,6 +244,7 @@ class DataLoader(
             val mappedValues = fetchedSomali.item.map {
                 if (requiredSomaliLanguage != null) {
                     it.language = requiredSomaliLanguage
+                    it.dialect = requiredSomaliDialect
                 }
                 it
             }
@@ -388,6 +398,81 @@ class DataLoader(
         }
         logger.info("users: ${userMap}")
     }
+
+    fun getMediaEntityDialectCount(){
+        val matchOperation = match(Criteria("needUploads").`is`(true))
+        val groupOperation: GroupOperation =
+            group("dialect","dialectName").count().`as`("dialectCount")
+        val aggregation = newAggregation(matchOperation, groupOperation)
+        val aggregationResults: AggregationResults<SentenceDialectCount> =
+            mongoTemplate.aggregate(aggregation, "sentenceEntitie", SentenceDialectCount::class.java)
+        val dialectList = mutableListOf<DataSentenceCount>()
+        aggregationResults.mappedResults.forEach {
+            logger.info("item: ${it}")
+
+//            if(it.id != null) {
+//                val dialect = dialectService.getDialectById(it.id!!)
+//                if (dialect != null) {
+//                    val dialectEntity = DataSentenceCount(
+//                        dialecId = it.id ?: "id",
+//                        dialectName = dialect.dialectName ?: "",
+//                        dialectCount = it.dialectCount ?: 0
+//                    )
+//                    dialectList.add(dialectEntity)
+//                }
+//            }
+        }
+        logger.info("dialect: ${dialectList}")
+        logger.info("dialectCount: ${aggregationResults.mappedResults}")
+    }
+
+    fun getSomaliMain(){
+        logger.info("somali Main")
+        val paging = PageRequest.of(0, 5, Sort.by("lastModifiedDate").descending())
+        val somalis = sentenceEntityRepository.findAllByDialectId("67435b3585a7090005c99264", paging)
+        logger.info("totalElements: ${somalis.totalElements}")
+
+    }
+
+    fun countSomaliByLanguageId(){
+        //localSomali
+        val somali1 = sentenceEntityRepository.countAllByDialectId("67435b3585a7090005c99264")
+        //legitSomali
+        val somali2 = sentenceEntityRepository.countAllByDialectId("66ebaf2fca5b937d85f4b05f")
+
+        logger.info("localSom: ${somali1}")
+        logger.info("legitSom: ${somali2}")
+    }
+
+    fun convertLocalSomaliToCorrectSomali(){
+        val paging = PageRequest.of(0, 5, Sort.by("lastModifiedDate").descending())
+        sentenceEntityRepository.findAllByDialectId("67435b3585a7090005c99264",paging).content.forEach {
+            logger.info("olderSomali: ${it}")
+        }
+    }
+
+    fun aggregateSentences(){
+        val matchOperation = match(Criteria("needsUpload").`is`(true))
+        val groupOperation: GroupOperation =
+            group("language.languageName","dialect.dialectName")
+                .count().`as`("dialectCount")
+
+        val aggregation = newAggregation(matchOperation, groupOperation)
+        val aggregationResults: AggregationResults<SentenceDialectCount> =
+            mongoTemplate.aggregate(aggregation, "sentenceEntitie", SentenceDialectCount::class.java)
+        logger.info("raw_results: ${aggregationResults.rawResults}")
+        logger.info("mapped_results: ${aggregationResults.mappedResults}")
+    }
+
+    fun removeNonKenyanLanguages(){
+        val allLanguages = languageService.getLanguages()
+        allLanguages.forEach { language: Language ->
+            if(language.languageName != "Kenya"){
+                logger.info("deleting: ${language}")
+                languageService.deleteByLanguageId(languageId = language.id ?: "")
+            }
+        }
+    }
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()
@@ -423,5 +508,11 @@ class DataLoader(
 //        getMediaEntitiesWithoutDuration()
 //        languageHoursService.setAllDurations()
 //        mediaEntityUpdate()
+//        getSomaliMain()
+//        getMediaEntityDialectCount()
+//        countSomaliByLanguageId()
+//        convertLocalSomaliToCorrectSomali()
+//        aggregateSentences()
+
     }
 }

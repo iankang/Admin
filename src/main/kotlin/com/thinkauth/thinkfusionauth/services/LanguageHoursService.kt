@@ -21,7 +21,7 @@ class LanguageHoursService(
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @TrackExecutionTime
-    @Scheduled(cron =  "0 0/5 * * * *")
+//    @Scheduled(cron =  "0 0/5 * * * *")
     fun setLanguageHourMetrics(){
         mediaEntityLanguageHoursAggregationUtil.setAllDurations()
     }

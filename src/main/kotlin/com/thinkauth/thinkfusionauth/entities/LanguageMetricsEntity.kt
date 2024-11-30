@@ -10,6 +10,6 @@ data class LanguageMetricsEntity(
     var languageName:String?,
     @Indexed
     var languageId:String?,
-    var sentenceCount:Long,
-    var recordingCount:Long
+    var sentenceCount:Long?,
+    var recordingCount:Long?
 )

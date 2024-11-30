@@ -25,19 +25,21 @@ class MediaEntityLanguageMetricsAggregationUtil(
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
         try {
 
-            val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").map {
-                LanguageRecordingsResponse(
-                    languageName = it.languageName,
-                    languageId = it.languageId,
-                    sentenceCount = 0L,
-                    recordingCount = 0L
-                )
+            val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").filter { it.languageName != "" }.map {
+
+                    LanguageRecordingsResponse(
+                        languageName = it.languageName,
+                        languageId = it.languageId,
+                        sentenceCount = 0L,
+                        recordingCount = 0L
+                    )
+
             }.distinct()
 
             //RELEVANT Languages should be added here as well.
-            if(relevantLanguagesImpl.countRelevantLanguages().toInt() != languagesIds.size) {
+            if(relevantLanguagesImpl.countRelevantLanguages().toInt() < languagesIds.size) {
 
-                val allLangs = languagesIds.map { languageRecordingsResponse: LanguageRecordingsResponse ->
+                val allLangs = languagesIds.filterNot { it.languageName == "" }.map { languageRecordingsResponse: LanguageRecordingsResponse ->
                     logger.info("languages don't tally, delete first")
                     val language = languageService.getLanguageByLanguageId(languageRecordingsResponse.languageId!!)
                     logger.info("language instance: ${language}")
@@ -57,12 +59,12 @@ class MediaEntityLanguageMetricsAggregationUtil(
                 languageResp?.sentenceCount =
                     audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
                 languageResp.recordingCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(
-                    languageResp?.languageId!!,
+                    languageResp.languageId!!,
                     "VOICE_COLLECTION"
                 ) ?: 0L
 //            val language = languageService.getLanguageByLanguageId(languageId)
 
-                if (languageMetricsImpl.existsByLanguageId(languageResp.languageId ?: "")) {
+                if (languageMetricsImpl.existsByLanguageId(languageResp.languageId!!)) {
                     logger.info("exists and deleting")
                     languageMetricsImpl.removeExistingMetric(languageResp.languageId!!)
                 }

@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
-class Language(
+data class Language(
     @Indexed
     var code:String? = null,
     @Indexed

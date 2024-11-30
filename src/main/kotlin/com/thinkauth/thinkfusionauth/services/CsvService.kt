@@ -28,7 +28,8 @@ class CsvService(
     private val sentenceDocumentImpl: SentenceDocumentImpl,
     private val languageService: LanguageService,
     private val dialectService: DialectService,
-    private val audioCollectionService: AudioCollectionService
+    private val audioCollectionService: AudioCollectionService,
+    private val mediaEntityService: MediaEntityService
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(CsvService::class.java)
@@ -82,6 +83,8 @@ class CsvService(
         if (csvItems.isNotEmpty()) {
             logger.info("CsvService adding sentences to db")
             uploadTheSentences(csvItems, business, fileId)
+        } else {
+            logger.info("csvService is empty")
         }
     }
 
@@ -107,11 +110,12 @@ class CsvService(
                 } else {
                     logger.info("CsvService language exists: {}", item.language)
                     languageEntityMap[item.language!!] =
-                        (languageService.findLanguageByLanguageName(item.language!!).first())!!
+                        (languageService.findLanguageByLanguageName(item.language!!).first { it?.country == "Kenya" })!!
                 }
                 if (!dialectService.existsByDialectName(item.dialect!!)) {
                     logger.info("CsvService dialect does not exist: {}", item.dialect!!)
-                    val languageStuff = languageService.findLanguageByLanguageName(item.language!!).first()
+                    val languageStuff =
+                        languageService.findLanguageByLanguageName(item.language!!).first { it?.country == "Kenya" }
                     dialectEntityMap[item.dialect!!] = dialectService.addDialect(
                         DialectRequest(
                             dialectName = item.dialect,

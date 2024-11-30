@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
-class Business(
+data class Business(
     var businessName:String? = null,
     var businessDescription:String? = null,
     var businessImageProfile:String? = null
