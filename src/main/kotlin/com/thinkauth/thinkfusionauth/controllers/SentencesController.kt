@@ -94,6 +94,30 @@ class SentencesController(
             upload = file
         ),HttpStatus.OK)
     }
+    @Operation(
+        summary = "Upload multiple sentence document", description = "Update multiple document for sentence", tags = ["Sentences"]
+    )
+    @PostMapping(
+        value = ["/uploadMultipleSentenceDocument"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
+    )
+    fun addMultipleSentenceDocument(
+        @RequestPart("file") files: MutableList<MultipartFile>,
+        @RequestParam("languageId") languageId:String,
+        @RequestParam("businessId") businessId:String,
+        @RequestParam("dialectId", required = false) dialectId:String,
+
+    ): ResponseEntity<List<SentenceDocumentEntity>> {
+
+        val multiple = files.map{
+            sentenceDocumentImpl.addDBFile(
+                languageId = languageId,
+                dialectId = dialectId,
+                businessId = businessId,
+                upload = it
+            )
+        }
+        return ResponseEntity(multiple,HttpStatus.OK)
+    }
 
     @Operation(
         summary = "Get all sentence documents", description = "gets all sentence documents", tags = ["Sentences"]
