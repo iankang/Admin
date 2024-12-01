@@ -4,6 +4,7 @@ import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.ConstituencyEntity
 import com.thinkauth.thinkfusionauth.entities.CountyEntity
 import com.thinkauth.thinkfusionauth.entities.UserEntity
+import com.thinkauth.thinkfusionauth.models.responses.UserData
 import com.thinkauth.thinkfusionauth.repository.UserRepository
 import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
@@ -186,5 +187,26 @@ class UserManagementService(
         constituencyName:String
     ): List<ConstituencyEntity> {
         return constituencyImpl.getByConstituencyName(constituencyName)
+    }
+
+    @TrackExecutionTime
+    fun getUserData(email: String):UserData?{
+        val user = fetchUserByEmail(email)
+        return if(user != null){
+          UserData(
+              constituencyId = if(user.data.containsKey("constituencyId")) user.data["constituencyId"].toString() else null,
+              constituencyName = if(user.data.containsKey("constituencyName")) user.data["constituencyName"].toString() else null,
+              countyId = if(user.data.containsKey("countyId")) user.data["countyId"]?.toString()?.toIntOrNull() else null,
+              countyName = if(user.data.containsKey("countyName")) user.data["countyName"]?.toString() else null,
+              dialectId = if(user.data.containsKey("dialectId")) user.data["dialectId"]?.toString() else null,
+              educationLevel = if(user.data.containsKey("education_level")) user.data["education_level"]?.toString() else null,
+              employmentState = if(user.data.containsKey("employment")) user.data["employment"]?.toString() else null,
+              genderState = if(user.data.containsKey("gender")) user.data["gender"]?.toString() else null,
+              languageId = if(user.data.containsKey("languageId")) user.data["languageId"]?.toString() else null,
+              nationalId = if(user.data.containsKey("nationalId")) user.data["nationalId"]?.toString()?.toLong() else null,
+          )
+        }else{
+            null
+        }
     }
 }

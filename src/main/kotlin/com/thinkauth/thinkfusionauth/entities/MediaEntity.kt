@@ -22,6 +22,15 @@ data class MediaEntity(
 
     var archived:Boolean = false
     var duration:Float? = null
+    var constituencyId:String? = null
+    var constituencyName:String? = null
+    var countyId:Int? = 0
+    var countyName:String? = null
+    var dialectId:String? = null
+    var educationLevel: String? = null
+    var employmentState: String? = null
+    var ownerEmail:String? = null
+    var nationalId:Long? = null
 
 
     fun toMediaEntityUserUpload(
@@ -40,6 +49,16 @@ data class MediaEntity(
             mediaState = mediaState
         )
         mediaUploadState.uploadDate = LocalDateTime.now()
+        mediaUploadState.constituencyId = constituencyId
+        mediaUploadState.constituencyName = constituencyName
+        mediaUploadState.countyId = countyId
+        mediaUploadState.countyName = countyName
+        mediaUploadState.dialectId = dialectId
+        mediaUploadState.educationLevel = educationLevel
+        mediaUploadState.employmentState = employmentState
+        mediaUploadState.genderState = genderState
+        mediaUploadState.languageId = languageId
+        mediaUploadState.nationalId = nationalId.toString()
         return mediaUploadState
     }
 }
