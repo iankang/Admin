@@ -24,6 +24,8 @@ data class  MediaEntityUserUploadState(
     var paymentState: PaymentState = PaymentState.UNPAID,
     var uploadDate:LocalDateTime? = null,
     var paymentDate:LocalDateTime? = null,
+    var acceptedCount:Long? = 0L,
+    var rejectedCount:Long? = 0L
 ):AuditMetadata(){
 
 }

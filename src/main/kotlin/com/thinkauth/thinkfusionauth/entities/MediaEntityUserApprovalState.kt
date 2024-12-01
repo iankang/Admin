@@ -25,7 +25,7 @@ data class MediaEntityUserApprovalState(
     var genderState: String?,
     var mediaEntityId:String?,
     var mediaState: MediaAcceptanceState =  MediaAcceptanceState.PENDING,
-    var paymentState: PaymentState = PaymentState.UNPAID
+    var paymentState: PaymentState = PaymentState.UNPAID,
 ):AuditMetadata(){
     var reviewDate:LocalDateTime? = null
     var paymentDate:LocalDateTime? = null
