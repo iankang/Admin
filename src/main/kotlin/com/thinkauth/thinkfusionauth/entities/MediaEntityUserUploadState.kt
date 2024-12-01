@@ -11,26 +11,19 @@ import java.time.LocalDateTime
 @Document
 data class  MediaEntityUserUploadState(
     var owner:UserEntity,
-    @Indexed
     var phoneNumber:String?,
-    @Indexed
     var nationalId:String?,
-    @Indexed
     var sentenceId: String?,
     var actualSentence:String?,
-    @Indexed
     var languageId:String?,
     var languageName:String?,
     var businessId: String?,
     var genderState: String?,
-    @Indexed
     var mediaEntityId:String?,
     var mediaState: MediaAcceptanceState =  MediaAcceptanceState.PENDING,
     var paymentState: PaymentState = PaymentState.UNPAID,
     var uploadDate:LocalDateTime? = null,
     var paymentDate:LocalDateTime? = null,
-    var acceptedCount:Long? = null,
-    var rejectedCount:Long? = null
 ):AuditMetadata(){
 
 }

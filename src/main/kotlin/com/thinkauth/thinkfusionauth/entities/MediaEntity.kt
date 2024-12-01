@@ -23,6 +23,7 @@ data class MediaEntity(
     var archived:Boolean = false
     var duration:Float? = null
 
+
     fun toMediaEntityUserUpload(
     ):MediaEntityUserUploadState{
         val mediaUploadState = MediaEntityUserUploadState(

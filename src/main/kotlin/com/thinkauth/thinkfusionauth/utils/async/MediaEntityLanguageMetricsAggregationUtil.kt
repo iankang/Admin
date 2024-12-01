@@ -39,7 +39,7 @@ class MediaEntityLanguageMetricsAggregationUtil(
             //RELEVANT Languages should be added here as well.
             if(relevantLanguagesImpl.countRelevantLanguages().toInt() != languagesIds.size) {
 
-                val allLangs = languagesIds.filter{ it.languageName != "" }.map { languageRecordingsResponse: LanguageRecordingsResponse ->
+                val allLangs = languagesIds.filter{ it.languageName != ""  }.map { languageRecordingsResponse: LanguageRecordingsResponse ->
                     logger.info("languages don't tally, delete first")
                     val language = languageService.getLanguageByLanguageId(languageRecordingsResponse.languageId!!)
                     logger.info("language instance: ${language}")
