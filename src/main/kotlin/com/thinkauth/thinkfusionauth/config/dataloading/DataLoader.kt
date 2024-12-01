@@ -1,4 +1,4 @@
-package com.thinkauth.thinkfusionauth.config
+package com.thinkauth.thinkfusionauth.config.dataloading
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -15,6 +15,7 @@ import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.ConversationImpl
 import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.services.*
+import com.thinkauth.thinkfusionauth.utils.async.MediaEntityLanguageMetricsAggregationUtil
 import io.fusionauth.domain.User
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -29,7 +30,6 @@ import org.springframework.data.mongodb.core.aggregation.GroupOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Component
 import java.io.InputStream
-import kotlin.math.log
 
 @Component
 class DataLoader(
@@ -42,7 +42,7 @@ class DataLoader(
     private val businessService: BusinessService,
     private val industryService: CompanyProfileIndustryService,
     private val mediaEntityService: MediaEntityRepository,
-    private val mediaEntityRealService: MediaEntityService,
+//    private val mediaEntityRealService: MediaEntityService,
     private val conversationService: ConversationImpl,
     private val botInfoImpl: BotInfoImpl,
     private val userManagementService: UserManagementService,
@@ -54,6 +54,7 @@ class DataLoader(
     private val approvalStateService: MediaEntityUserApprovalStateService,
     private val dialectService: DialectService,
     private val mongoTemplate: MongoTemplate,
+    private val mongoAggregateKey: MediaEntityLanguageMetricsAggregationUtil,
     @Value("\${minio.bucket}") private val bucketName: String
 ) : CommandLineRunner {
 
@@ -369,23 +370,23 @@ class DataLoader(
 //        logger.info("distinctLanguageIds: ${answer.toString()}")
 //    }
 
-    fun getMediaEntitiesWithoutDuration(): Long {
-        val count = mediaEntityService.countAllByDuration(null)
-        logger.info("no duration media: ${count}")
-        if(count > 0L){
-            val medias = mediaEntityService.findAllByDuration(null)
-
-             medias.map { mediaEntity: MediaEntity ->
-                val objectName = mediaEntity.mediaPathId.split("/").last()
-                logger.info("mediaName: ${objectName}")
-                val duration = mediaEntityRealService.mediaEntityGetDuration(objectName)
-                mediaEntity.duration = duration
-                 logger.info("saving : ${mediaEntity}")
-                mediaEntityService.save(mediaEntity)
-            }
-        }
-        return count
-    }
+//    fun getMediaEntitiesWithoutDuration(): Long {
+//        val count = mediaEntityService.countAllByDuration(null)
+//        logger.info("no duration media: ${count}")
+//        if(count > 0L){
+//            val medias = mediaEntityService.findAllByDuration(null)
+//
+//             medias.map { mediaEntity: MediaEntity ->
+//                val objectName = mediaEntity.mediaPathId.split("/").last()
+//                logger.info("mediaName: ${objectName}")
+//                val duration = mediaEntityRealService.mediaEntityGetDuration(objectName)
+//                mediaEntity.duration = duration
+//                 logger.info("saving : ${mediaEntity}")
+//                mediaEntityService.save(mediaEntity)
+//            }
+//        }
+//        return count
+//    }
 
     fun mediaEntityUpdate(){
         val mediaEntities = userManagementService.fetchAllUsers()
@@ -473,6 +474,8 @@ class DataLoader(
             }
         }
     }
+
+
     override fun run(vararg args: String?) {
         logger.debug("starting to run the commandline runner")
         createBusinesses()

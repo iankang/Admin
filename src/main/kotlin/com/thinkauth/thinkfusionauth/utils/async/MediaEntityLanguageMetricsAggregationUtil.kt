@@ -1,5 +1,6 @@
 package com.thinkauth.thinkfusionauth.utils.async
 
+import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.RelevantLanguages
 import com.thinkauth.thinkfusionauth.models.responses.LanguageRecordingsResponse
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
@@ -7,6 +8,7 @@ import com.thinkauth.thinkfusionauth.repository.impl.LanguageMetricsImpl
 import com.thinkauth.thinkfusionauth.repository.impl.RelevantLanguagesImpl
 import com.thinkauth.thinkfusionauth.services.AudioCollectionService
 import com.thinkauth.thinkfusionauth.services.LanguageService
+import com.thinkauth.thinkfusionauth.services.MediaEntityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -24,51 +26,18 @@ class MediaEntityLanguageMetricsAggregationUtil(
     @Async
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
         try {
-
-            val languagesIds = mediaEntityRepository.findAllByMediaName("VOICE_COLLECTION").filter { it.languageName != "" }.map {
-
-                    LanguageRecordingsResponse(
-                        languageName = it.languageName,
-                        languageId = it.languageId,
-                        sentenceCount = 0L,
-                        recordingCount = 0L
-                    )
-
-            }.distinct()
-
-            //RELEVANT Languages should be added here as well.
-            if(relevantLanguagesImpl.countRelevantLanguages().toInt() != languagesIds.size) {
-
-                val allLangs = languagesIds.filter{ it.languageName != ""  }.map { languageRecordingsResponse: LanguageRecordingsResponse ->
-                    logger.info("languages don't tally, delete first")
-                    val language = languageService.getLanguageByLanguageId(languageRecordingsResponse.languageId!!)
-                    logger.info("language instance: ${language}")
-                    RelevantLanguages(
-                        languageName = language.languageName,
-                        languageId = languageRecordingsResponse.languageId,
-                        classification = language.classification,
-                        code = language.code,
-                        country = language.country
-                    )
-                }
-                relevantLanguagesImpl.deleteAllItems()
-                relevantLanguagesImpl.addAllRelevantLanguages(allLangs)
+            val mediaEntitiesLanguages = languageService.aggregateMediaEntitiesLanguages().filter { it.id.languageId != null }
+            val languageMetrics = mediaEntitiesLanguages.map {
+                LanguageMetricsEntity(
+                    languageId = it.id.languageId,
+                    languageName = it.id.languageName,
+                    recordingCount = it.recordingCount?.toLong(),
+                    sentenceCount =  audioCollectionService.getCountOfAllAudioCollectionByLanguageId(it.id.languageId!!) ?: 0L
+                )
             }
-            languagesIds.forEach { languageResp: LanguageRecordingsResponse? ->
-
-                languageResp?.sentenceCount =
-                    audioCollectionService.getCountOfAllAudioCollectionByLanguageId(languageResp?.languageId!!) ?: 0L
-                languageResp.recordingCount = mediaEntityRepository.countAllByLanguageIdAndMediaName(
-                    languageResp.languageId!!,
-                    "VOICE_COLLECTION"
-                ) ?: 0L
-//            val language = languageService.getLanguageByLanguageId(languageId)
-
-                if (languageMetricsImpl.existsByLanguageId(languageResp.languageId!!)) {
-                    logger.info("exists and deleting")
-                    languageMetricsImpl.removeExistingMetric(languageResp.languageId!!)
-                }
-                languageMetricsImpl.createItem(languageResp.toLanguageMetricsTbl())
+            if(languageMetrics.isNotEmpty()){
+                languageMetricsImpl.deleteAllItems()
+                languageMetricsImpl.addAllMetrics(languageMetrics)
             }
 
         }catch (e:Exception){
