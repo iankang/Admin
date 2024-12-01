@@ -22,7 +22,7 @@ class MediaEntityLanguageHoursAggregationUtil(
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     @Async
     fun setAllDurations(){
-        val languages = mediaEntityService.aggregateLanguageHoursMediaEntities()
+        val languages = mediaEntityService.aggregateLanguageHoursMediaEntities().filterNot { it.id.languageId == null   }
 
         val languageStateMap = mutableMapOf<String,LanguageHoursEntity>()
         languages.map { durationsum ->
