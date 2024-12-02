@@ -96,7 +96,7 @@ server:
   port: 9081
   ssl:
     enabled: true
-    key-store: /etc/letsencrypt/live/dev.think.ke/dev.think.ke.keystore.p12
+    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore.p12
     key-store-password: kangethe
     key-store-type: PKCS12
     key-alias: dev.think.ke
