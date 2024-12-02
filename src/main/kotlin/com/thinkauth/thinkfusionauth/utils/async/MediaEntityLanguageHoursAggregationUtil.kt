@@ -22,25 +22,28 @@ class MediaEntityLanguageHoursAggregationUtil(
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     @Async
     fun setAllDurations(){
-        val languages = mediaEntityService.aggregateLanguageHoursMediaEntities().filterNot { it.id.languageId == null   }
+        try {
+            val languages = mediaEntityService.aggregateLanguageHoursMediaEntities()
+                .filterNot { it.id.languageId == null || it.id.languageName == null }
 
-        val languageStateMap = mutableMapOf<String,LanguageHoursEntity>()
-        languages.map { durationsum ->
-            logger.info("languageduration: ${durationsum}")
-            val totalCount:Long = mediaEntityService.countAllVoiceCollectionsByLanguageId(durationsum.id.languageId!!)
-            var totalAccepted:Int? = 0
-            var totalAcceptedDuration:Float? = 0.0f
-            var totalRejected:Int? = 0
-            var totalRejectedDuration:Float? = 0.0f
-            var totalPending:Int? = 0
-            var totalPendingDuration:Float? = 0.0f
+            val languageStateMap = mutableMapOf<String, LanguageHoursEntity>()
+            languages.map { durationsum ->
+                logger.info("languageduration: ${durationsum}")
+                val totalCount: Long =
+                    mediaEntityService.countAllVoiceCollectionsByLanguageId(durationsum.id.languageId!!)
+                var totalAccepted: Int? = 0
+                var totalAcceptedDuration: Float? = 0.0f
+                var totalRejected: Int? = 0
+                var totalRejectedDuration: Float? = 0.0f
+                var totalPending: Int? = 0
+                var totalPendingDuration: Float? = 0.0f
 
 
-            when(durationsum.id.mediaState){
-                MediaAcceptanceState.PENDING -> {
-                    totalPending = durationsum.recordingCount
-                    totalPendingDuration = durationsum.totalDuration
-                    val ent = if(languageStateMap.containsKey(durationsum.id.languageName ?: "")){
+                when (durationsum.id.mediaState) {
+                    MediaAcceptanceState.PENDING -> {
+                        totalPending = durationsum.recordingCount
+                        totalPendingDuration = durationsum.totalDuration
+                        val ent = if (languageStateMap.containsKey(durationsum.id.languageName ?: "")) {
                             languageStateMap.get(durationsum.id.languageName)
                         } else {
                             LanguageHoursEntity(
@@ -48,58 +51,64 @@ class MediaEntityLanguageHoursAggregationUtil(
                                 languageName = durationsum.id.languageName
                             )
                         }
-                    ent?.totalCount = totalCount.toInt()
-                    ent?.totalDuration = ent?.totalDuration?.plus(totalPendingDuration ?: 0.0f)
-                    ent?.pendingCount = totalPending
-                    ent?.pendingDuration = totalPendingDuration?.toDouble()
-                    languageStateMap.put(durationsum.id.languageName !!,ent!! )
+                        ent?.totalCount = totalCount.toInt()
+                        ent?.totalDuration = ent?.totalDuration?.plus(totalPendingDuration ?: 0.0f)
+                        ent?.pendingCount = totalPending
+                        ent?.pendingDuration = totalPendingDuration?.toDouble()
+                        languageStateMap.put(durationsum.id.languageName ?: "", ent!!)
 
-                }
-                MediaAcceptanceState.ACCEPTED -> {
-                    totalAccepted = durationsum.recordingCount
-                    totalAcceptedDuration = durationsum.totalDuration
-                    val ent = if(languageStateMap.containsKey(durationsum.id.languageName !!)){
-                        languageStateMap.get(durationsum.id.languageName)
-                    } else {
-                        LanguageHoursEntity(
-                            languageId = durationsum.id.languageId,
-                            languageName = durationsum.id.languageName
-                        )
                     }
-                    ent?.totalCount = totalCount.toInt()
-                    ent?.totalDuration = ent?.totalDuration?.plus(totalAcceptedDuration ?: 0.0f)
-                    ent?.acceptedCount = totalAccepted
-                    ent?.acceptedDuration = totalAcceptedDuration?.toDouble()
-                    languageStateMap.put(durationsum.id.languageName !!,ent!! )
-                }
-                MediaAcceptanceState.REJECTED -> {
-                    totalRejected = durationsum.recordingCount
-                    totalRejectedDuration = durationsum.totalDuration
 
-                    val ent = if(languageStateMap.containsKey(durationsum.id.languageName !!)){
-                        languageStateMap.get(durationsum.id.languageName)
-                    } else {
-                        LanguageHoursEntity(
-                            languageId = durationsum.id.languageId,
-                            languageName = durationsum.id.languageName
-                        )
+                    MediaAcceptanceState.ACCEPTED -> {
+                        totalAccepted = durationsum.recordingCount
+                        totalAcceptedDuration = durationsum.totalDuration
+                        val ent = if (languageStateMap.containsKey(durationsum.id.languageName!!)) {
+                            languageStateMap.get(durationsum.id.languageName)
+                        } else {
+                            LanguageHoursEntity(
+                                languageId = durationsum.id.languageId,
+                                languageName = durationsum.id.languageName
+                            )
+                        }
+                        ent?.totalCount = totalCount.toInt()
+                        ent?.totalDuration = ent?.totalDuration?.plus(totalAcceptedDuration ?: 0.0f)
+                        ent?.acceptedCount = totalAccepted
+                        ent?.acceptedDuration = totalAcceptedDuration?.toDouble()
+                        languageStateMap.put(durationsum.id.languageName!!, ent!!)
                     }
-                    ent?.totalCount = totalCount.toInt()
-                    ent?.totalDuration = ent?.totalDuration?.plus(totalRejectedDuration ?: 0.0f)
-                    ent?.rejectedCount = totalRejected
-                    ent?.rejectedDuration = totalRejectedDuration?.toDouble()
-                    languageStateMap.put(durationsum.id.languageName !!,ent!! )
+
+                    MediaAcceptanceState.REJECTED -> {
+                        totalRejected = durationsum.recordingCount
+                        totalRejectedDuration = durationsum.totalDuration
+
+                        val ent = if (languageStateMap.containsKey(durationsum.id.languageName!!)) {
+                            languageStateMap.get(durationsum.id.languageName)
+                        } else {
+                            LanguageHoursEntity(
+                                languageId = durationsum.id.languageId,
+                                languageName = durationsum.id.languageName
+                            )
+                        }
+                        ent?.totalCount = totalCount.toInt()
+                        ent?.totalDuration = ent?.totalDuration?.plus(totalRejectedDuration ?: 0.0f)
+                        ent?.rejectedCount = totalRejected
+                        ent?.rejectedDuration = totalRejectedDuration?.toDouble()
+                        languageStateMap.put(durationsum.id.languageName!!, ent!!)
+                    }
+
+                    null -> TODO()
                 }
-                null -> TODO()
+
             }
-
-        }
-        logger.info("deleting all language items")
-        languageHoursImpl.deleteAllItems()
-        logger.info("saving  all language items")
-        languageHoursImpl.saveAll(languageStateMap.values.toList())
-        logger.info("added to database: ${languageStateMap.values.toList()}")
+            logger.info("deleting all language items")
+            languageHoursImpl.deleteAllItems()
+            logger.info("saving  all language items")
+            languageHoursImpl.saveAll(languageStateMap.values.toList())
+            logger.info("added to database: ${languageStateMap.values.toList()}")
 //        languageHoursImpl.deleteAllItems()
 //
+        }catch (e:Exception){
+            logger.error("e: ${e.stackTrace}")
+        }
     }
 }
