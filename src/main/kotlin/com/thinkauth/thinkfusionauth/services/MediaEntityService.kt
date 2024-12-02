@@ -59,6 +59,11 @@ class MediaEntityService(
     }
 
     @TrackExecutionTime
+    fun saveManyMediaEntities(list:List<MediaEntity>): MutableList<MediaEntity> {
+        return mediaEntityRepository.saveAll(list)
+    }
+
+    @TrackExecutionTime
     fun fetchAllMediaEntityPaged(
         page: Int = 0, size: Int = 10
     ): PagedResponse<List<MediaEntity>> {
@@ -238,6 +243,21 @@ class MediaEntityService(
         )
     }
 
+    @TrackExecutionTime
+    fun findMediaEntitiesWithDialectIdNull(
+        page: Int, size: Int
+    ): PagedResponse<MutableList<MediaEntity>> {
+        val paging = PageRequest.of(page, size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val mediaEntities = mediaEntityRepository.findAllByDialectId(null, paging)
+        return PagedResponse(
+            mediaEntities.content, mediaEntities.number, mediaEntities.totalElements, mediaEntities.totalPages
+        )
+    }
+
+    @TrackExecutionTime
+    fun getMediaEntityNullCount(): Long {
+        return mediaEntityRepository.countAllByDialectId(null)
+    }
     @TrackExecutionTime
     fun findAllVoiceCollectionsByLoggedInUser(
         page: Int, size: Int

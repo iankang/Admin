@@ -41,6 +41,10 @@ interface MediaEntityRepository :MongoRepository<MediaEntity,String>{
 
     fun findAllByMediaStateAndLanguageId(mediaAcceptanceState: MediaAcceptanceState,languageId:String,pageable: Pageable):Page<MediaEntity>
 
+    fun findAllByDialectId(dialectId:String?,pageable: Pageable):Page<MediaEntity>
+
+    fun countAllByDialectId(dialectId: String?):Long
+
     fun countAllByMediaName(mediaName:String):Long
 
     fun countAllByMediaStateAndMediaName(mediaAcceptanceState: MediaAcceptanceState, mediaName:String):Long

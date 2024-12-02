@@ -14,10 +14,10 @@ server:
   port: 9080
 #  ssl:
 #    enabled: true
-#    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore.p12
+#    key-store: /etc/letsencrypt/live/dev.think.ke/dev.think.ke.keystore.p12
 #    key-store-password: kangethe
 #    key-store-type: PKCS12
-#    key-alias: auth.think.ke
+#    key-alias: dev.think.ke
 
 spring:
   config:
@@ -70,7 +70,7 @@ minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
   access-key: think-access-key
-  url: http://18.218.12.248:9001
+  url: http://194.242.57.214
   bucket: thinking
   secret-key: think-secret-key
   port: 9000
@@ -97,10 +97,10 @@ server:
   port: 9081
   ssl:
     enabled: true
-    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore.p12
+    key-store: /etc/letsencrypt/live/dev.think.ke/dev.think.ke.keystore.p12
     key-store-password: kangethe
     key-store-type: PKCS12
-    key-alias: auth.think.ke
+    key-alias: dev.think.ke
 spring:
   http:
     encoding:
@@ -155,7 +155,7 @@ minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
   access-key: think-access-key
-  url: http://18.218.12.248:9000
+  url: http://194.242.57.214
   bucket: thinking
   secret-key: think-secret-key
   port: 9000

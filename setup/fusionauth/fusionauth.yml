@@ -22,5 +22,5 @@ services:
       - /home/ubuntu/fusionauth/cert.pem:/usr/local/fusionauth/config/cert.pem
       - /home/ubuntu/fusionauth/fullchain.pem:/usr/local/fusionauth/config/fullchain.pem
       - /home/ubuntu/fusionauth/privkey.pem:/usr/local/fusionauth/config/privkey.pem
-      - /home/ubuntu/fusionauth/auth.think.ke.p12:/usr/local/fusionauth/config/auth.think.ke.p12
-      - /home/ubuntu/fusionauth/auth.think.ke.keystore.p12:/usr/local/fusionauth/config/auth.think.ke.keystore.p12
+      - /home/ubuntu/fusionauth/dev.think.ke.p12:/usr/local/fusionauth/config/dev.think.ke.p12
+      - /home/ubuntu/fusionauth/dev.think.ke.keystore.p12:/usr/local/fusionauth/config/dev.think.ke.keystore.p12

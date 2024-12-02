@@ -40,7 +40,7 @@ class MediaEntityLanguageHoursAggregationUtil(
                 MediaAcceptanceState.PENDING -> {
                     totalPending = durationsum.recordingCount
                     totalPendingDuration = durationsum.totalDuration
-                    val ent = if(languageStateMap.containsKey(durationsum.id.languageName !!)){
+                    val ent = if(languageStateMap.containsKey(durationsum.id.languageName ?: "")){
                             languageStateMap.get(durationsum.id.languageName)
                         } else {
                             LanguageHoursEntity(
