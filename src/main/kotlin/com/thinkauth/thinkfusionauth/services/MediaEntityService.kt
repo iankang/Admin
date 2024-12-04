@@ -120,9 +120,16 @@ class MediaEntityService(
     }
 
     @TrackExecutionTime
-    fun rejectMediaEntity(mediaId: String): MediaEntity {
+    fun rejectMediaEntity(
+        mediaId: String,
+        rejectionReason:String? = null
+    ): MediaEntity {
         val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.REJECTED
+        if(rejectionReason != null){
+            mediaEntity.rejectionReason = rejectionReason
+        }
+
         //recycle sentence when the audio is rejected.
         if (mediaEntity.sentenceId != null) {
             audioCollectionService.setSentenceNeedsUpload(mediaEntity.sentenceId ?: "", true)

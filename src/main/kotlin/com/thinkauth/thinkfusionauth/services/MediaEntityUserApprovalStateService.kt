@@ -87,7 +87,8 @@ class MediaEntityUserApprovalStateService(
     }
 
     fun rejectMediaEntity(
-        mediaEntityId: String
+        mediaEntityId: String,
+        rejectionReason:String? =null
     ): MediaEntityUserApprovalState {
         val loggedInUser = userManagementService.fetchLoggedInUserEntity()
         val uploadedMedia = mediaEntityUserUploadStateService.getByUserUploadMediaEntityId(mediaEntityId)
@@ -113,6 +114,7 @@ class MediaEntityUserApprovalStateService(
                 mediaState = MediaAcceptanceState.REJECTED,
                 paymentState = uploadedMedia.paymentState
             )
+            approvalState.rejectionReason = rejectionReason
             mediaEntityUserApprovalStateImpl.createItem(approvalState)
 
             mediaEntityUserUploadStateService.rejectMediaEntityUserUploadState(

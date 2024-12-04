@@ -29,4 +29,5 @@ data class MediaEntityUserApprovalState(
 ):AuditMetadata(){
     var reviewDate:LocalDateTime? = null
     var paymentDate:LocalDateTime? = null
+    var rejectionReason:String? = null
 }

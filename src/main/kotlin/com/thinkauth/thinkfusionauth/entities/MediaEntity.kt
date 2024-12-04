@@ -31,6 +31,7 @@ data class MediaEntity(
     var employmentState: String? = null
     var ownerEmail:String? = null
     var nationalId:Long? = null
+    var rejectionReason:String? = null
 
 
     fun toMediaEntityUserUpload(

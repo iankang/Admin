@@ -96,9 +96,10 @@ class MediaEntityController(
     )
     @PutMapping("/mediaEntityReject")
     fun assignRejected(
-        @RequestParam("mediaEntityId") sentenceId:String
+        @RequestParam("mediaEntityId") sentenceId:String,
+        @RequestBody(required = false) rejectionReason:String?
     ): ResponseEntity<MediaEntity>{
-        return ResponseEntity(mediaEntityService.rejectMediaEntity(sentenceId),HttpStatus.OK)
+        return ResponseEntity(mediaEntityService.rejectMediaEntity(sentenceId,rejectionReason),HttpStatus.OK)
     }
 
     @Operation(
