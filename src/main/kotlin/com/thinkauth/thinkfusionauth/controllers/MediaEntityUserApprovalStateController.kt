@@ -39,9 +39,10 @@ class MediaEntityUserApprovalStateController(
     )
     @PostMapping("/rejectMediaEntity")
     fun rejectMediaEntity(
-        @RequestParam("mediaEntityId", required = true) mediaEntityId: String
+        @RequestParam("mediaEntityId", required = true) mediaEntityId: String,
+        @RequestBody(required = false) rejectionReason:String?
     ): ResponseEntity<MediaEntityUserApprovalState> {
-        return ResponseEntity(mediaEntityUserApprovalStateService.rejectMediaEntity(mediaEntityId), HttpStatus.OK)
+        return ResponseEntity(mediaEntityUserApprovalStateService.rejectMediaEntity(mediaEntityId, rejectionReason), HttpStatus.OK)
     }
 
     @Operation(
