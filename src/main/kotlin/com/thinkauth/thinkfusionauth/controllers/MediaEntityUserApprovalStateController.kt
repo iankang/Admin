@@ -3,6 +3,7 @@ package com.thinkauth.thinkfusionauth.controllers
 import com.thinkauth.thinkfusionauth.entities.MediaEntityUserApprovalState
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.entities.enums.PaymentState
+import com.thinkauth.thinkfusionauth.models.requests.RejectionReasonRequest
 import com.thinkauth.thinkfusionauth.models.responses.ApproverCount
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
 import com.thinkauth.thinkfusionauth.services.MediaEntityUserApprovalStateService
@@ -40,9 +41,11 @@ class MediaEntityUserApprovalStateController(
     @PostMapping("/rejectMediaEntity")
     fun rejectMediaEntity(
         @RequestParam("mediaEntityId", required = true) mediaEntityId: String,
-        @RequestBody(required = false) rejectionReason:String?
+        @RequestBody(required = false) rejectionReasonRequest: RejectionReasonRequest?
     ): ResponseEntity<MediaEntityUserApprovalState> {
-        return ResponseEntity(mediaEntityUserApprovalStateService.rejectMediaEntity(mediaEntityId, rejectionReason), HttpStatus.OK)
+        return ResponseEntity(mediaEntityUserApprovalStateService.rejectMediaEntity(mediaEntityId,
+            rejectionReasonRequest?.rejectionReason
+        ), HttpStatus.OK)
     }
 
     @Operation(
