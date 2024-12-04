@@ -26,7 +26,8 @@ class MediaEntityLanguageMetricsAggregationUtil(
     @Async
     fun countAllByLanguages(): MutableList<LanguageRecordingsResponse>?{
         try {
-            val mediaEntitiesLanguages = languageService.aggregateMediaEntitiesLanguages().filter { it.id.languageId != null }
+            val mediaEntitiesLanguages = languageService.aggregateMediaEntitiesLanguages()
+                .filter { it.id.languageId != null }.distinct()
             val languageMetrics = mediaEntitiesLanguages.map {
                 LanguageMetricsEntity(
                     languageId = it.id.languageId,
@@ -36,6 +37,7 @@ class MediaEntityLanguageMetricsAggregationUtil(
                 )
             }
             if(languageMetrics.isNotEmpty()){
+                logger.info("language metrics not empty")
                 languageMetricsImpl.deleteAllItems()
                 languageMetricsImpl.addAllMetrics(languageMetrics)
             }
