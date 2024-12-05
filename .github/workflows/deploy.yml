@@ -23,23 +23,6 @@ jobs:
           context: .
           push: true
           tags: ikangethe/think-fusion-auth:latest
-  deploy_to_think-server:
-    runs-on: ubuntu-latest
-    needs: build_and_push
-    name: Deploy to Think Server
-    steps:
-      - name: Connect with SSH and Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          script: |
-            docker stop think-auth-fusion-container1
-            docker rm think-auth-fusion-container1
-            docker pull ikangethe/think-fusion-auth:latest
-            docker run -d -p "9081:9081" -p "8080:8080" --restart=unless-stopped --name=think-auth-fusion-container1 ikangethe/think-fusion-auth:latest
-            docker ps -a
 
   deploy_to_think-server-admin:
     runs-on: ubuntu-latest
