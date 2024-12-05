@@ -13,4 +13,4 @@ ADD dev.think.ke.keystore.p12 /etc/letsencrypt/live/dev.think.ke/dev.think.ke.ke
 EXPOSE 9081
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=production
-ENTRYPOINT ["java", "-XX:+UseG1GC","-Xmx10g", "-XX:InitiatingHeapOccupancyPercent=50", "-jar", "/opt/app.jar"]
+ENTRYPOINT ["java", "-XX:+UseG1GC","-Xmx10g", "-jar", "/opt/app.jar"]
