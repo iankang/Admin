@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 
 @Document
-class SentenceEntitie(
+data class SentenceEntitie(
     @TextIndexed
     var sentence: String? = null,
     @TextIndexed

@@ -6,7 +6,7 @@ data class LanguageRecordingsResponse(
     var languageName:String?,
     var languageId:String?,
     var sentenceCount:Long,
-    var recordingCount:Long
+    var recordingCount:Long?
 ){
     fun toLanguageMetricsTbl():LanguageMetricsEntity{
         return LanguageMetricsEntity(

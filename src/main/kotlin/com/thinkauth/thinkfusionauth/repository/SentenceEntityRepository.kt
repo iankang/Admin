@@ -37,4 +37,9 @@ interface SentenceEntityRepository : MongoRepository<SentenceEntitie, String> {
 
     fun deleteAllByLanguageIdAndCreatedDateBetween(languageId: String,createdDateStart:LocalDateTime, createdDateEnd:LocalDateTime):Long
 
+    @Query("{'dialect.id': ?0 }")
+    fun findAllByDialectId(dialectId:String, pageable: Pageable):Page<SentenceEntitie>
+
+    fun countAllByDialectId(dialectId: String):Long
+
 }

@@ -5,10 +5,7 @@ import com.thinkauth.thinkfusionauth.entities.LanguageMetricsEntity
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.entities.enums.MediaAcceptanceState
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
-import com.thinkauth.thinkfusionauth.models.responses.DurationLanguageSum
-import com.thinkauth.thinkfusionauth.models.responses.DurationSum
-import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
-import com.thinkauth.thinkfusionauth.models.responses.UserLanguageRecordingsResponse
+import com.thinkauth.thinkfusionauth.models.responses.*
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
 import com.thinkauth.thinkfusionauth.repository.impl.LanguageMetricsImpl
 import com.thinkauth.thinkfusionauth.repository.impl.RelevantLanguagesImpl
@@ -59,6 +56,11 @@ class MediaEntityService(
     @TrackExecutionTime
     fun saveMediaEntity(mediaEntity: MediaEntity): MediaEntity {
         return mediaEntityRepository.save(mediaEntity)
+    }
+
+    @TrackExecutionTime
+    fun saveManyMediaEntities(list:List<MediaEntity>): MutableList<MediaEntity> {
+        return mediaEntityRepository.saveAll(list)
     }
 
     @TrackExecutionTime
@@ -118,9 +120,16 @@ class MediaEntityService(
     }
 
     @TrackExecutionTime
-    fun rejectMediaEntity(mediaId: String): MediaEntity {
+    fun rejectMediaEntity(
+        mediaId: String,
+        rejectionReason:String? = null
+    ): MediaEntity {
         val mediaEntity = fetchMediaEntityById(mediaId)
         mediaEntity.mediaState = MediaAcceptanceState.REJECTED
+        if(rejectionReason != null){
+            mediaEntity.rejectionReason = rejectionReason
+        }
+
         //recycle sentence when the audio is rejected.
         if (mediaEntity.sentenceId != null) {
             audioCollectionService.setSentenceNeedsUpload(mediaEntity.sentenceId ?: "", true)
@@ -242,6 +251,21 @@ class MediaEntityService(
     }
 
     @TrackExecutionTime
+    fun findMediaEntitiesWithDialectIdNull(
+        page: Int, size: Int
+    ): PagedResponse<MutableList<MediaEntity>> {
+        val paging = PageRequest.of(page, size, Sort.by(Sort.Order.desc("lastModifiedDate")))
+        val mediaEntities = mediaEntityRepository.findAllByDialectId(null, paging)
+        return PagedResponse(
+            mediaEntities.content, mediaEntities.number, mediaEntities.totalElements, mediaEntities.totalPages
+        )
+    }
+
+    @TrackExecutionTime
+    fun getMediaEntityNullCount(): Long {
+        return mediaEntityRepository.countAllByDialectId(null)
+    }
+    @TrackExecutionTime
     fun findAllVoiceCollectionsByLoggedInUser(
         page: Int, size: Int
     ): PagedResponse<List<MediaEntity>> {
@@ -344,5 +368,6 @@ class MediaEntityService(
         logger.info("mapped_results: ${aggregationResults.mappedResults}")
         return aggregationResults.mappedResults
     }
+
 
 }

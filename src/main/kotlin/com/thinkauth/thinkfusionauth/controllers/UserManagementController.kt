@@ -9,6 +9,7 @@ import com.thinkauth.thinkfusionauth.exceptions.ResourceNotFoundException
 import com.thinkauth.thinkfusionauth.models.requests.EditUserRequest
 import com.thinkauth.thinkfusionauth.models.requests.ProfileInfoRequest
 import com.thinkauth.thinkfusionauth.models.responses.FusionApiResponse
+import com.thinkauth.thinkfusionauth.models.responses.UserData
 import com.thinkauth.thinkfusionauth.repository.impl.ConstituencyImpl
 import com.thinkauth.thinkfusionauth.repository.impl.CountyServiceImple
 import com.thinkauth.thinkfusionauth.services.ConversationService
@@ -339,6 +340,17 @@ class UserManagementController(
 
         return ResponseEntity(
             userManagementService.getUserByMobile(mobile),
+            HttpStatus.OK
+        )
+    }
+    @Operation(summary = "get user by phone", description = "Gets by phone", tags = ["UserManagement"])
+    @GetMapping("/fetchUserDataByEmail" )
+    fun getUserDetailsData(
+        email:String
+    ): ResponseEntity<UserData> {
+
+        return ResponseEntity(
+            userManagementService.getUserData(email),
             HttpStatus.OK
         )
     }

@@ -15,24 +15,19 @@ data class MediaEntityUserApprovalState(
     var approverEmail:String?,
     var approverUsername:String?,
     var uploaderId:String?,
-    @Indexed
     var phoneNumber:String?,
-    @Indexed
     var nationalId:String?,
     var sentenceId: String?,
     var actualSentence:String?,
-    @Indexed
     var languageId:String?,
     var languageName:String?,
     var businessId: String?,
     var genderState: String?,
-    @Indexed
     var mediaEntityId:String?,
     var mediaState: MediaAcceptanceState =  MediaAcceptanceState.PENDING,
-    var paymentState: PaymentState = PaymentState.UNPAID
+    var paymentState: PaymentState = PaymentState.UNPAID,
 ):AuditMetadata(){
-    @Indexed
     var reviewDate:LocalDateTime? = null
-    @Indexed
     var paymentDate:LocalDateTime? = null
+    var rejectionReason:String? = null
 }

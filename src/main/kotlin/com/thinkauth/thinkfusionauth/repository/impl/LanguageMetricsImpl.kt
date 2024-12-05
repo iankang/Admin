@@ -83,4 +83,9 @@ class LanguageMetricsImpl(
         languageMetricsRepository.deleteByLanguageId(languageId)
     }
 
+    @TrackExecutionTime
+    fun addAllMetrics(list:List<LanguageMetricsEntity>): MutableList<LanguageMetricsEntity> {
+        return languageMetricsRepository.saveAll(list)
+    }
+
 }

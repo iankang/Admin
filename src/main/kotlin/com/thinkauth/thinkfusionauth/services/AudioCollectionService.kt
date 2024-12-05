@@ -5,7 +5,9 @@ import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.SentenceEntitie
 import com.thinkauth.thinkfusionauth.entities.Language
 import com.thinkauth.thinkfusionauth.models.requests.AudioCollectionRequest
+import com.thinkauth.thinkfusionauth.models.responses.DurationSum
 import com.thinkauth.thinkfusionauth.models.responses.PagedResponse
+import com.thinkauth.thinkfusionauth.models.responses.SentenceDialectCount
 import com.thinkauth.thinkfusionauth.repository.SentenceEntityRepository
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import com.thinkauth.thinkfusionauth.utils.FileProcessingHelper
@@ -18,6 +20,11 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation.*
+import org.springframework.data.mongodb.core.aggregation.AggregationResults
+import org.springframework.data.mongodb.core.aggregation.GroupOperation
+import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.servlet.http.HttpServletResponse
@@ -32,6 +39,7 @@ class AudioCollectionService(
     private val bucketName:String,
     private val storageService: StorageService,
     private val fileProcessingHelper: FileProcessingHelper,
+    private val mongoTemplate: MongoTemplate,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val LOGGER: Logger = LoggerFactory.getLogger(AudioCollectionService::class.java)
@@ -307,5 +315,18 @@ class AudioCollectionService(
         createdDateEnd:LocalDateTime,
     ): Long {
         return sentenceRepository.deleteAllByLanguageIdAndCreatedDateBetween(languageId, createdDateStart, createdDateEnd)
+    }
+
+    fun aggregateSentences(){
+        val matchOperation = match(Criteria("needsUpload").`is`(true))
+        val groupOperation: GroupOperation =
+            group("language.id")
+                .count().`as`("dialectCount")
+
+        val aggregation = newAggregation(matchOperation, groupOperation)
+        val aggregationResults: AggregationResults<SentenceDialectCount> =
+            mongoTemplate.aggregate(aggregation, "sentenceEntitie", SentenceDialectCount::class.java)
+        LOGGER.info("raw_results: ${aggregationResults.rawResults}")
+        LOGGER.info("mapped_results: ${aggregationResults.mappedResults}")
     }
 }

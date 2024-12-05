@@ -18,51 +18,59 @@ class MediaEntityAggregationUtil(
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     @Async
     fun setTotalHourEntity(){
-        var totalEverything= mediaEntityService.aggregateMediaEntities()
-        logger.info("media entity metrics: ${totalEverything}")
-        var totalAccepted:Int? = 0
-        var totalAcceptedDuration:Float? = 0.0f
-        var totalRejected:Int? = 0
-        var totalRejectedDuration:Float? = 0.0f
-        var totalPending:Int? = 0
-        var totalPendingDuration:Float? = 0.0f
+        try {
+            var totalEverything = mediaEntityService.aggregateMediaEntities()
+            logger.info("media entity metrics: ${totalEverything}")
+            var totalAccepted: Int? = 0
+            var totalAcceptedDuration: Float? = 0.0f
+            var totalRejected: Int? = 0
+            var totalRejectedDuration: Float? = 0.0f
+            var totalPending: Int? = 0
+            var totalPendingDuration: Float? = 0.0f
 
-        totalEverything.forEach { durationSum: DurationSum ->
-            when(durationSum.id){
-                MediaAcceptanceState.PENDING -> {
-                    totalPending = durationSum.stateCount
-                    totalPendingDuration = durationSum.totalDuration
+            totalEverything.forEach { durationSum: DurationSum ->
+                when (durationSum.id) {
+                    MediaAcceptanceState.PENDING -> {
+                        totalPending = durationSum.stateCount
+                        totalPendingDuration = durationSum.totalDuration
 
-                }
-                MediaAcceptanceState.ACCEPTED -> {
-                    totalAccepted = durationSum.stateCount
-                    totalAcceptedDuration = durationSum.totalDuration
+                    }
 
-                }
-                MediaAcceptanceState.REJECTED -> {
-                    totalRejected = durationSum.stateCount
-                    totalRejectedDuration = durationSum.totalDuration
+                    MediaAcceptanceState.ACCEPTED -> {
+                        totalAccepted = durationSum.stateCount
+                        totalAcceptedDuration = durationSum.totalDuration
 
-                }
-                null -> {
+                    }
+
+                    MediaAcceptanceState.REJECTED -> {
+                        totalRejected = durationSum.stateCount
+                        totalRejectedDuration = durationSum.totalDuration
+
+                    }
+
+                    null -> {
 
 
+                    }
                 }
             }
-        }
 
-        val ent = TotalHoursEntity(
-            totalDuration = totalAcceptedDuration?.plus(totalPendingDuration ?: 0.0f)?.plus(totalRejectedDuration ?: 0.0f)?.toDouble(),
-            totalCount = totalAccepted?.plus(totalRejected ?: 0)?.plus(totalPending ?: 0),
-            acceptedCount = totalAccepted,
-            acceptedDuration = totalAcceptedDuration?.toDouble(),
-            rejectedCount = totalRejected,
-            rejectedDuration = totalRejectedDuration?.toDouble(),
-            pendingCount = totalPending,
-            pendingDuration = totalPendingDuration?.toDouble()
-        )
-        logger.info("totals: ${ent}")
-        totalHourRepository.deleteAll()
-        totalHourRepository.save(ent)
+            val ent = TotalHoursEntity(
+                totalDuration = totalAcceptedDuration?.plus(totalPendingDuration ?: 0.0f)
+                    ?.plus(totalRejectedDuration ?: 0.0f)?.toDouble(),
+                totalCount = totalAccepted?.plus(totalRejected ?: 0)?.plus(totalPending ?: 0),
+                acceptedCount = totalAccepted,
+                acceptedDuration = totalAcceptedDuration?.toDouble(),
+                rejectedCount = totalRejected,
+                rejectedDuration = totalRejectedDuration?.toDouble(),
+                pendingCount = totalPending,
+                pendingDuration = totalPendingDuration?.toDouble()
+            )
+            logger.info("totals: ${ent}")
+            totalHourRepository.deleteAll()
+            totalHourRepository.save(ent)
+        }catch (e:Exception){
+            logger.error("e: ${e.stackTrace}")
+        }
     }
 }

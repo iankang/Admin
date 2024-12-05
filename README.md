@@ -3,22 +3,22 @@
 ```
 # Create keystore
 echo "Refreshing '~/home/ikangethe/key"
-sudo openssl pkcs12 -export   -in /etc/letsencrypt/live/auth.think.ke/cert.pem   -inkey /etc/letsencrypt/live/auth.think.ke/privkey.pem   -out auth.think.ke.keystore.p12   -name auth.think.ke   -CAfile /etc/letsencrypt/live/auth.think.ke/chain.pem   -caname auth.think.ke   -password pass:kangethe
+sudo openssl pkcs12 -export   -in /etc/letsencrypt/live/dev.think.ke/cert.pem   -inkey /etc/letsencrypt/live/dev.think.ke/privkey.pem   -out dev.think.ke.keystore.p12   -name dev.think.ke   -CAfile /etc/letsencrypt/live/dev.think.ke/chain.pem   -caname dev.think.ke   -password pass:kangethe
 
 echo "Refreshing '~/home/ikangethe/key"
 
 echo "Removing the keystore"
-rm /home/ubuntu/key/auth.think.ke.keystore
+rm /home/ubuntu/key/dev.think.ke.keystore
 
 keytool -importkeystore \
         -deststorepass kangethe \
         -destkeypass kangethe \
         -deststoretype pkcs12 \
-        -srckeystore /home/ubuntu/key/auth.think.ke.p12 \
+        -srckeystore /home/ubuntu/key/dev.think.ke.p12 \
         -srcstoretype PKCS12 \
         -srcstorepass kangethe \
-        -destkeystore /home/ubuntu/key/auth.think.ke.keystore \
-        -alias auth.think.ke
+        -destkeystore /home/ubuntu/key/dev.think.ke.keystore \
+        -alias dev.think.ke
 ```
 
 ### How to create the fusion auth application
@@ -48,8 +48,8 @@ services:
       - /home/ubuntu/fusionauth/cert.pem:/usr/local/fusionauth/config/cert.pem
       - /home/ubuntu/fusionauth/fullchain.pem:/usr/local/fusionauth/config/fullchain.pem
       - /home/ubuntu/fusionauth/privkey.pem:/usr/local/fusionauth/config/privkey.pem
-      - /home/ubuntu/fusionauth/auth.think.ke.p12:/usr/local/fusionauth/config/auth.think.ke.p12
-      - /home/ubuntu/fusionauth/auth.think.ke.keystore:/usr/local/fusionauth/config/auth.think.ke.keystore
+      - /home/ubuntu/fusionauth/dev.think.ke.p12:/usr/local/fusionauth/config/dev.think.ke.p12
+      - /home/ubuntu/fusionauth/dev.think.ke.keystore:/usr/local/fusionauth/config/dev.think.ke.keystore
 ```
 
 ### fusion auth config.properties
@@ -57,7 +57,7 @@ services:
 
 database.url=jdbc:postgresql://18.218.12.248:37821/fusionauth
 database.username=fusionauth
-#proxy.host="https://auth.think.ke/fusion"
+#proxy.host="https://dev.think.ke/fusion"
 #proxy.port=443
 database.password=fusionauth
 fusionauth-app.url=http://18.218.12.248

@@ -14,10 +14,10 @@ server:
   port: 9080
 #  ssl:
 #    enabled: true
-#    key-store: /etc/letsencrypt/live/auth.think.ke/auth.think.ke.keystore.p12
+#    key-store: /etc/letsencrypt/live/dev.think.ke/dev.think.ke.keystore.p12
 #    key-store-password: kangethe
 #    key-store-type: PKCS12
-#    key-alias: auth.think.ke
+#    key-alias: dev.think.ke
 
 spring:
   config:
@@ -25,6 +25,7 @@ spring:
       on-profile: development
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
   servlet:
     multipart:
       enabled: true
@@ -47,13 +48,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://194.242.57.214:9011/.well-known/jwks.json
-          issuer-uri: http://194.242.57.214:9011
+          jwk-set-uri: http://18.218.12.248:9011/.well-known/jwks.json
+          issuer-uri: http://18.218.12.248:9011
 
 oidc:
   issuer: think.net
-  auth_url: http://194.242.57.214:9011/oauth2/authorize
-  token_url: http://194.242.57.214:9011/oauth2/token
+  auth_url: http://18.218.12.248:9011/oauth2/authorize
+  token_url: http://18.218.12.248:9011/oauth2/token
 
 springdoc:
   swagger-ui:
@@ -62,14 +63,14 @@ springdoc:
       client-secret: yflW_todW2NtALNqhEhfIyabYLic2Bpcm19o5uDP2IM
 fusionauth:
   apikey: 9hmUEht1z98FKCt4F0fareYJI_QdV6-hcB4imnTFvIl1_ovx5hjR9yNM
-  baseurl: http://194.242.57.214:9011
+  baseurl: http://18.218.12.248:9011
   tenantId: 0f19389f-dbd1-4853-ab0f-33fcd2ac1ed0
   applicationId: 85d2fc81-5ed0-4276-9101-640026f5eacc
 minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
   access-key: think-access-key
-  url: http://194.242.57.214:9001
+  url: http://194.242.57.214
   bucket: thinking
   secret-key: think-secret-key
   port: 9000
@@ -108,6 +109,7 @@ spring:
       force: true
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
   servlet:
     multipart:
       enabled: true
@@ -153,7 +155,7 @@ minio:
   #  default-folder: /resources
   #  access-key: mWorR7QeZtLQ4zEL
   access-key: think-access-key
-  url: http://194.242.57.214:9000
+  url: http://194.242.57.214
   bucket: thinking
   secret-key: think-secret-key
   port: 9000

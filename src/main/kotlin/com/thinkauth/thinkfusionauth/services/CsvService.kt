@@ -14,6 +14,8 @@ import com.thinkauth.thinkfusionauth.models.requests.LanguageRequest
 import com.thinkauth.thinkfusionauth.models.responses.LangAndDialect
 import com.thinkauth.thinkfusionauth.models.responses.SentenceDocumentCSV
 import com.thinkauth.thinkfusionauth.repository.impl.SentenceDocumentImpl
+import com.thinkauth.thinkfusionauth.utils.toStandardCase
+import com.thinkauth.thinkfusionauth.utils.toTitleCase
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -28,7 +30,8 @@ class CsvService(
     private val sentenceDocumentImpl: SentenceDocumentImpl,
     private val languageService: LanguageService,
     private val dialectService: DialectService,
-    private val audioCollectionService: AudioCollectionService
+    private val audioCollectionService: AudioCollectionService,
+    private val mediaEntityService: MediaEntityService
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(CsvService::class.java)
@@ -82,6 +85,8 @@ class CsvService(
         if (csvItems.isNotEmpty()) {
             logger.info("CsvService adding sentences to db")
             uploadTheSentences(csvItems, business, fileId)
+        } else {
+            logger.info("csvService is empty")
         }
     }
 
@@ -93,48 +98,52 @@ class CsvService(
             val sentenceDoc = sentenceDocumentImpl.getSentenceDocumentByFileId(fileId)
             logger.info("csvItemsSize: ${csvItems.size}")
             val dialects = csvItems.map {
-                    LangAndDialect(language = it.language, dialect = it.dialect)
+                    LangAndDialect(language = it.language?.toTitleCase(), dialect = it.dialect?.toTitleCase())
                 }.distinct()
             logger.info("CsvService dialectsMap: {}", dialects)
             val languageEntityMap: MutableMap<String, Language> = mutableMapOf()
             val dialectEntityMap: MutableMap<String, Dialect> = mutableMapOf()
             dialects.forEach { item ->
-                if (!languageService.existsByLanguageName(item.language!!)) {
-                    logger.info("CsvService language does not exist: {}", item.language)
-                    languageEntityMap[item.language!!] =
-                        languageService.addLanguage(languageRequest = LanguageRequest(item.language!!))
+                if (!languageService.existsByLanguageName(item.language?.toTitleCase()!!)) {
+                    logger.info("CsvService language does not exist: {}", item.language?.toTitleCase())
+                    languageEntityMap[item.language?.toTitleCase() ?: ""] =
+                        languageService.addLanguage(languageRequest = LanguageRequest(item.language?.toTitleCase()!!))
 
                 } else {
                     logger.info("CsvService language exists: {}", item.language)
-                    languageEntityMap[item.language!!] =
-                        (languageService.findLanguageByLanguageName(item.language!!).first())!!
+                    languageEntityMap[item.language?.toTitleCase()!!] =
+                        (languageService.findLanguageByLanguageName(item.language?.toTitleCase()!!).first { it?.country == "Kenya" })!!
                 }
-                if (!dialectService.existsByDialectName(item.dialect!!)) {
-                    logger.info("CsvService dialect does not exist: {}", item.dialect!!)
-                    val languageStuff = languageService.findLanguageByLanguageName(item.language!!).first()
-                    dialectEntityMap[item.dialect!!] = dialectService.addDialect(
+                if (!dialectService.existsByDialectName(item.dialect?.toTitleCase()!!)) {
+                    logger.info("CsvService dialect does not exist: {}", item.dialect?.toTitleCase()!!)
+                    val languageStuff =
+                        languageService.findLanguageByLanguageName(item.language?.toTitleCase()!!).first { it?.country == "Kenya" }
+                    dialectEntityMap[item.dialect?.toTitleCase()!!] = dialectService.addDialect(
                         DialectRequest(
-                            dialectName = item.dialect,
+                            dialectName = item.dialect?.toTitleCase(),
                             languageId = languageStuff?.id
                         )
                     )
 
                 } else {
-                    logger.info("CsvService dialect exists: {}", item.language)
-                    dialectEntityMap[item.dialect!!] = dialectService.getDialectByDialectName(item.dialect!!)?.first()!!
+                    logger.info("CsvService dialect exists: {}", item.language?.toTitleCase())
+                    dialectEntityMap[item.dialect?.toTitleCase()!!] = dialectService.getDialectByDialectName(item.dialect?.toTitleCase()!!)?.first()!!
                 }
                 logger.info("CsvService languages: {}, dialects: {}", languageEntityMap, dialectEntityMap)
             }
 //     d
             val sentences = mutableListOf<SentenceEntitie>()
+            var index = 0
             csvItems.map {
+                index += 1
+                logger.info("index: $index")
                 if (!audioCollectionService.sentenceExistsBySentence(it.localLanguage ?: "")) {
                     logger.info("CsvService sentence doesn't exist: {}", it)
 
                     val sent = SentenceEntitie(
                         sentence = it.localLanguage,
-                        language = languageEntityMap[it.language]!!,
-                        dialect = dialectEntityMap[it.dialect],
+                        language = languageEntityMap[it.language?.toTitleCase()]!!,
+                        dialect = dialectEntityMap[it.dialect?.toTitleCase()],
                         englishTranslation = it.textTranslation,
                         topic = it.topic,
                         source = it.source,

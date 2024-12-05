@@ -4,10 +4,7 @@ import com.thinkauth.thinkfusionauth.config.TrackExecutionTime
 import com.thinkauth.thinkfusionauth.entities.MediaEntity
 import com.thinkauth.thinkfusionauth.events.OnMediaUploadItemEvent
 import com.thinkauth.thinkfusionauth.repository.MediaEntityRepository
-import com.thinkauth.thinkfusionauth.services.AudioCollectionService
-import com.thinkauth.thinkfusionauth.services.MediaEntityUserUploadStateService
-import com.thinkauth.thinkfusionauth.services.SentenceUserIgnoreService
-import com.thinkauth.thinkfusionauth.services.StorageService
+import com.thinkauth.thinkfusionauth.services.*
 import com.thinkauth.thinkfusionauth.utils.BucketName
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,6 +29,7 @@ class UploadMediaservice(
     private val audioCollectionService: AudioCollectionService,
     private val mediaEntityUserUploadStateService: MediaEntityUserUploadStateService,
     private val storageService: StorageService,
+    private val userManagementService: UserManagementService,
     @Value("\${minio.bucket} ")
     private val thinkResources: String,
 ) {
@@ -73,7 +71,21 @@ class UploadMediaservice(
             val duration = mediaEntityGetDuration(objectName)
             logger.info("duration: ${duration}")
             mediaEntity.duration = duration
+            val userData = userManagementService.getUserData(event.user.email!!)
+            logger.info("userData: $userData")
+            mediaEntity.constituencyId = userData?.constituencyId
+            mediaEntity.constituencyName = userData?.constituencyName
+            mediaEntity.countyId = userData?.countyId
+            mediaEntity.countyName = userData?.countyName
+            mediaEntity.dialectId = userData?.dialectId
+            mediaEntity.educationLevel = userData?.educationLevel
+            mediaEntity.employmentState = userData?.employmentState
+            mediaEntity.genderState = userData?.genderState
+            mediaEntity.languageId = userData?.languageId
+            mediaEntity.nationalId = userData?.nationalId
+            logger.info("finalMediaEnt: $mediaEntity")
             val mediaent = saveMediaEntity(mediaEntity)
+
             mediaEntityUserUploadStateService.addMediaEntityUploadState(mediaent)
 
             //once uploaded, the sentence should not be visible
