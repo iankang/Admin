@@ -27,8 +27,8 @@ class AsyncConfiguration:AsyncConfigurer {
     @Bean (name = ["taskExecutor"])
     fun asyncExecutor(): Executor {
         val executor = ThreadPoolTaskExecutor()
-        executor.corePoolSize = 3
-        executor.maxPoolSize = 5
+        executor.corePoolSize = 5
+        executor.maxPoolSize = 8
         executor.queueCapacity = 500
         executor.setThreadNamePrefix("AsynchThread-")
         executor.setRejectedExecutionHandler { r: Runnable?, executor1: ThreadPoolExecutor? ->
